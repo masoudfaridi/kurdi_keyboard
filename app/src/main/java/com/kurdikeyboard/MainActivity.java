@@ -28,6 +28,8 @@ public class MainActivity extends Activity {
         stepEnable = (TextView) findViewById(R.id.stepEnable);
         stepSelect = (TextView) findViewById(R.id.stepSelect);
         refreshSteps();
+        bindLanguage(R.id.langPersian, R.string.preflanguage_farsi, true);
+        bindLanguage(R.id.langKurdish, R.string.preflanguage_kurdi, false);
     }
 
     @Override
@@ -67,6 +69,20 @@ public class MainActivity extends Activity {
         } else if (id == R.id.buttonGuid) {
             startActivity(new Intent(this, MainActivityViewPager.class));
         }
+    }
+
+    /** a language checkbox, stored where the keyboard and the settings read it */
+    private void bindLanguage(int viewId, final int prefKey, boolean def) {
+        final android.content.SharedPreferences prefs =
+                getSharedPreferences("MySharedPreference", MODE_PRIVATE);
+        android.widget.CheckBox box = (android.widget.CheckBox) findViewById(viewId);
+        box.setChecked(prefs.getBoolean(getString(prefKey), def));
+        box.setOnCheckedChangeListener(new android.widget.CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(android.widget.CompoundButton b, boolean checked) {
+                prefs.edit().putBoolean(getString(prefKey), checked).apply();
+            }
+        });
     }
 
     private ComponentName myIme() {

@@ -1664,7 +1664,7 @@ public class KKeyboardView extends KeyboardView {
         if (prefs.getBoolean(getContext().getString(R.string.preflanguage_farsi), true)) {
             items.add(new SlideItem(KEYCODE_LANG_FA, "فارسی", null));
         }
-        if (prefs.getBoolean(getContext().getString(R.string.preflanguage_kurdi), true)) {
+        if (prefs.getBoolean(getContext().getString(R.string.preflanguage_kurdi), false)) {
             items.add(new SlideItem(KEYCODE_LANG_KR, "کوردی", null));
         }
         mSlideRows.clear();

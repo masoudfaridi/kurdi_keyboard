@@ -307,7 +307,7 @@ public class kurdikeyboard extends InputMethodService
 
         }*/
         listS="";
-        language_kurdi_enable=true;
+        language_kurdi_enable=false; // read from the settings in onCreateInputView (Persian on, Kurdish off by default)
         language_farsi_enable=true;
         toolskayout_enable=false;
         correct_kurdi_v_abouve=false;
@@ -553,7 +553,7 @@ public class kurdikeyboard extends InputMethodService
          listS=
         preferenceKeyboard.getString(getString(R.string.pref_list_theme_selector), KeyboardTheme.DEFAULT_ID);
         language_kurdi_enable=
-                preferenceKeyboard.getBoolean(getString(R.string.preflanguage_kurdi), true);
+                preferenceKeyboard.getBoolean(getString(R.string.preflanguage_kurdi), false);
         language_farsi_enable=
                 preferenceKeyboard.getBoolean(getString(R.string.preflanguage_farsi),true);
 
@@ -597,7 +597,7 @@ public class kurdikeyboard extends InputMethodService
         widthkeyboard=WindowManager.LayoutParams.MATCH_PARENT;
         ivKeyboard.setOnClickListener(new OnClickListener() {
             @Override public void onClick(View view) {
-                toggleEmojiPanel();
+                openKeyboardScreen(ReadySentencesActivity.class);
             }
         });
 
@@ -1221,8 +1221,8 @@ public class kurdikeyboard extends InputMethodService
       // Toast.makeText(getBaseContext(),"onStartInputView",Toast.LENGTH_LONG).show();
 
         super.onStartInputView(attribute, restarting);
-        if (attribute != null && !ContactPickerActivity.isShowing()) {
-            final String contactText = ContactPickerActivity.takePendingText();
+        if (attribute != null && !PendingText.screenShowing()) {
+            final String contactText = PendingText.take();
             if (contactText != null) {
                 // after the field is ready
                 mSuggestHandler.postDelayed(new Runnable() {
@@ -1239,6 +1239,13 @@ public class kurdikeyboard extends InputMethodService
             else if ("kr".equals(prelanguage)) mCurKeyboard = mkurdishKeyboard;
             else mCurKeyboard = mQwertyKeyboard;
             setInputView(onCreateInputView());
+        }
+        if (preferenceKeyboard != null
+                && (("kr".equals(prelanguage) && !preferenceKeyboard.getBoolean(getString(R.string.preflanguage_kurdi), false))
+                || ("fa".equals(prelanguage) && !preferenceKeyboard.getBoolean(getString(R.string.preflanguage_farsi), true)))) {
+            prelanguage = "en";
+            language = "en";
+            mCurKeyboard = mQwertyKeyboard;
         }
         readPredictionPrefs();
         mFieldAllowsPrediction = fieldAllowsPrediction(attribute);
@@ -4099,7 +4106,7 @@ private void setCurrentLanguage(){
                 bg.getConstantState() != null ? bg.getConstantState().newDrawable(getResources()) : bg) > 0.55;
         int tint = light ? 0xFF2B3442 : 0xFFF2F4F7;
         int[][] map = {
-                {R.id.ivKeyboard, R.drawable.ic_kk_emoji},
+                {R.id.ivKeyboard, R.drawable.ic_kk_notes}, // ready sentences (emoji: the emoji key)
                 {R.id.ivKeyboardselectall, R.drawable.ic_kk_select_all},
                 {R.id.ivKeyboardcopy, R.drawable.ic_kk_copy},
                 {R.id.ivKeyboardback, R.drawable.ic_kk_arrow_left},
@@ -4139,7 +4146,9 @@ private void setCurrentLanguage(){
         return KeyboardTheme.forId(preferenceKeyboard.getString(getString(R.string.pref_list_theme_selector),
                 KeyboardTheme.DEFAULT_ID)).id + "|"
                 + preferenceKeyboard.getBoolean(getString(R.string.prefimagefrbackground), false) + "|"
-                + preferenceKeyboard.getString(getString(R.string.prefkeypathimage), "");
+                + preferenceKeyboard.getString(getString(R.string.prefkeypathimage), "") + "|"
+                + preferenceKeyboard.getBoolean(getString(R.string.preflanguage_farsi), true) + "|"
+                + preferenceKeyboard.getBoolean(getString(R.string.preflanguage_kurdi), false);
     }
 
     // ---------------------------------------------------------------- emoji panel (2.0)
@@ -4206,8 +4215,13 @@ private void setCurrentLanguage(){
 
     /** opens the contact picker (search, then send a number / card into the current field) */
     private void openContactPicker() {
+        openKeyboardScreen(ContactPickerActivity.class);
+    }
+
+    /** opens one of the keyboard's own screens (contacts, ready sentences) */
+    private void openKeyboardScreen(Class<?> screen) {
         closeOpenPopup();
-        Intent i = new Intent(getApplicationContext(), ContactPickerActivity.class);
+        Intent i = new Intent(getApplicationContext(), screen);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
         try {
             startActivity(i);

@@ -42,28 +42,18 @@ public class ContactPickerActivity extends Activity {
 
     private static final int REQUEST_CONTACTS = 11;
 
-    /** text waiting to be typed into the original app (read by the keyboard) */
-    private static String sPendingText;
-    private static long sPendingTime;
-    /** true while this screen is in front (its own search field must not get the text) */
-    private static volatile boolean sShowing;
-
-    static boolean isShowing() { return sShowing; }
-
-    @Override protected void onResume() { super.onResume(); sShowing = true; }
-    @Override protected void onPause() { super.onPause(); sShowing = false; }
-
-    /** called by the keyboard when an input field starts; returns the text to type, once */
-    static synchronized String takePendingText() {
-        String t = sPendingText;
-        sPendingText = null;
-        if (t != null && System.currentTimeMillis() - sPendingTime > 120000) return null; // stale
-        return t;
+    @Override protected void onResume() {
+        super.onResume();
+        PendingText.screenShown();
+        // permission given in the app settings meanwhile
+        if (all.isEmpty() && hasPermission()) load();
     }
 
-    private static synchronized void setPendingText(String t) {
-        sPendingText = t;
-        sPendingTime = System.currentTimeMillis();
+    @Override protected void onPause() { super.onPause(); PendingText.screenHidden(); }
+
+    private boolean hasPermission() {
+        return Build.VERSION.SDK_INT < 23
+                || checkSelfPermission(android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
     }
 
     static final class Person {
@@ -133,8 +123,7 @@ public class ContactPickerActivity extends Activity {
             @Override public void onClick(View v) { finish(); }
         });
 
-        if (Build.VERSION.SDK_INT >= 23
-                && checkSelfPermission(android.Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+        if (!hasPermission()) {
             empty.setText(R.string.contacts_need_permission);
             requestPermissions(new String[]{android.Manifest.permission.READ_CONTACTS}, REQUEST_CONTACTS);
         } else {
@@ -151,7 +140,18 @@ public class ContactPickerActivity extends Activity {
         if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
             load();
         } else {
-            empty.setText(R.string.contacts_permission_denied);
+            // refused (maybe for good): offer the app settings, where the permission can be given
+            empty.setText(getString(R.string.contacts_permission_denied) + "\n\n"
+                    + getString(R.string.contacts_open_settings));
+            empty.setTextColor(getColor(R.color.kk_primary));
+            empty.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    android.content.Intent i = new android.content.Intent(
+                            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            android.net.Uri.fromParts("package", getPackageName(), null));
+                    try { startActivity(i); } catch (RuntimeException ignored) {}
+                }
+            });
         }
     }
 
@@ -302,8 +302,7 @@ public class ContactPickerActivity extends Activity {
     }
 
     private void send(String text) {
-        setPendingText(text);
-        sShowing = false;
+        PendingText.set(text);
         finish(); // the original app gets the focus back; the keyboard types the text there
     }
 }

@@ -417,5 +417,24 @@
     <string name="contacts_no_match">مخاطبی با این نام یا شماره پیدا نشد.</string>
     <string name="contacts_send_name_number">نام و شماره</string>
     <string name="contacts_send_card">کارت کامل (نام، شماره‌ها و ایمیل)</string>
+    <string name="ready_title">جمله‌های آماده</string>
+    <string name="ready_search_hint">جستجوی عنوان</string>
+    <string name="ready_empty">هنوز جمله آماده‌ای ندارید. با دکمه + بسازید؛ مثلاً عنوان «بانک ملی» و مقدار شماره کارت.</string>
+    <string name="ready_no_match">جمله‌ای با این عنوان پیدا نشد.</string>
+    <string name="ready_send_value">فقط مقدار</string>
+    <string name="ready_send_both">عنوان و مقدار</string>
+    <string name="ready_new">جمله آماده جدید</string>
+    <string name="ready_edit">ویرایش</string>
+    <string name="ready_delete">حذف</string>
+    <string name="ready_delete_confirm">«%1$s» حذف شود؟</string>
+    <string name="ready_key_hint">عنوان (مثلاً: بانک ملی)</string>
+    <string name="ready_value_hint">مقدار (مثلاً: شماره کارت)</string>
+    <string name="ready_fill_both">عنوان و مقدار را بنویسید.</string>
+    <string name="ready_exists">جمله‌ای با این عنوان وجود دارد.</string>
+    <string name="home_languages_title">زبان‌های کیبورد</string>
+    <string name="home_languages_summary">انگلیسی همیشه فعال است. با نگه داشتن کلید فاصله بین زبان‌ها جابجا شوید.</string>
+    <string name="lang_kurdish">کوردی (سورانی)</string>
+    <string name="lang_persian">فارسی</string>
+    <string name="contacts_open_settings">باز کردن تنظیمات برنامه برای دادن اجازه</string>
 </resources>
 

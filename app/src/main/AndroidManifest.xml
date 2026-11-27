@@ -88,6 +88,13 @@
               android:windowSoftInputMode="stateVisible|adjustResize"
               android:theme="@style/AppTheme" />
 
+          <activity android:name=".ReadySentencesActivity"
+              android:exported="false"
+              android:excludeFromRecents="true"
+              android:taskAffinity=""
+              android:windowSoftInputMode="stateHidden|adjustResize"
+              android:theme="@style/AppTheme" />
+
           <activity android:name=".PermissionActivity"
               android:exported="false"
               android:excludeFromRecents="true"
