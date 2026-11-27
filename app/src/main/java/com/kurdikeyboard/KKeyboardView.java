@@ -1246,7 +1246,7 @@ public class KKeyboardView extends KeyboardView {
                         continue;
                     }
                     String lang = "fa".equals(kurdikeyboard.language) ? "فارسی"
-                            : "kr".equals(kurdikeyboard.language) ? "کوردی" : "English";
+                            : "kr".equals(kurdikeyboard.language) ? "کُردی" : "English";
                     float base = cy + mFnTextPaint.getTextSize() / 3;
                     mFnTextPaint.setColor(t.hint);
                     canvas.drawText(lang, cx, base, mFnTextPaint); // hold space to switch language
@@ -1684,7 +1684,7 @@ public class KKeyboardView extends KeyboardView {
             items.add(new SlideItem(KEYCODE_LANG_FA, "فارسی", null));
         }
         if (prefs.getBoolean(getContext().getString(R.string.preflanguage_kurdi), false)) {
-            items.add(new SlideItem(KEYCODE_LANG_KR, "کوردی", null));
+            items.add(new SlideItem(KEYCODE_LANG_KR, "کُردی", null));
         }
         // one language per row, stacked above the space bar: the finger only has to go up
         mSlideRows.clear();

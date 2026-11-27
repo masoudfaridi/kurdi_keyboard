@@ -3883,10 +3883,19 @@ private void setCurrentLanguage(){
                 || !Character.isWhitespace(before.charAt(before.length() - 1)))) {
             prev = null; // only predict the next word right after a space
         }
-        List<String> words = mPredict.suggest(lang, prev, current, 3);
+        int count = suggestionCount();
+        if (mStrip != null) mStrip.setSlotCount(count);
+        List<String> words = mPredict.suggest(lang, prev, current, count);
         int literal = current.length() > 0 && !words.isEmpty() && words.get(0).equals(current)
                 && !mPredict.isKnown(lang, current) ? 0 : -1;
         showSuggestions(words, literal, lang);
+    }
+
+    /** how many suggestions the strip shows: a setting, 3 to 6 (default 4) */
+    private int suggestionCount() {
+        int n = getSharedPreferences("MySharedPreference", MODE_PRIVATE)
+                .getInt(getString(R.string.prefsuggestcount), SuggestionStripView.DEFAULT_SLOTS);
+        return Math.max(SuggestionStripView.MIN_SLOTS, Math.min(SuggestionStripView.MAX_SLOTS, n));
     }
 
     /** Inserts a word picked on the strip: it replaces the word at the cursor. */

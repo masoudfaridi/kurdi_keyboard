@@ -97,6 +97,13 @@
                 android:key="@string/prefprediction"
                 android:summary="@string/summary_prediction"
                 android:title="@string/title_prediction" />
+            <com.kurdikeyboard.SeekBarPreference
+                android:defaultValue="4"
+                android:dependency="@string/prefprediction"
+                android:key="@string/prefsuggestcount"
+                android:max="6"
+                android:title="@string/title_suggest_count"
+                kurdikeyboard:min="3" />
             <CheckBoxPreference
                 android:defaultValue="true"
                 android:key="@string/prefswipe"

@@ -30,9 +30,12 @@ public class SuggestionStripView extends LinearLayout {
         void onShowToolsRequested();
     }
 
-    private static final int SLOTS = 3;
-    private final TextView[] slots = new TextView[SLOTS];
-    private final View[] dividers = new View[SLOTS - 1];
+    /** number of suggestions shown: a setting, 3 to 6 (default 4) */
+    public static final int MIN_SLOTS = 3, MAX_SLOTS = 6, DEFAULT_SLOTS = 4;
+    private TextView[] slots = new TextView[0];
+    private View[] dividers = new View[0];
+    /** slotForWord[k] = slot that shows the k-th best word */
+    private int[] slotForWord = new int[0];
     private final TextView toolsButton;
     private final List<String> words = new ArrayList<>();
     private Listener listener;
@@ -56,20 +59,39 @@ public class SuggestionStripView extends LinearLayout {
             }
         });
         addView(toolsButton, new LayoutParams(dp(44), LayoutParams.MATCH_PARENT));
-        for (int i = 0; i < SLOTS; i++) {
+        setSlotCount(DEFAULT_SLOTS);
+        applyColors();
+    }
+
+    public void setListener(Listener l) { listener = l; }
+
+    /**
+     * Sets how many suggestions the strip shows (clamped to 3..6). The best one goes in the
+     * middle, the next ones alternate outwards (the 2nd on the side where the user's text
+     * starts: right for RTL languages).
+     */
+    public void setSlotCount(int n) {
+        n = Math.max(MIN_SLOTS, Math.min(MAX_SLOTS, n));
+        if (n == slots.length) return;
+        for (TextView tv : slots) removeView(tv);
+        for (View d : dividers) removeView(d);
+        slots = new TextView[n];
+        dividers = new View[n - 1];
+        float sp = n <= 4 ? 17 : n == 5 ? 15.5f : 14.5f;
+        for (int i = 0; i < n; i++) {
             if (i > 0) {
-                View d = new View(context);
+                View d = new View(getContext());
                 LayoutParams lp = new LayoutParams(dp(1), LayoutParams.MATCH_PARENT);
                 lp.topMargin = lp.bottomMargin = dp(9);
                 addView(d, lp);
                 dividers[i - 1] = d;
             }
-            final TextView tv = new TextView(context);
+            final TextView tv = new TextView(getContext());
             tv.setGravity(Gravity.CENTER);
             tv.setSingleLine(true);
             tv.setEllipsize(TextUtils.TruncateAt.END);
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17);
-            tv.setPadding(dp(4), 0, dp(4), 0);
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, sp);
+            tv.setPadding(dp(n <= 4 ? 4 : 2), 0, dp(n <= 4 ? 4 : 2), 0);
             final int index = i;
             tv.setOnClickListener(new OnClickListener() {
                 @Override public void onClick(View v) {
@@ -92,20 +114,28 @@ public class SuggestionStripView extends LinearLayout {
             addView(tv, new LayoutParams(0, LayoutParams.MATCH_PARENT, 1f));
             slots[i] = tv;
         }
+        // slots by distance from the centre; on a tie the start side (right in RTL) first
+        final double centre = (n - 1) / 2.0;
+        Integer[] order = new Integer[n];
+        for (int i = 0; i < n; i++) order[i] = i;
+        java.util.Arrays.sort(order, new java.util.Comparator<Integer>() {
+            @Override public int compare(Integer a, Integer b) {
+                int c = Double.compare(Math.abs(a - centre), Math.abs(b - centre));
+                return c != 0 ? c : Integer.compare(a, b);
+            }
+        });
+        slotForWord = new int[n];
+        for (int k = 0; k < n; k++) slotForWord[k] = order[k];
         applyColors();
+        setSuggestions(new ArrayList<>(words), literalIndex);
     }
 
-    public void setListener(Listener l) { listener = l; }
+    public int getSlotCount() { return slots.length; }
 
-    /**
-     * The best suggestion goes in the middle slot, the 2nd and 3rd at the sides
-     * (the 2nd on the side where the user's text starts: right for RTL languages).
-     */
     private int wordIndexForSlot(int slot) {
         // slots are laid out start → end, so slot 0 is at the right in RTL
-        if (slot == 1) return 0;
-        if (slot == 0) return 1;
-        return 2;
+        for (int k = 0; k < slotForWord.length; k++) if (slotForWord[k] == slot) return k;
+        return -1;
     }
 
     public void setRtl(boolean rtl) {
@@ -115,9 +145,9 @@ public class SuggestionStripView extends LinearLayout {
     /** @param literalIndex index in {@code list} of the "keep what I typed" entry, or -1 */
     public void setSuggestions(List<String> list, int literalIndex) {
         words.clear();
-        if (list != null) words.addAll(list.subList(0, Math.min(SLOTS, list.size())));
+        if (list != null) words.addAll(list.subList(0, Math.min(slots.length, list.size())));
         this.literalIndex = literalIndex;
-        for (int s = 0; s < SLOTS; s++) {
+        for (int s = 0; s < slots.length; s++) {
             int wi = wordIndexForSlot(s);
             TextView tv = slots[s];
             if (wi < words.size()) {
