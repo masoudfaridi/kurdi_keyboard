@@ -1,65 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:fillViewport="true">
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.kurdikeyboard.MainActivity"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#F4F6F8"
+    android:layoutDirection="rtl">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:context="com.kurdikeyboard.MainActivity">
+
+        <!-- setup: two steps with live status -->
+        <LinearLayout
+            android:id="@+id/setupCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/setup_title"
+                android:textColor="#1A2433"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/stepEnable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/step_background"
+                android:gravity="center_vertical|start"
+                android:minHeight="52dp"
+                android:onClick="onClick"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textColor="#1A2433"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/stepSelect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/step_background"
+                android:gravity="center_vertical|start"
+                android:minHeight="52dp"
+                android:onClick="onClick"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textColor="#1A2433"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- try it -->
+        <EditText
+            android:id="@+id/tryField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/card_background"
+            android:gravity="top|start"
+            android:hint="@string/try_hint"
+            android:inputType="textMultiLine|textCapSentences"
+            android:minLines="3"
+            android:padding="16dp"
+            android:textColor="#1A2433"
+            android:textSize="17sp" />
+
         <Button
-        android:layout_width="200dp"
-        android:layout_height="100dp"
-        android:onClick="onClick"
-        android:text="@string/activationtext"
-       android:textColor="#000000"
-        android:id="@+id/buttonactivationIME"
-        android:gravity="center"
+            android:id="@+id/buttonactivationIME"
+            android:layout_width="220dp"
+            android:layout_height="90dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/a_18_mf_theme_18_background_key_selector"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:text="@string/open_settings"
+            android:textColor="#000000" />
 
-        android:layout_gravity="center"
-            android:background="@drawable/a_18_mf_theme_18_background_key_selector" />
-            <Button
-        android:layout_width="200dp"
-        android:layout_height="100dp"
-        android:onClick="onClick"
-        android:visibility="visible"
-        android:id="@+id/buttonGuid"
-        android:text="@string/textbuttonguid"
-        android:textColor="#000000"
-        android:gravity="center"
-        android:layout_gravity="center"
-                android:background="@drawable/a_18_mf_theme_18_background_key_letters_selector" />
+        <Button
+            android:id="@+id/buttonGuid"
+            android:layout_width="220dp"
+            android:layout_height="90dp"
+            android:layout_gravity="center"
+            android:background="@drawable/a_18_mf_theme_18_background_key_letters_selector"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:text="@string/textbuttonguid"
+            android:textColor="#000000" />
 
+        <Button
+            android:id="@+id/buttonTelegram"
+            android:layout_width="220dp"
+            android:layout_height="90dp"
+            android:layout_gravity="center"
+            android:background="@drawable/a_18_mf_theme_18_background_key_letters_selector"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:text="@string/textbuttontelegram"
+            android:textColor="#000000" />
 
-    <Button
-        android:layout_width="200dp"
-        android:layout_height="100dp"
-        android:onClick="onClick"
-        android:visibility="visible"
-        android:id="@+id/buttonTelegram"
-        android:text="@string/textbuttontelegram"
-        android:textColor="#000000"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:background="@drawable/a_18_mf_theme_18_background_key_letters_selector" />
-    <Button
-        android:layout_width="200dp"
-        android:layout_height="100dp"
-        android:onClick="onClick"
-        android:visibility="visible"
-        android:id="@+id/buttonTelegramtrain"
-        android:text="@string/textbuttontelegramtrain"
-        android:textColor="#000000"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:background="@drawable/a_18_mf_theme_18_background_key_letters_selector" />
-
-</LinearLayout>
+        <Button
+            android:id="@+id/buttonTelegramtrain"
+            android:layout_width="220dp"
+            android:layout_height="90dp"
+            android:layout_gravity="center"
+            android:background="@drawable/a_18_mf_theme_18_background_key_letters_selector"
+            android:gravity="center"
+            android:onClick="onClick"
+            android:text="@string/textbuttontelegramtrain"
+            android:textColor="#000000" />
+    </LinearLayout>
 </ScrollView>

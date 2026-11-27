@@ -403,7 +403,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_0_mf_theme_0_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_0_mf_theme_0_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -422,7 +422,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_0_mf_theme_0_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -448,7 +448,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_0_mf_theme_0_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -483,7 +483,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_1_mf_theme_1_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_1_mf_theme_1_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -503,7 +503,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_1_mf_theme_1_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -529,7 +529,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_1_mf_theme_1_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -564,7 +564,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_1_mf_theme_1_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_1x_mf_theme_1x_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -584,7 +584,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_1x_mf_theme_1x_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -610,7 +610,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_1x_mf_theme_1x_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -645,7 +645,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_1_mf_theme_1_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_1xx_mf_theme_1xx_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -665,7 +665,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_1xx_mf_theme_1xx_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -691,7 +691,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_1xx_mf_theme_1xx_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -726,7 +726,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_2_mf_theme_2_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_2_mf_theme_2_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -746,7 +746,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_2_mf_theme_2_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -772,7 +772,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_2_mf_theme_2_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -807,7 +807,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_2_mf_theme_2_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_2x_mf_theme_2x_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -827,7 +827,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_2x_mf_theme_2x_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -853,7 +853,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_2x_mf_theme_2x_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -888,7 +888,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_2_mf_theme_2_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_2xx_mf_theme_2xx_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -908,7 +908,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_2xx_mf_theme_2xx_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -934,7 +934,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_2xx_mf_theme_2xx_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -969,7 +969,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_3_mf_theme_3_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_3_mf_theme_3_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -989,7 +989,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_3_mf_theme_3_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1015,7 +1015,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_3_mf_theme_3_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -1050,7 +1050,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_3_mf_theme_3_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_3x_mf_theme_3x_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1070,7 +1070,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_3x_mf_theme_3x_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1096,7 +1096,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_3x_mf_theme_3x_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -1131,7 +1131,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_3_mf_theme_3_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_3xx_mf_theme_3xx_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1151,7 +1151,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_3xx_mf_theme_3xx_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1177,7 +1177,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_3xx_mf_theme_3xx_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -1212,7 +1212,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_4_mf_theme_4_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_4_mf_theme_4_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1232,7 +1232,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_4_mf_theme_4_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1258,7 +1258,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_4_mf_theme_4_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -1293,7 +1293,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_5_mf_theme_5_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_5_mf_theme_5_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1313,7 +1313,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_5_mf_theme_5_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1339,7 +1339,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_5_mf_theme_5_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -1374,7 +1374,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_5_mf_theme_5_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_5x_mf_theme_5x_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1394,7 +1394,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_5x_mf_theme_5x_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1420,7 +1420,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_5x_mf_theme_5x_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -1455,7 +1455,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_5_mf_theme_5_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_5xx_mf_theme_5xx_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1475,7 +1475,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_5xx_mf_theme_5xx_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1501,7 +1501,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_5xx_mf_theme_5xx_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -1536,7 +1536,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_6_mf_theme_6_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_6_mf_theme_6_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1556,7 +1556,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_6_mf_theme_6_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1582,7 +1582,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_6_mf_theme_6_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -1617,7 +1617,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_6_mf_theme_6_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_6x_mf_theme_6x_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1637,7 +1637,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_6x_mf_theme_6x_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1663,7 +1663,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_6x_mf_theme_6x_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -1698,7 +1698,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_6_mf_theme_6_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_6xx_mf_theme_6xx_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1718,7 +1718,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_6xx_mf_theme_6xx_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1744,7 +1744,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_6xx_mf_theme_6xx_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -1779,7 +1779,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_7_mf_theme_7_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_7_mf_theme_7_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1799,7 +1799,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_7_mf_theme_7_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1825,7 +1825,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_7_mf_theme_7_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -1860,7 +1860,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_7_mf_theme_7_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_7x_mf_theme_7x_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1880,7 +1880,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_7x_mf_theme_7x_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1906,7 +1906,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_7x_mf_theme_7x_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -1941,7 +1941,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_7_mf_theme_7_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_7xx_mf_theme_7xx_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1961,7 +1961,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_7xx_mf_theme_7xx_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -1987,7 +1987,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_7xx_mf_theme_7xx_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -2022,7 +2022,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_8_mf_theme_8_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_8_mf_theme_8_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2042,7 +2042,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_8_mf_theme_8_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2068,7 +2068,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_8_mf_theme_8_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -2103,7 +2103,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_8_mf_theme_8_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_8x_mf_theme_8x_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2123,7 +2123,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_8x_mf_theme_8x_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2149,7 +2149,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_8x_mf_theme_8x_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -2184,7 +2184,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_8_mf_theme_8_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_8xx_mf_theme_8xx_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2204,7 +2204,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_8xx_mf_theme_8xx_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2230,7 +2230,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_8xx_mf_theme_8xx_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -2265,7 +2265,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_9_mf_theme_9_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_9x_mf_theme_9x_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2285,7 +2285,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_9x_mf_theme_9x_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2311,7 +2311,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_9x_mf_theme_9x_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -2346,7 +2346,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_9_mf_theme_9_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_9xx_mf_theme_9xx_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2366,7 +2366,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_9xx_mf_theme_9xx_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2392,7 +2392,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_9xx_mf_theme_9xx_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -2427,7 +2427,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_10_mf_theme_10_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_10_mf_theme_10_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2447,7 +2447,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_10_mf_theme_10_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2473,7 +2473,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_10_mf_theme_10_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -2508,7 +2508,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_10_mf_theme_10_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_10x_mf_theme_10x_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2528,7 +2528,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_10x_mf_theme_10x_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2554,7 +2554,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_10x_mf_theme_10x_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -2589,7 +2589,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_10_mf_theme_10_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_10xx_mf_theme_10xx_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2609,7 +2609,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_10xx_mf_theme_10xx_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2635,7 +2635,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_10xx_mf_theme_10xx_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -2670,7 +2670,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_11_mf_theme_11_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_11_mf_theme_11_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2690,7 +2690,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_11_mf_theme_11_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2716,7 +2716,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_11_mf_theme_11_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -2751,7 +2751,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_11_mf_theme_11_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_11x_mf_theme_11x_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2771,7 +2771,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_11x_mf_theme_11x_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2797,7 +2797,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_11x_mf_theme_11x_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -2832,7 +2832,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_11_mf_theme_11_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_11xx_mf_theme_11xx_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2852,7 +2852,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_11xx_mf_theme_11xx_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2878,7 +2878,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_11xx_mf_theme_11xx_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -2913,7 +2913,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_12_mf_theme_12_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_12_mf_theme_12_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2933,7 +2933,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_12_mf_theme_12_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -2959,7 +2959,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_12_mf_theme_12_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -2994,7 +2994,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_13_mf_theme_13_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_13_mf_theme_13_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3014,7 +3014,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_13_mf_theme_13_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3040,7 +3040,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_13_mf_theme_13_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -3075,7 +3075,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_14_mf_theme_14_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_14_mf_theme_14_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3095,7 +3095,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_14_mf_theme_14_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3121,7 +3121,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_14_mf_theme_14_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -3156,7 +3156,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_15_mf_theme_15_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_15_mf_theme_15_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3176,7 +3176,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_15_mf_theme_15_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3202,7 +3202,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_15_mf_theme_15_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -3237,7 +3237,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_16_mf_theme_16_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_16_mf_theme_16_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3257,7 +3257,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_16_mf_theme_16_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3283,7 +3283,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_16_mf_theme_16_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -3318,7 +3318,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_17_mf_theme_17_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_17_mf_theme_17_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3338,7 +3338,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_17_mf_theme_17_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3364,7 +3364,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_17_mf_theme_17_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -3399,7 +3399,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_18_mf_theme_18_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_18_mf_theme_18_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3419,7 +3419,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_18_mf_theme_18_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3445,7 +3445,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_18_mf_theme_18_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -3480,7 +3480,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_19_mf_theme_19_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_19_mf_theme_19_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3500,7 +3500,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_19_mf_theme_19_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3526,7 +3526,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_19_mf_theme_19_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -3561,7 +3561,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_20_mf_theme_20_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_20_mf_theme_20_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3581,7 +3581,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_20_mf_theme_20_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3607,7 +3607,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_20_mf_theme_20_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -3642,7 +3642,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_21_mf_theme_21_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_21_mf_theme_21_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3662,7 +3662,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_21_mf_theme_21_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3688,7 +3688,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_21_mf_theme_21_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -3723,7 +3723,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_22_mf_theme_22_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_22_mf_theme_22_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3743,7 +3743,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_22_mf_theme_22_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3769,7 +3769,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_22_mf_theme_22_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -3804,7 +3804,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_23_mf_theme_23_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_23_mf_theme_23_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3824,7 +3824,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_23_mf_theme_23_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3850,7 +3850,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_23_mf_theme_23_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -3885,7 +3885,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_24_mf_theme_24_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_24_mf_theme_24_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3905,7 +3905,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_24_mf_theme_24_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3931,7 +3931,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_24_mf_theme_24_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -3966,7 +3966,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_25_mf_theme_25_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_25_mf_theme_25_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -3986,7 +3986,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_25_mf_theme_25_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4012,7 +4012,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_25_mf_theme_25_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -4047,7 +4047,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_26_mf_theme_26_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_26_mf_theme_26_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4067,7 +4067,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_26_mf_theme_26_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4093,7 +4093,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_26_mf_theme_26_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -4128,7 +4128,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_27_mf_theme_27_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_27_mf_theme_27_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4148,7 +4148,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_27_mf_theme_27_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4174,7 +4174,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }/*else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_27_mf_theme_27_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -4209,7 +4209,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_28_mf_theme_28_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_28_mf_theme_28_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4229,7 +4229,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_28_mf_theme_28_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4256,7 +4256,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_28_mf_theme_28_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -4291,7 +4291,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_29_mf_theme_29_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_29_mf_theme_29_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4311,7 +4311,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_29_mf_theme_29_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4337,7 +4337,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_29_mf_theme_29_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -4372,7 +4372,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_30_mf_theme_30_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_30_mf_theme_30_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4391,7 +4391,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_30_mf_theme_30_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4416,7 +4416,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_30_mf_theme_30_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -4451,7 +4451,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_31_mf_theme_31_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_31_mf_theme_31_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4470,7 +4470,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_31_mf_theme_31_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4496,7 +4496,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_31_mf_theme_31_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -4530,7 +4530,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_32_mf_theme_32_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_32_mf_theme_32_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4549,7 +4549,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_32_mf_theme_32_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4574,7 +4574,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_32_mf_theme_32_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -4609,7 +4609,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_33_mf_theme_33_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_33_mf_theme_33_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4628,7 +4628,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_33_mf_theme_33_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4654,7 +4654,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_33_mf_theme_33_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -4689,7 +4689,7 @@ public class KKeyboardView extends KeyboardView {
                         paintforsize2fortwolabelkey.setColor(
                                 getResources().getColor(R.color.a_34_mf_theme_34_color_letters_littleword));
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_34_mf_theme_34_background_key_letters_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4708,7 +4708,7 @@ public class KKeyboardView extends KeyboardView {
                     }else //if(isWordnumbers(key.codes[0]))
                     {
 
-                        Drawable npd = mContext.getResources().getDrawable(
+                        Drawable npd = cachedDrawable(
                                 R.drawable.a_34_mf_theme_34_background_key_selector);
                         int[] drawableState = key.getCurrentDrawableState();
                         if (key.codes[0] != 0) {
@@ -4734,7 +4734,7 @@ public class KKeyboardView extends KeyboardView {
 
 
                 }else {
-                    Drawable npd = mContext.getResources().getDrawable(
+                    Drawable npd = cachedDrawable(
                             R.drawable.a_34_mf_theme_34_background_key_selector);
                     int[] drawableState = key.getCurrentDrawableState();
                     if (key.codes[0] != 0) {
@@ -5202,7 +5202,7 @@ public class KKeyboardView extends KeyboardView {
         if (key.icon == null) {
 
 
-            Drawable npd = mContext.getResources().getDrawable(
+            Drawable npd = cachedDrawable(
                     drawableId);
             int[] drawableState = key.getCurrentDrawableState();
             if (key.codes[0] != 0) {
@@ -5216,7 +5216,7 @@ public class KKeyboardView extends KeyboardView {
         }
     }
     private void drawKeyBackground(int drawableId, Canvas canvas, Key key) {
-        Drawable npd = mContext.getResources().getDrawable(
+        Drawable npd = cachedDrawable(
                 drawableId);
         int[] drawableState = key.getCurrentDrawableState();
         if (key.codes[0] != 0) {
@@ -5310,7 +5310,7 @@ public class KKeyboardView extends KeyboardView {
 
            // canvas.drawText("\u064E", key.x + 5*(key.width /15   ),
            //         key.y + 5*(key.height/8) , paintforsizenumbersfixed);
-           Drawable npd = mContext.getResources().getDrawable(
+           Drawable npd = cachedDrawable(
                     R.drawable.ic_menu_paste_holo_light);
             int[] drawableState = key.getCurrentDrawableState();
             if (key.codes[0] != 0) {
@@ -5327,7 +5327,7 @@ public class KKeyboardView extends KeyboardView {
 
            // canvas.drawText("\u0650", key.x + 5*(key.width /15   ),
             //        key.y + 5*(key.height/8) , paintforsizenumbersfixed);
-            Drawable npd = mContext.getResources().getDrawable(
+            Drawable npd = cachedDrawable(
                     R.drawable.ic_menu_copy_holo_light);
             int[] drawableState = key.getCurrentDrawableState();
             if (key.codes[0] != 0) {
@@ -5342,7 +5342,7 @@ public class KKeyboardView extends KeyboardView {
 
            // canvas.drawText("\u064F", key.x + 5*(key.width /15   ),
             //        key.y + 5*(key.height/8) , paintforsizenumbersfixed);
-            Drawable npd = mContext.getResources().getDrawable(
+            Drawable npd = cachedDrawable(
                     R.drawable.ic_menu_cut_holo_light);
             int[] drawableState = key.getCurrentDrawableState();
             if (key.codes[0] != 0) {
@@ -5357,7 +5357,7 @@ public class KKeyboardView extends KeyboardView {
 
           //  canvas.drawText("\u064B", key.x + 5*(key.width /15   ),
            //         key.y + 5*(key.height/8) , paintforsizenumbersfixed);
-            Drawable npd = mContext.getResources().getDrawable(
+            Drawable npd = cachedDrawable(
                     R.drawable.ic_menu_selectall_holo_light);
             int[] drawableState = key.getCurrentDrawableState();
             if (key.codes[0] != 0) {
@@ -5425,7 +5425,7 @@ public class KKeyboardView extends KeyboardView {
 
             if (key.codes[0] == 10&&!kurdikeyboard.getCurrentlanguage().equals("en")) {
 
-                Drawable npd = mContext.getResources().getDrawable(
+                Drawable npd = cachedDrawable(
                         R.drawable.aarabpng);
                 int[] drawableState = key.getCurrentDrawableState();
                 if (key.codes[0] != 0) {
@@ -5437,7 +5437,7 @@ public class KKeyboardView extends KeyboardView {
             }
             /*else if (key.codes[0] == -158) {
 
-                Drawable npd = mContext.getResources().getDrawable(
+                Drawable npd = cachedDrawable(
                         R.drawable.dotpng);
                 int[] drawableState = key.getCurrentDrawableState();
                 if (key.codes[0] != 0) {
@@ -5449,7 +5449,7 @@ public class KKeyboardView extends KeyboardView {
 
             } */else if (key.codes[0] == -2) {
 
-                Drawable npd = mContext.getResources().getDrawable(
+                Drawable npd = cachedDrawable(
                         R.drawable.numberpng);
                 int[] drawableState = key.getCurrentDrawableState();
                 if (key.codes[0] != 0) {
@@ -5460,7 +5460,7 @@ public class KKeyboardView extends KeyboardView {
                 npd.draw(canvas);
             } else if (key.codes[0] == -3) {
 
-                Drawable npd = mContext.getResources().getDrawable(
+                Drawable npd = cachedDrawable(
                         R.drawable.emojipng);
                 int[] drawableState = key.getCurrentDrawableState();
                 if (key.codes[0] != 0) {
@@ -5471,7 +5471,7 @@ public class KKeyboardView extends KeyboardView {
                 npd.draw(canvas);
             } else if (key.codes[0] == 8204) {
 
-                Drawable npd = mContext.getResources().getDrawable(
+                Drawable npd = cachedDrawable(
                         R.drawable.keshidehpng);
                 int[] drawableState = key.getCurrentDrawableState();
                 if (key.codes[0] != 0) {
@@ -5684,5 +5684,19 @@ public class KKeyboardView extends KeyboardView {
         @Override public void setAlpha(int a) {}
         @Override public void setColorFilter(android.graphics.ColorFilter cf) {}
         @Override public int getOpacity() { return android.graphics.PixelFormat.TRANSLUCENT; }
+    }
+
+    // onDraw used to create every key drawable again for every key on every frame
+    // (~170 call sites); keep one instance per resource instead.
+    private final android.util.SparseArray<Drawable> mDrawableCache = new android.util.SparseArray<Drawable>();
+
+    private Drawable cachedDrawable(int resId) {
+        Drawable d = mDrawableCache.get(resId);
+        if (d == null) {
+            d = getContext().getDrawable(resId).mutate();
+            mDrawableCache.put(resId, d);
+        }
+        d.setAlpha(255); // some branches set an opacity; start from opaque every time
+        return d;
     }
 }

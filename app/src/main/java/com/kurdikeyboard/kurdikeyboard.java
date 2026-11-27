@@ -1403,12 +1403,13 @@ public class kurdikeyboard extends InputMethodService
                 //options.inPreferredConfig=Bitmap.Config.RGB_565;
                 //Bitmap bitmapImage = BitmapFactory.decodeFile(pathimage,options);
 
-               bitmap = BitmapFactory.decodeFile(pathimage);
+               // downsampled, RGB_565: a full-size camera photo used to crash the keyboard (out of memory)
+               bitmap = ImagePickerActivity.decodeBackground(pathimage,
+                       Math.max(getResources().getDisplayMetrics().widthPixels,
+                               getResources().getDisplayMetrics().heightPixels));
+                convertedbitmap = bitmap;
 
-
-                convertedbitmap=bitmapconvert(bitmap, Bitmap.Config.RGB_565);
-
-                 dr = new BitmapDrawable(convertedbitmap);
+                 dr = new BitmapDrawable(getResources(), convertedbitmap);
 
                 try {
 

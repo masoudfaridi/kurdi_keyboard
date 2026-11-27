@@ -367,5 +367,11 @@
 
     <string name="permission_granted">دسترسی داده شد. دوباره روی دکمه بزنید.</string>
     <string name="permission_denied">بدون این دسترسی، این قابلیت کار نمی‌کند.</string>
+    <string name="setup_title">راه‌اندازی کیبورد</string>
+    <string name="setup_step_enable">فعال کردن کیبورد در تنظیمات گوشی</string>
+    <string name="setup_step_select">انتخاب به عنوان کیبورد فعلی</string>
+    <string name="setup_enable_toast">کیبورد کردی را روشن کنید و برگردید</string>
+    <string name="try_hint">اینجا تایپ کنید و کیبورد را امتحان کنید…</string>
+    <string name="open_settings">ورود به تنظیمات</string>
 </resources>
 
