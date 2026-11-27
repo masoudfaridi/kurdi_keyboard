@@ -484,5 +484,6 @@
     <string name="s_guide_summary">آموزش همه امکانات کیبورد</string>
     <string name="s_about_title">کیبورد هوشمند چندزبانه ماپریس</string>
     <string name="s_about_summary">گروه نرم‌افزاری ماپریس · مسعود فریدی · masoud3faridi@gmail.com</string>
+    <string name="guide_step">%1$d از %2$d</string>
 </resources>
 

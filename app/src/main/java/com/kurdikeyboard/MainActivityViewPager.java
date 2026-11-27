@@ -16,9 +16,10 @@ public class MainActivityViewPager extends Activity {
         super.onCreate(savedInstanceState);
         getWindow().getDecorView().setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
         setContentView(R.layout.layout_viewpage);
+        setTitle(R.string.textbuttonguid);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        final CustomPagerAdapter adapter = new CustomPagerAdapter(this);
+        final GuidePagerAdapter adapter = new GuidePagerAdapter(this);
         viewPager.setAdapter(adapter);
         final android.widget.Button prev = (android.widget.Button) findViewById(R.id.guidePrev);
         final android.widget.Button next = (android.widget.Button) findViewById(R.id.guideNext);
