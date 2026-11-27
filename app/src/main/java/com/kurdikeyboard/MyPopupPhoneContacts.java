@@ -182,42 +182,45 @@ public class MyPopupPhoneContacts extends PopupWindow {
 
         }*/
 
-            ArrayList arrContacts = new ArrayList();
-
-            Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-            String selection = ContactsContract.Contacts.HAS_PHONE_NUMBER;
-            Cursor cursor =
-                    //MyPopupPhoneContacts.this.mContext.getContentResolver().query(uri, new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone._ID, ContactsContract.Contacts._ID}, selection, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
-                    contexttemp.getContentResolver().query(uri, new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone._ID, ContactsContract.Contacts._ID}, selection, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
-
-        if(cursor!=null && cursor.getCount()>0 ) {
-            cursor.moveToFirst();
-
-
-            while (!cursor.isAfterLast()) {
-
-                String contactNumber = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                String contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                int phoneContactID = cursor.getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone._ID));
-                int contactID = cursor.getInt(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-                contacts.add(new Contact(contactName, contactNumber));
-                cursor.moveToNext();
-
-               // cursor.close();
-
-            }
-            cursor.close();
-           cursor = null;
-        }
-      /*  contacts.add(new Contact("Gloria Miller","86-(216)605-9056"));
-        contacts.add(new Contact("Teresa Garrett","86-(131)666-7051"));
-        contacts.add(new Contact("Jeremy Diaz","370-(899)196-6943"));
-        contacts.add(new Contact("Rose Henry","420-(240)605-2163"));
-        contacts.add(new Contact("Maria Kelly","62-(488)190-3222"));
-        */
         final ContactsAdapter adapter = new ContactsAdapter(MyPopupPhoneContacts.this.mContext,
                 R.layout.listview_textview_textview, contacts);
         lview.setAdapter(adapter);
+
+        // The 2017 code queried all contacts on the main thread while opening the popup,
+        // which froze the keyboard with a big address book. Load them in the background.
+        final android.content.ContentResolver resolver = contexttemp.getContentResolver();
+        new Thread(new Runnable() {
+            @Override public void run() {
+                final List<Contact> loaded = new ArrayList<Contact>();
+                Cursor cursor = null;
+                try {
+                    cursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER,
+                                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME},
+                            null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+                    if (cursor != null) {
+                        int num = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                        int name = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+                        while (cursor.moveToNext()) {
+                            String n = name >= 0 ? cursor.getString(name) : null;
+                            String ph = num >= 0 ? cursor.getString(num) : null;
+                            if (ph != null) loaded.add(new Contact(n != null ? n : ph, ph));
+                        }
+                    }
+                } catch (RuntimeException ignored) {
+                    // no permission or provider error: show an empty list instead of crashing
+                } finally {
+                    if (cursor != null) cursor.close();
+                }
+                view.post(new Runnable() {
+                    @Override public void run() {
+                        contacts.clear();
+                        contacts.addAll(loaded);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }, "contacts-loader").start();
 
 
         lview.setOnItemClickListener(new AdapterView.OnItemClickListener()

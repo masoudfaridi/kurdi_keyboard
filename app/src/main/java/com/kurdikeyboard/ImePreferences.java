@@ -39,7 +39,6 @@ public class ImePreferences extends PreferenceActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTheme(android.R.style.Theme_Holo_Light);
         PreferenceManager manager=getPreferenceManager();
 
         manager.setSharedPreferencesName("MySharedPreference");

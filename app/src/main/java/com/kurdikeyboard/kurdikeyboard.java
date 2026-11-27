@@ -803,10 +803,10 @@ public class kurdikeyboard extends InputMethodService
         LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
        final EmojiconsPopup popupWindow = new EmojiconsPopup(root,getApplicationContext());
-        popupWindow.setSizeForSoftKeyboard();
+        // sized from the keyboard itself (was setSizeForSoftKeyboard(): screen-size guesswork)
         final float popUpheight = getResources().getDimension(
                 R.dimen.keyboard_height);
-        popupWindow.setSize(WindowManager.LayoutParams.MATCH_PARENT, (int) popUpheight);
+        popupWindow.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
         widthkeyboard=WindowManager.LayoutParams.MATCH_PARENT;
         ivKeyboard.setOnClickListener(new OnClickListener() {
             @Override
@@ -844,9 +844,9 @@ public class kurdikeyboard extends InputMethodService
                         );
                     }
                     widthkeyboard=defHeight2;
-                    popupWindow.setSize(WindowManager.LayoutParams.MATCH_PARENT,
-                            defHeight2);
+                    popupWindow.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
                     popupWindow.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
+                mOpenPopup = popupWindow;
 
 
                     // Bring soft keyboard up : NOT WORKING
@@ -1028,10 +1028,10 @@ public class kurdikeyboard extends InputMethodService
         final myPopupWindow popupWindowsetting = new myPopupWindow(root,getApplicationContext()
         ,this);
 
-        popupWindowsetting.setSizeForSoftKeyboard();
+        // sized from the keyboard itself (was setSizeForSoftKeyboard(): screen-size guesswork)
         final float popUpheight2 = getResources().getDimension(
                 R.dimen.keyboard_height);
-        popupWindowsetting.setSize(WindowManager.LayoutParams.MATCH_PARENT,(int) popUpheight2);
+        popupWindowsetting.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
 
         ivKeyboardSetting.setOnClickListener(new OnClickListener() {
             @Override
@@ -1083,9 +1083,9 @@ public class kurdikeyboard extends InputMethodService
                                 R.dimen.key_height_firstrow
                         );
                     }
-                    popupWindowsetting.setSize(WindowManager.LayoutParams.MATCH_PARENT,
-                            defHeight2);
+                    popupWindowsetting.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
                     popupWindowsetting.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
+                mOpenPopup = popupWindowsetting;
 
 
                     InputMethodManager mInputMethodManager = (InputMethodManager) getBaseContext()
@@ -1570,6 +1570,12 @@ public class kurdikeyboard extends InputMethodService
     ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////
 
+
+    @Override
+    public void onFinishInputView(boolean finishingInput) {
+        super.onFinishInputView(finishingInput);
+        closeOpenPopup();
+    }
 
     @Override public void onFinishInput() {
 
@@ -2562,6 +2568,7 @@ public class kurdikeyboard extends InputMethodService
 
 
         }else  if(primaryCode==KKeyboardView.KEYCODE_LONG_RUN_POPUPOPTONS){
+            if (closeOpenPopup()) return; // pressing again closes it (they used to stack up)
 
             ///////////////////////
             //File folder = new File(getFilesDir(),Constants.ClipboardCacheFolderPath);
@@ -2642,8 +2649,8 @@ public class kurdikeyboard extends InputMethodService
 
             final float popUpheight2 = getResources().getDimension(
                     R.dimen.keyboard_height);
-            popupphonecontacts.setSizeForSoftKeyboard();
-            popupphonecontacts.setSize(WindowManager.LayoutParams.MATCH_PARENT,(int) popUpheight2);
+            // sized from the keyboard itself (was setSizeForSoftKeyboard(): screen-size guesswork)
+            popupphonecontacts.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
             if(popupphonecontacts.isShowing()){
 
                 popupphonecontacts.dismiss();
@@ -2674,8 +2681,7 @@ public class kurdikeyboard extends InputMethodService
                             R.dimen.key_height_firstrow
                     );
                 }
-                popupphonecontacts.setSize(WindowManager.LayoutParams.MATCH_PARENT,
-                        defHeight2);
+                popupphonecontacts.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
                 // popupcontacts.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
 
 
@@ -2719,6 +2725,7 @@ public class kurdikeyboard extends InputMethodService
 
             try {
                 popupphonecontacts.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
+                mOpenPopup = popupphonecontacts;
             }catch (Exception ei){
                 toastM(ei.getMessage());
             }
@@ -2727,6 +2734,7 @@ public class kurdikeyboard extends InputMethodService
 
 
         }else  if(primaryCode==KKeyboardView.KEYCODE_CONTACCTS_READ_2){
+            if (closeOpenPopup()) return; // pressing again closes it (they used to stack up)
             if (!PermissionActivity.ensure(this, android.Manifest.permission.READ_CONTACTS)) {
                 return; // the permission dialog opens; tap the key again afterwards
             }
@@ -2743,8 +2751,8 @@ public class kurdikeyboard extends InputMethodService
 
             final float popUpheight2 = getResources().getDimension(
                     R.dimen.keyboard_height);
-            popupphonecontacts.setSizeForSoftKeyboard();
-            popupphonecontacts.setSize(WindowManager.LayoutParams.MATCH_PARENT, (int) popUpheight2);
+            // sized from the keyboard itself (was setSizeForSoftKeyboard(): screen-size guesswork)
+            popupphonecontacts.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
             if(popupphonecontacts.isShowing()){
 
                 popupphonecontacts.dismiss();
@@ -2775,8 +2783,7 @@ public class kurdikeyboard extends InputMethodService
                             R.dimen.key_height_firstrow
                     );
                 }
-                popupphonecontacts.setSize(WindowManager.LayoutParams.MATCH_PARENT,
-                        defHeight2);
+                popupphonecontacts.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
                 // popupcontacts.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
 
 
@@ -2820,12 +2827,14 @@ public class kurdikeyboard extends InputMethodService
 
            try {
                popupphonecontacts.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
+                mOpenPopup = popupphonecontacts;
            }catch (Exception ei){
                toastM(ei.getMessage());
            }
 
 
         }else  if(primaryCode==KKeyboardView.KEYCODE_Ready_Sentences){
+            if (closeOpenPopup()) return; // pressing again closes it (they used to stack up)
             final MyPopupReadySentences
                     popupphonecontacts2 =new MyPopupReadySentences(
                     rootTemp,getApplicationContext()
@@ -2839,8 +2848,8 @@ public class kurdikeyboard extends InputMethodService
 
             final float popUpheight2 = getResources().getDimension(
                     R.dimen.keyboard_height);
-            popupphonecontacts2.setSizeForSoftKeyboard();
-            popupphonecontacts2.setSize(WindowManager.LayoutParams.MATCH_PARENT,(int) popUpheight2);
+            // sized from the keyboard itself (was setSizeForSoftKeyboard(): screen-size guesswork)
+            popupphonecontacts2.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
             if(popupphonecontacts2.isShowing()){
 
                 popupphonecontacts2.dismiss();
@@ -2871,8 +2880,7 @@ public class kurdikeyboard extends InputMethodService
                             R.dimen.key_height_firstrow
                     );
                 }
-                popupphonecontacts2.setSize(WindowManager.LayoutParams.MATCH_PARENT,
-                        defHeight2);
+                popupphonecontacts2.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
                 // popupcontacts.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
 
 
@@ -2917,6 +2925,7 @@ public class kurdikeyboard extends InputMethodService
 
             try {
                 popupphonecontacts2.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
+                mOpenPopup = popupphonecontacts2;
             }catch (Exception ei){
                 toastM(ei.getMessage());
             }
@@ -2948,13 +2957,14 @@ public class kurdikeyboard extends InputMethodService
         }else if(primaryCode==KKeyboardView.KEYCODE_symbols_Numbers_page){
             setKKeyboard(mSymbolsnumbers);
         }else if(primaryCode==KKeyboardView.KEYCODE_LONG_closetobringupemoji){
+            if (closeOpenPopup()) return; // pressing again closes it (they used to stack up)
            // Toast.makeText(getApplicationContext(),
              //       "KEYCODE_LONG_closetobringupemoji",Toast.LENGTH_LONG).show();
             final EmojiconsPopup popupWindow = new EmojiconsPopup(rootTemp,getApplicationContext());
-            popupWindow.setSizeForSoftKeyboard();
+            // sized from the keyboard itself (was setSizeForSoftKeyboard(): screen-size guesswork)
             final float popUpheight = getResources().getDimension(
                     R.dimen.keyboard_height);
-            popupWindow.setSize(WindowManager.LayoutParams.MATCH_PARENT, (int) popUpheight);
+            popupWindow.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
 
             if (popupWindow.isShowing()) {
 
@@ -2997,9 +3007,9 @@ public class kurdikeyboard extends InputMethodService
                 */
 
 
-                popupWindow.setSize(WindowManager.LayoutParams.MATCH_PARENT,
-                        defHeight2);
+                popupWindow.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
                 popupWindow.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
+                mOpenPopup = popupWindow;
 
 
                 // Bring soft keyboard up : NOT WORKING
@@ -4628,6 +4638,33 @@ private void setCurrentLanguage(){
         return preferenceKeyboard.getBoolean(getString(R.string.preflanguage_farsi_doublecick), true) + ","
                 + preferenceKeyboard.getBoolean(getString(R.string.preflanguage_kurdi_doublecick), true) + ","
                 + preferenceKeyboard.getBoolean(getString(R.string.preflanguage_kurdi_extend), false);
+    }
+
+    // ---------------------------------------------------------------- popups
+
+    /** the clipboard / contacts / ready-sentences / emoji popup on screen, if any */
+    private PopupWindow mOpenPopup;
+
+    /** closes the open popup; true if there was one */
+    private boolean closeOpenPopup() {
+        if (mOpenPopup != null && mOpenPopup.isShowing()) {
+            try {
+                mOpenPopup.dismiss();
+            } catch (RuntimeException ignored) {
+            }
+            mOpenPopup = null;
+            return true;
+        }
+        mOpenPopup = null;
+        return false;
+    }
+
+    /** popups cover the keyboard area exactly (tools/suggestion row + keys) */
+    private int keyboardPopupHeight() {
+        int h = rootTemp != null ? rootTemp.getHeight() : 0;
+        if (h <= 0 && mInputView != null) h = mInputView.getHeight();
+        if (h <= 0) h = (int) getResources().getDimension(R.dimen.keyboard_height);
+        return h;
     }
 }
 
