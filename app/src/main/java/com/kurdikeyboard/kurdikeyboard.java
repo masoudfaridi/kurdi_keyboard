@@ -3742,9 +3742,7 @@ private void setCurrentLanguage(){
             // mInputView.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
             // mInputView.performHapticFeedback(HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             // mInputView.performHapticFeedback(HapticFeedbackConstants.);
-            mInputView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY,
-                    HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING
-                            | HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+            keyVibrate();
         }
 
     }
@@ -4072,10 +4070,34 @@ private void setCurrentLanguage(){
         setKKeyboard(mCurKeyboard);
 
     }
+    /**
+     * Short key-press vibration. The old performHapticFeedback(..., FLAG_IGNORE_GLOBAL_SETTING)
+     * is ignored since Android 13, so the keyboard's own "vibrate" option did nothing when
+     * the phone's touch feedback was off.
+     */
+    private void keyVibrate() {
+        try {
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            if (v == null || !v.hasVibrator()) return;
+            if (Build.VERSION.SDK_INT >= 29) {
+                v.vibrate(android.os.VibrationEffect.createPredefined(android.os.VibrationEffect.EFFECT_TICK));
+            } else if (Build.VERSION.SDK_INT >= 26) {
+                v.vibrate(android.os.VibrationEffect.createOneShot(20, android.os.VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                v.vibrate(20);
+            }
+        } catch (RuntimeException ignored) {
+        }
+    }
+
     public void handlevibreh(int pk){
         Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-
-        v.vibrate(pk);
+        if (v == null) return;
+        if (Build.VERSION.SDK_INT >= 26) {
+            v.vibrate(android.os.VibrationEffect.createOneShot(Math.max(1, pk), android.os.VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            v.vibrate(pk);
+        }
 
 
 
