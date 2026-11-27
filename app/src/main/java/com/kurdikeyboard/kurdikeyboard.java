@@ -971,7 +971,7 @@ public class kurdikeyboard extends InputMethodService
                         if(Math.abs(dx)>Math.abs(dy)){
                           //  Toast.makeText(getApplicationContext(), "drag", Toast.LENGTH_SHORT).show();
                           if(Math.abs(dx)>spaceW/4){
-                              spacemove=true;
+                              spacemove=false; // 2.0: sliding on space moves the cursor (KKeyboardView)
                              // handleLanguageSwitch();
                               if(dx>0){
                                   spacemovetoright=true;
@@ -1837,6 +1837,16 @@ public class kurdikeyboard extends InputMethodService
             }
 
 
+        }else if(primaryCode==KKeyboardView.KEYCODE_LANG_EN||primaryCode==KKeyboardView.KEYCODE_LANG_FA
+                ||primaryCode==KKeyboardView.KEYCODE_LANG_KR){
+            // picked in the language strip (hold the space bar)
+            KKeyboard next = primaryCode==KKeyboardView.KEYCODE_LANG_FA ? mfarsiKeyboard
+                    : primaryCode==KKeyboardView.KEYCODE_LANG_KR ? mkurdishKeyboard : mQwertyKeyboard;
+            language = primaryCode==KKeyboardView.KEYCODE_LANG_FA ? "fa"
+                    : primaryCode==KKeyboardView.KEYCODE_LANG_KR ? "kr" : "en";
+            prelanguage = language;
+            mCurKeyboard = next;
+            setKKeyboard(next);
         }else if(primaryCode==KKeyboardView.KEYCODE_BACK_TO_LETTERS){
             KKeyboard letters = "fa".equals(prelanguage) ? mfarsiKeyboard
                     : "kr".equals(prelanguage) ? mkurdishKeyboard : mQwertyKeyboard;

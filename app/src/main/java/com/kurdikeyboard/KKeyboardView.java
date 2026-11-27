@@ -928,6 +928,7 @@ public class KKeyboardView extends KeyboardView {
             }
             return r;
         }
+        if (handleSpaceGesture(me)) return true;
         if (mSwipeListener == null) return super.onTouchEvent(me);
         int action = me.getActionMasked();
         switch (action) {
@@ -1221,11 +1222,8 @@ public class KKeyboardView extends KeyboardView {
                     String lang = "fa".equals(kurdikeyboard.language) ? "فارسی"
                             : "kr".equals(kurdikeyboard.language) ? "کوردی" : "English";
                     float base = cy + mFnTextPaint.getTextSize() / 3;
-                    float half = mFnTextPaint.measureText(lang) / 2 + 10 * d;
                     mFnTextPaint.setColor(t.hint);
-                    canvas.drawText(lang, cx, base, mFnTextPaint);
-                    canvas.drawText("◂", cx - half, base, mFnTextPaint); // slide space to switch language
-                    canvas.drawText("▸", cx + half, base, mFnTextPaint);
+                    canvas.drawText(lang, cx, base, mFnTextPaint); // hold space to switch language
                     mFnTextPaint.setColor(t.text);
                     continue;
                 }
@@ -1604,6 +1602,193 @@ public class KKeyboardView extends KeyboardView {
                     index++;
                 }
             }
+        }
+    }
+
+    // =====================================================================
+    // Space bar gestures (2.0)
+    //   tap                      -> space
+    //   hold still               -> language strip above the space bar; slide up onto a
+    //                               language and lift to switch
+    //   hold/slide left or right -> move the cursor, one character per step
+    // (The 2017 "slide on space switches language" is gone.)
+    // =====================================================================
+
+    static final int KEYCODE_LANG_EN = -171, KEYCODE_LANG_FA = -172, KEYCODE_LANG_KR = -173;
+
+    private boolean mSpaceTracking, mSpaceCursor, mSpaceLangOpen;
+    private float mSpaceDownX, mSpaceDownY, mSpaceLastStepX;
+    private long mSpaceDownTime;
+    private Key mSpaceKey;
+    private final android.os.Handler mSpaceHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Runnable mSpaceLongPress = new Runnable() {
+        @Override public void run() {
+            if (mSpaceTracking && !mSpaceCursor) openLanguageStrip();
+        }
+    };
+
+    private Key keyAt(float x, float y) {
+        Keyboard kb = getKeyboard();
+        if (kb == null) return null;
+        for (Key k : kb.getKeys()) {
+            if (k.height > 0 && k.isInside((int) x, (int) y)) return k;
+        }
+        return null;
+    }
+
+    private void cancelSuperTouch(long downTime, float x, float y) {
+        android.view.MotionEvent cancel = android.view.MotionEvent.obtain(downTime,
+                android.os.SystemClock.uptimeMillis(), android.view.MotionEvent.ACTION_CANCEL, x, y, 0);
+        super.onTouchEvent(cancel);
+        cancel.recycle();
+    }
+
+    private void openLanguageStrip() {
+        if (mSpaceKey == null) return;
+        SharedPreferences prefs = getContext().getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE);
+        List<SlideItem> items = new java.util.ArrayList<>();
+        items.add(new SlideItem(KEYCODE_LANG_EN, "English", null));
+        if (prefs.getBoolean(getContext().getString(R.string.preflanguage_farsi), true)) {
+            items.add(new SlideItem(KEYCODE_LANG_FA, "فارسی", null));
+        }
+        if (prefs.getBoolean(getContext().getString(R.string.preflanguage_kurdi), true)) {
+            items.add(new SlideItem(KEYCODE_LANG_KR, "کوردی", null));
+        }
+        mSlideRows.clear();
+        mSlideRows.add(items);
+        float d = getResources().getDisplayMetrics().density;
+        float cellW = Math.max(mSpaceKey.width / (float) items.size(), 78 * d);
+        float cellH = Math.max(mSpaceKey.height * 0.9f, 44 * d);
+        float pad = 6 * d;
+        int popW = (int) (cellW * items.size() + 2 * pad);
+        int popH = (int) (cellH + 2 * pad);
+        for (int i = 0; i < items.size(); i++) {
+            SlideItem it = items.get(i);
+            it.x = pad + i * cellW; it.y = pad; it.w = cellW; it.h = cellH;
+        }
+        int x = (int) (mSpaceKey.x + mSpaceKey.width / 2f - popW / 2f);
+        x = Math.max(0, Math.min(getWidth() - popW, x));
+        int y = (int) (mSpaceKey.y - popH - 4 * d);
+        mSlideOrigin[0] = x;
+        mSlideOrigin[1] = y;
+        if (mSlideView == null) {
+            mSlideView = new SlidePopupView(getContext());
+            mSlideWindow = new android.widget.PopupWindow(mSlideView);
+            mSlideWindow.setTouchable(false);
+            mSlideWindow.setClippingEnabled(false);
+            mSlideWindow.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(0));
+        }
+        mSlideView.theme = currentTheme();
+        // the current language starts highlighted
+        String cur = kurdikeyboard.language;
+        mSlideSelected = 0;
+        for (int i = 0; i < items.size(); i++) {
+            int c = items.get(i).code;
+            if (("fa".equals(cur) && c == KEYCODE_LANG_FA) || ("kr".equals(cur) && c == KEYCODE_LANG_KR)) mSlideSelected = i;
+        }
+        mSlideWindow.setWidth(popW);
+        mSlideWindow.setHeight(popH);
+        int[] loc = new int[2];
+        getLocationInWindow(loc);
+        try {
+            mSlideWindow.showAtLocation(this, android.view.Gravity.NO_GRAVITY, loc[0] + x, loc[1] + y);
+        } catch (RuntimeException e) {
+            return;
+        }
+        mSpaceLangOpen = true;
+        cancelSuperTouch(mSpaceDownTime, mSpaceDownX, mSpaceDownY); // the space is not typed
+        performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
+    }
+
+    private void resetSpace() {
+        mSpaceHandler.removeCallbacks(mSpaceLongPress);
+        mSpaceTracking = false;
+        mSpaceCursor = false;
+        if (mSpaceLangOpen) {
+            mSpaceLangOpen = false;
+            if (mSlideWindow != null && mSlideWindow.isShowing()) {
+                try { mSlideWindow.dismiss(); } catch (RuntimeException ignored) {}
+            }
+        }
+    }
+
+    /** @return true if the event was consumed by a space gesture */
+    private boolean handleSpaceGesture(android.view.MotionEvent me) {
+        float d = getResources().getDisplayMetrics().density;
+        switch (me.getActionMasked()) {
+            case android.view.MotionEvent.ACTION_DOWN: {
+                resetSpace();
+                Key k = keyAt(me.getX(), me.getY());
+                if (k != null && k.codes != null && k.codes.length > 0 && k.codes[0] == 32
+                        && keyboardHasLetters()) {
+                    mSpaceTracking = true;
+                    mSpaceKey = k;
+                    mSpaceDownX = me.getX();
+                    mSpaceDownY = me.getY();
+                    mSpaceDownTime = me.getDownTime();
+                    mSpaceHandler.postDelayed(mSpaceLongPress, 450);
+                }
+                return false; // KeyboardView still shows the key as pressed / types it on a tap
+            }
+            case android.view.MotionEvent.ACTION_MOVE: {
+                if (!mSpaceTracking) return false;
+                float x = me.getX(), y = me.getY();
+                if (mSpaceLangOpen) {
+                    if (y < mSpaceKey.y) { // finger moved up into the language strip
+                        int sel = slideItemAt(x, y);
+                        if (sel != mSlideSelected) {
+                            mSlideSelected = sel;
+                            if (mSlideView != null) mSlideView.invalidate();
+                            performHapticFeedback(android.view.HapticFeedbackConstants.CLOCK_TICK);
+                        }
+                        return true;
+                    }
+                    if (Math.abs(x - mSpaceDownX) > 14 * d) { // sideways on the space bar: cursor
+                        mSpaceLangOpen = false;
+                        if (mSlideWindow != null) try { mSlideWindow.dismiss(); } catch (RuntimeException ignored) {}
+                        mSpaceCursor = true;
+                        mSpaceLastStepX = x;
+                    }
+                    return true;
+                }
+                if (!mSpaceCursor) {
+                    if (Math.abs(x - mSpaceDownX) > 12 * d) {
+                        mSpaceHandler.removeCallbacks(mSpaceLongPress);
+                        cancelSuperTouch(mSpaceDownTime, x, y);
+                        mSpaceCursor = true;
+                        mSpaceLastStepX = x;
+                    } else {
+                        return false;
+                    }
+                }
+                // one character per step; in Persian / Kurdish the text runs right to left
+                float step = 11 * d;
+                boolean rtl = "fa".equals(kurdikeyboard.language) || "kr".equals(kurdikeyboard.language);
+                while (Math.abs(x - mSpaceLastStepX) >= step) {
+                    boolean right = x > mSpaceLastStepX;
+                    mSpaceLastStepX += right ? step : -step;
+                    boolean forward = right != rtl;
+                    if (getOnKeyboardActionListener() != null) {
+                        getOnKeyboardActionListener().onKey(forward ? KEYCODE_CURSOR_F : KEYCODE_CURSOR_B, null);
+                    }
+                }
+                return true;
+            }
+            case android.view.MotionEvent.ACTION_UP: {
+                if (!mSpaceTracking) return false;
+                boolean consumed = mSpaceCursor || mSpaceLangOpen;
+                SlideItem pick = mSpaceLangOpen && mSlideSelected >= 0 ? slideItem(mSlideSelected) : null;
+                resetSpace();
+                if (pick != null && getOnKeyboardActionListener() != null) {
+                    getOnKeyboardActionListener().onKey(pick.code, null);
+                }
+                return consumed;
+            }
+            case android.view.MotionEvent.ACTION_CANCEL:
+                resetSpace();
+                return false;
+            default:
+                return mSpaceCursor || mSpaceLangOpen;
         }
     }
 }
