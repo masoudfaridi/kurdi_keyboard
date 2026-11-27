@@ -29,10 +29,12 @@ public final class KeyboardTheme {
     public final int stroke;         // 0 = no outline
     public final float radiusDp;     // key corner radius
     public final boolean borderless; // keys without a shape, labels only
+    /** extra effects of a "pro" theme (gradients, glow, 3D keys ...); null for a plain theme */
+    public final Pro pro;
 
     private KeyboardTheme(String id, String name, int bg, int key, int keyPressed, int fn, int fnPressed,
                           int text, int hint, int accent, int onAccent, int shadow, int stroke,
-                          float radiusDp, boolean borderless) {
+                          float radiusDp, boolean borderless, Pro pro) {
         this.id = id;
         this.name = name;
         this.bg = bg;
@@ -48,10 +50,15 @@ public final class KeyboardTheme {
         this.stroke = stroke;
         this.radiusDp = radiusDp;
         this.borderless = borderless;
+        this.pro = pro;
     }
 
     public boolean isDark() {
-        return luminance(bg) < 0.5;
+        return pro != null ? pro.dark : luminance(bg) < 0.5;
+    }
+
+    public boolean isPro() {
+        return pro != null;
     }
 
     static double luminance(int c) {
@@ -68,7 +75,7 @@ public final class KeyboardTheme {
                             int text, int hint, int accent, int onAccent, int shadow, int stroke,
                             float radius, boolean borderless) {
         THEMES.put(id, new KeyboardTheme(id, name, bg, key, keyPressed, fn, fnPressed, text, hint,
-                accent, onAccent, shadow, stroke, radius, borderless));
+                accent, onAccent, shadow, stroke, radius, borderless, null));
     }
 
     static {
@@ -129,7 +136,14 @@ public final class KeyboardTheme {
     /** Themes of one section of the theme list: light or dark. */
     public static List<KeyboardTheme> section(boolean dark) {
         List<KeyboardTheme> out = new ArrayList<>();
-        for (KeyboardTheme t : THEMES.values()) if (t.isDark() == dark) out.add(t);
+        for (KeyboardTheme t : THEMES.values()) if (!t.isPro() && t.isDark() == dark) out.add(t);
+        return out;
+    }
+
+    /** Themes of one section of the "pro" theme list: light or dark. */
+    public static List<KeyboardTheme> proSection(boolean dark) {
+        List<KeyboardTheme> out = new ArrayList<>();
+        for (KeyboardTheme t : THEMES.values()) if (t.isPro() && t.isDark() == dark) out.add(t);
         return out;
     }
 
@@ -171,4 +185,173 @@ public final class KeyboardTheme {
             default: return DEFAULT_ID;
         }
     }
+
+    // ------------------------------------------------------------------ pro themes
+
+    /** Effects of a pro theme. All drawn in code by {@link ProPainter}. */
+    public static final class Pro {
+        boolean dark;
+        int[] bg;                 // background gradient, top to bottom (or diagonal)
+        boolean diagonal;
+        int[] blobColor = new int[0];       // soft round glows on the background
+        float[] blobX = new float[0], blobY = new float[0], blobR = new float[0]; // fractions of the size
+        int stars;                // color of small sparkles on the background, 0 = none
+        int keyTop, keyBottom;    // key gradient
+        int fnTop, fnBottom;      // function keys gradient
+        int edge;                 // 3D: the side of the key under it, 0 = flat
+        int line;                 // outline color, 0 = none
+        float lineDp;
+        int glow;                 // neon glow of outline and edge, 0 = none
+        float glowDp;
+        boolean rainbow;          // outline and labels change color across the keyboard
+        boolean labelGlow;        // labels glow too
+        int sheen;                // light reflection on the upper half of the key, 0 = none
+    }
+
+    private static final class P {
+        final String id, name;
+        final Pro x = new Pro();
+        int text = 0xFFFFFFFF, hint = 0xB3FFFFFF, accent = 0xFF3B82F6, onAccent = 0xFFFFFFFF, pressed = 0x40FFFFFF;
+        float radius = 8;
+
+        P(String id, String name, boolean dark) {
+            this.id = id;
+            this.name = name;
+            x.dark = dark;
+            if (!dark) { text = 0xFF1F2937; hint = 0xFF6B7280; pressed = 0x22000000; }
+        }
+
+        P bg(int... c) { x.bg = c; return this; }
+        P diagonal() { x.diagonal = true; return this; }
+        P blob(int color, float fx, float fy, float fr) {
+            int n = x.blobColor.length;
+            x.blobColor = java.util.Arrays.copyOf(x.blobColor, n + 1); x.blobColor[n] = color;
+            x.blobX = java.util.Arrays.copyOf(x.blobX, n + 1); x.blobX[n] = fx;
+            x.blobY = java.util.Arrays.copyOf(x.blobY, n + 1); x.blobY[n] = fy;
+            x.blobR = java.util.Arrays.copyOf(x.blobR, n + 1); x.blobR[n] = fr;
+            return this;
+        }
+        P stars(int c) { x.stars = c; return this; }
+        P keys(int top, int bottom) { x.keyTop = top; x.keyBottom = bottom; return this; }
+        P fn(int top, int bottom) { x.fnTop = top; x.fnBottom = bottom; return this; }
+        P edge(int c) { x.edge = c; return this; }
+        P line(int c, float dp) { x.line = c; x.lineDp = dp; return this; }
+        P glow(int c, float dp) { x.glow = c; x.glowDp = dp; return this; }
+        P rainbow() { x.rainbow = true; return this; }
+        P labelGlow() { x.labelGlow = true; return this; }
+        P sheen(int c) { x.sheen = c; return this; }
+        P text(int t, int h) { text = t; hint = h; return this; }
+        P accent(int a, int on) { accent = a; onAccent = on; return this; }
+        P pressed(int c) { pressed = c; return this; }
+        P radius(float r) { radius = r; return this; }
+
+        void done() {
+            if (x.fnTop == 0) { x.fnTop = x.keyTop; x.fnBottom = x.keyBottom; }
+            int key = x.keyBottom != 0 ? x.keyBottom : x.bg[0];
+            int fn = x.fnBottom != 0 ? x.fnBottom : key;
+            int pressedKey = ProPainter.over(key, pressed);
+            int stroke = x.line != 0 ? x.line : 0;
+            THEMES.put(id, new KeyboardTheme(id, name, x.bg[0], key, pressedKey, fn, ProPainter.over(fn, pressed),
+                    text, hint, accent, onAccent, 0, stroke, radius, false, x));
+        }
+    }
+
+    private static P pro(String id, String name, boolean dark) { return new P(id, name, dark); }
+
+    static {
+        // ---------------------------------------------------------------- pro, dark
+        pro("pro_neon_cyan", "نئون فیروزه‌ای", true).bg(0xFF000000, 0xFF01141A)
+                .blob(0x4400D9FF, 0.15f, 0.05f, 0.7f).blob(0x2200FFD5, 0.9f, 1f, 0.6f).stars(0x9900E5FF)
+                .keys(0xF0030708, 0xF0020405).line(0xFF19E6F0, 1.4f).glow(0xFF00E5FF, 5)
+                .text(0xFF6FF6FF, 0xAA19E6F0).labelGlow().accent(0xFF00C8D7, 0xFF001014).radius(9).done();
+        pro("pro_blue_fire", "شعله آبی", true).bg(0xFF020617, 0xFF000208)
+                .blob(0x662563EB, 0.05f, 0.95f, 0.55f).blob(0x553B82F6, 0.95f, 0.9f, 0.5f).blob(0x331D4ED8, 0.5f, 0f, 0.6f)
+                .stars(0x8860A5FA).keys(0xFF0B1022, 0xFF03050D).edge(0xFF1D4ED8).glow(0xFF3B82F6, 6)
+                .line(0xFF3B82F6, 1).text(0xFFFFFFFF, 0xFF93C5FD).accent(0xFF2563EB, 0xFFFFFFFF).radius(8).done();
+        pro("pro_purple_3d", "بنفش سه‌بعدی", true).bg(0xFF1E1B4B, 0xFF2E1065).diagonal()
+                .blob(0x447C3AED, 0.1f, 0.1f, 0.6f).blob(0x33DB2777, 0.95f, 0.2f, 0.4f)
+                .keys(0xFF2A2660, 0xFF1C1940).edge(0xFFA855F7).glow(0xFFC084FC, 5).sheen(0x14FFFFFF)
+                .text(0xFFFFFFFF, 0xFFC4B5FD).accent(0xFFA855F7, 0xFFFFFFFF).radius(10).done();
+        pro("pro_butterfly", "پروانه نئونی", true).bg(0xFF0A0418, 0xFF12052A)
+                .blob(0x66C026D3, 0.0f, 0.5f, 0.45f).blob(0x552563EB, 1f, 0.5f, 0.45f).blob(0x33F43F5E, 0.5f, 0f, 0.5f)
+                .stars(0x99F0ABFC).keys(0xFF3B0A57, 0xFF14063A).line(0xFFE879F9, 1.3f).glow(0xFFD946EF, 5)
+                .sheen(0x1AFFFFFF).text(0xFFFFFFFF, 0xFFF0ABFC).accent(0xFFC026D3, 0xFFFFFFFF).radius(9).done();
+        pro("pro_rainbow", "رنگین‌کمان نئونی", true).bg(0xFF05050A, 0xFF0B0B14)
+                .blob(0x44F43F5E, 0.05f, 0.1f, 0.45f).blob(0x443B82F6, 0.95f, 0.15f, 0.45f).blob(0x4422C55E, 0.5f, 1f, 0.5f)
+                .keys(0xE6101018, 0xE608080E).line(0xFFFFFFFF, 1.4f).glow(0xFFFFFFFF, 5).rainbow().labelGlow()
+                .text(0xFFFFFFFF, 0xCCFFFFFF).accent(0xFFEC4899, 0xFFFFFFFF).radius(9).done();
+        pro("pro_neon_pink", "نئون صورتی", true).bg(0xFF0A0007, 0xFF14000E)
+                .blob(0x44FF2DAA, 0.85f, 0.05f, 0.6f).blob(0x228B5CF6, 0.1f, 1f, 0.6f).stars(0x88FF7AD1)
+                .keys(0xF0080006, 0xF0050004).line(0xFFFF4FC1, 1.4f).glow(0xFFFF2DAA, 5)
+                .text(0xFFFF9BDC, 0xAAFF4FC1).labelGlow().accent(0xFFFF2DAA, 0xFF14000E).radius(9).done();
+        pro("pro_matrix", "نئون سبز", true).bg(0xFF000000, 0xFF001407)
+                .blob(0x3322FF66, 0.5f, 0f, 0.7f).stars(0x8822FF66)
+                .keys(0xF0010603, 0xF0000301).line(0xFF22FF66, 1.3f).glow(0xFF00FF55, 5)
+                .text(0xFF7CFFA6, 0xAA22FF66).labelGlow().accent(0xFF16C75A, 0xFF001407).radius(7).done();
+        pro("pro_gold", "طلایی لوکس", true).bg(0xFF0B0A08, 0xFF16130C)
+                .blob(0x33D4AF37, 0.5f, 0f, 0.7f).stars(0x77F5D27A)
+                .keys(0xFF1C1912, 0xFF0D0C09).line(0xFFD4AF37, 1.2f).glow(0xFFE6C15A, 4).sheen(0x12FFE7A0)
+                .text(0xFFF5D27A, 0xAAD4AF37).accent(0xFFD4AF37, 0xFF16130C).radius(8).done();
+        pro("pro_galaxy", "کهکشان پرستاره", true).bg(0xFF0B0620, 0xFF1A0B3A, 0xFF07041A)
+                .blob(0x55A855F7, 0.2f, 0.3f, 0.5f).blob(0x443B82F6, 0.85f, 0.7f, 0.5f).blob(0x33EC4899, 0.6f, 0.1f, 0.35f)
+                .stars(0xCCFFFFFF).keys(0x33FFFFFF, 0x1AFFFFFF).line(0x55FFFFFF, 1).sheen(0x14FFFFFF)
+                .text(0xFFFFFFFF, 0xB3E9D5FF).accent(0xFFA855F7, 0xFFFFFFFF).radius(10).done();
+        pro("pro_lava", "گدازه", true).bg(0xFF120303, 0xFF1F0602)
+                .blob(0x66EF4444, 0.1f, 1f, 0.55f).blob(0x55F97316, 0.9f, 1f, 0.55f).stars(0x88FDBA74)
+                .keys(0xFF240A06, 0xFF120403).edge(0xFFEA580C).glow(0xFFF97316, 6).line(0xFFFB923C, 1)
+                .text(0xFFFFEDD5, 0xFFFDBA74).accent(0xFFF97316, 0xFF1F0602).radius(8).done();
+        pro("pro_ocean_glow", "اقیانوس درخشان", true).bg(0xFF021526, 0xFF03304A).diagonal()
+                .blob(0x5506B6D4, 0.15f, 0.9f, 0.6f).blob(0x333B82F6, 0.9f, 0.1f, 0.5f)
+                .keys(0x40FFFFFF, 0x14FFFFFF).line(0x6667E8F9, 1).glow(0xFF22D3EE, 3).sheen(0x1AFFFFFF)
+                .text(0xFFFFFFFF, 0xCCA5F3FC).accent(0xFF06B6D4, 0xFF021526).radius(11).done();
+        pro("pro_synthwave", "غروب نئونی", true).bg(0xFF1A0B2E, 0xFF3B0D4F, 0xFF7A1F4F)
+                .blob(0x66FB923C, 0.5f, 1f, 0.5f).blob(0x44EC4899, 0.5f, 0.6f, 0.6f).stars(0x99FFFFFF)
+                .keys(0xE6200B35, 0xE6140622).line(0xFFFF6AD5, 1.3f).glow(0xFFFF2DAA, 5)
+                .text(0xFFFFFFFF, 0xFFFFB3E6).labelGlow().accent(0xFFFB923C, 0xFF1A0B2E).radius(8).done();
+
+        // ---------------------------------------------------------------- pro, light
+        pro("pro_pastel_rainbow", "رنگین‌کمان پاستلی", false).bg(0xFFFFFFFF, 0xFFF5F3FF)
+                .blob(0x55FDA4AF, 0.05f, 0.1f, 0.45f).blob(0x5593C5FD, 0.95f, 0.2f, 0.45f).blob(0x5586EFAC, 0.5f, 1f, 0.5f)
+                .keys(0xFFFFFFFF, 0xFFF8FAFC).line(0xFF94A3B8, 1.3f).rainbow().edge(0x22000000)
+                .text(0xFF334155, 0xFF64748B).accent(0xFF8B5CF6, 0xFFFFFFFF).radius(10).done();
+        pro("pro_glass_sky", "شیشه آسمانی", false).bg(0xFF7DD3FC, 0xFFE0F2FE).diagonal()
+                .blob(0x66FFFFFF, 0.2f, 0.2f, 0.5f).blob(0x4438BDF8, 0.9f, 0.9f, 0.5f)
+                .keys(0x8CFFFFFF, 0x59FFFFFF).line(0xCCFFFFFF, 1.2f).sheen(0x33FFFFFF)
+                .text(0xFF0C4A6E, 0xFF0369A1).accent(0xFF0284C7, 0xFFFFFFFF).radius(12).done();
+        pro("pro_candy_3d", "آبنبات سه‌بعدی", false).bg(0xFFFCE7F3, 0xFFFBCFE8)
+                .keys(0xFFFFFFFF, 0xFFFFF1F8).edge(0xFFF472B6).sheen(0x0F000000)
+                .text(0xFF9D174D, 0xFFDB2777).accent(0xFFEC4899, 0xFFFFFFFF).radius(12).done();
+        pro("pro_mint_3d", "نعنایی سه‌بعدی", false).bg(0xFFD1FAE5, 0xFFA7F3D0)
+                .keys(0xFFFFFFFF, 0xFFF0FDF4).edge(0xFF34D399).text(0xFF065F46, 0xFF059669)
+                .accent(0xFF10B981, 0xFFFFFFFF).radius(12).done();
+        pro("pro_sunrise", "طلوع", false).bg(0xFFFDBA74, 0xFFF9A8D4).diagonal()
+                .blob(0x66FFFFFF, 0.8f, 0.1f, 0.5f)
+                .keys(0x99FFFFFF, 0x66FFFFFF).line(0xCCFFFFFF, 1.2f).sheen(0x33FFFFFF)
+                .text(0xFF7C2D12, 0xFF9A3412).accent(0xFFEA580C, 0xFFFFFFFF).radius(12).done();
+        pro("pro_lavender_dream", "رویای یاسی", false).bg(0xFFEDE9FE, 0xFFDDD6FE)
+                .blob(0x55F0ABFC, 0.1f, 0.9f, 0.5f).blob(0x5593C5FD, 0.9f, 0.1f, 0.5f)
+                .keys(0xFFFFFFFF, 0xFFF5F3FF).edge(0xFFA78BFA).sheen(0x0A000000)
+                .text(0xFF4C1D95, 0xFF7C3AED).accent(0xFF8B5CF6, 0xFFFFFFFF).radius(11).done();
+        pro("pro_white_gold", "سفید طلایی", false).bg(0xFFFFFBF0, 0xFFF5EBD3)
+                .stars(0x99D4AF37).keys(0xFFFFFFFF, 0xFFFFFCF5).line(0xFFD4AF37, 1.2f).glow(0x88E6C15A, 3)
+                .text(0xFF5C4813, 0xFFA8892E).accent(0xFFC9A227, 0xFFFFFFFF).radius(9).done();
+        pro("pro_aurora_light", "شفق روشن", false).bg(0xFFCCFBF1, 0xFFE9D5FF).diagonal()
+                .blob(0x6667E8F9, 0.1f, 0.2f, 0.5f).blob(0x55F0ABFC, 0.9f, 0.8f, 0.5f)
+                .keys(0x99FFFFFF, 0x66FFFFFF).line(0xCCFFFFFF, 1.2f).sheen(0x26FFFFFF)
+                .text(0xFF134E4A, 0xFF6B21A8).accent(0xFF14B8A6, 0xFFFFFFFF).radius(12).done();
+        pro("pro_ice_crystal", "کریستال یخی", false).bg(0xFFE0F7FF, 0xFFBAE6FD)
+                .stars(0xCCFFFFFF).blob(0x66FFFFFF, 0.5f, 0f, 0.6f)
+                .keys(0xB3FFFFFF, 0x80FFFFFF).line(0xFF67E8F9, 1.3f).glow(0xAA22D3EE, 4).sheen(0x33FFFFFF)
+                .text(0xFF0E4F6E, 0xFF0891B2).accent(0xFF06B6D4, 0xFFFFFFFF).radius(10).done();
+        pro("pro_rose_gold", "رزگلد", false).bg(0xFFFBE4DD, 0xFFF3C9C0)
+                .stars(0x99FFFFFF).keys(0xFFFFF7F5, 0xFFFDEDE9).line(0xFFD8A39A, 1.2f).edge(0xFFE0A899)
+                .text(0xFF7F3B33, 0xFFB76E64).accent(0xFFC9776A, 0xFFFFFFFF).radius(10).done();
+        pro("pro_lemon_3d", "لیمویی سه‌بعدی", false).bg(0xFFFEF9C3, 0xFFFDE68A)
+                .keys(0xFFFFFFFF, 0xFFFFFDF0).edge(0xFFFACC15).text(0xFF713F12, 0xFFA16207)
+                .accent(0xFFEAB308, 0xFFFFFFFF).radius(12).done();
+        pro("pro_sky_3d", "آبی سه‌بعدی", false).bg(0xFFDBEAFE, 0xFFBFDBFE)
+                .keys(0xFFFFFFFF, 0xFFF8FBFF).edge(0xFF60A5FA).sheen(0x0A000000).text(0xFF1E3A8A, 0xFF2563EB)
+                .accent(0xFF2563EB, 0xFFFFFFFF).radius(12).done();
+    }
+
 }

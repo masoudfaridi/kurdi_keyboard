@@ -1173,7 +1173,17 @@ public class KKeyboardView extends KeyboardView {
         mFnTextPaint.setTextSize(15 * sp);
         mFnTextPaint.setColor(t.text);
 
-        if (!photo) canvas.drawColor(t.bg);
+        // pro themes: glows need a software layer before Android 9
+        if (t.pro != null && android.os.Build.VERSION.SDK_INT < 28 && getLayerType() != LAYER_TYPE_SOFTWARE) {
+            setLayerType(LAYER_TYPE_SOFTWARE, null);
+        }
+        mLabelPaint.clearShadowLayer();
+        mNumberPaint.clearShadowLayer();
+        mFnTextPaint.clearShadowLayer();
+        if (!photo) {
+            if (t.pro != null) ProPainter.background(canvas, t, getWidth(), getHeight(), d);
+            else canvas.drawColor(t.bg);
+        }
 
         boolean letters = keyboardHasLetters();
         KKeyboard kk = kb instanceof KKeyboard ? (KKeyboard) kb : null;
@@ -1191,7 +1201,25 @@ public class KKeyboardView extends KeyboardView {
             int fill = isEnter ? (key.pressed ? darker(t.accent) : t.accent)
                     : isFn ? (key.pressed ? t.fnPressed : t.fn)
                     : (key.pressed ? t.keyPressed : t.key);
-            if (!t.borderless || key.pressed || isEnter) {
+            if (t.pro != null) {
+                // pro theme: gradients, glow, 3D edge, rainbow (ProPainter)
+                int tint = t.pro.rainbow ? ProPainter.rainbow((key.x + key.width / 2f) / Math.max(1, getWidth()),
+                        (key.y + key.height / 2f) / Math.max(1, getHeight()), t.isDark()) : 0;
+                ProPainter.key(canvas, mKeyPaint, mKeyRect, r, t,
+                        isEnter ? ProPainter.ENTER : isFn ? ProPainter.FUNCTION : ProPainter.LETTER,
+                        key.pressed, tint, d, keyAlpha);
+                mKeyRect.offset(0, ProPainter.sink(t, key.pressed, d));
+                int lc = t.pro.rainbow ? tint : t.text;
+                mLabelPaint.setColor(lc);
+                mNumberPaint.setColor(lc);
+                mFnTextPaint.setColor(lc);
+                if (t.pro.rainbow) mHintPaint.setColor((tint & 0x00FFFFFF) | 0xB3000000);
+                if (t.pro.labelGlow) {
+                    mLabelPaint.setShadowLayer(4 * d, 0, 0, lc);
+                    mNumberPaint.setShadowLayer(4 * d, 0, 0, lc);
+                    mFnTextPaint.setShadowLayer(3 * d, 0, 0, lc);
+                }
+            } else if (!t.borderless || key.pressed || isEnter) {
                 mKeyPaint.setStyle(Paint.Style.FILL);
                 if (t.shadow != 0 && !photo) {
                     mKeyPaint.setColor(t.shadow);
@@ -1463,7 +1491,13 @@ public class KKeyboardView extends KeyboardView {
         // above the key, centred on it, inside the screen width
         int x = (int) (key.x + key.width / 2f - popW / 2f);
         x = Math.max(0, Math.min(getWidth() - popW, x));
-        int y = (int) (key.y - popH - 4 * d);
+        // same distance from the finger as the key preview (setting "prefpreviewgap")
+        int gapDp = getContext().getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE)
+                .getInt(getContext().getString(R.string.prefpreviewgap), 24);
+        int y = (int) (key.y - popH - gapDp * d);
+        int[] win = new int[2];
+        getLocationInWindow(win);
+        y = Math.max(y, -win[1]); // stay inside the keyboard window: over the tools row if needed
         mSlideOrigin[0] = x;
         mSlideOrigin[1] = y;
 
@@ -1550,7 +1584,9 @@ public class KKeyboardView extends KeyboardView {
                 SlideItem it = mSlideMoved && mSlideSelected >= 0 ? slideItem(mSlideSelected) : null;
                 closeSlidePopup();
                 if (it != null && getOnKeyboardActionListener() != null) {
-                    if (it.code != 0 && (it.text == null || it.text.codePointCount(0, it.text.length()) <= 1)) {
+                    // a special key (negative code, e.g. "ـ5ـ" = five kashidas) runs its action;
+                    // otherwise a one-letter label is a key and a longer label is typed as text
+                    if (it.code < 0 || (it.code > 0 && (it.text == null || it.text.codePointCount(0, it.text.length()) <= 1))) {
                         getOnKeyboardActionListener().onKey(it.code, new int[]{it.code});
                     } else if (it.text != null) {
                         getOnKeyboardActionListener().onText(it.text);
@@ -1868,8 +1904,61 @@ public class KKeyboardView extends KeyboardView {
         return isShifted() ? s.toUpperCase() : s;
     }
 
+    /** key whose second letter is shown in the bubble (held two-letter key), or null */
+    private Key mAltKey;
+
+    /**
+     * Held two-letter key (ا → آ, ص → ض ...): shows the second letter in the key preview
+     * bubble, in the theme's colors and at the preview distance from the finger. Replaces
+     * the 2017 white popup. Shown even when the normal key preview is turned off.
+     */
+    void showAltPreview(int keyX, int keyY, int keyW, int keyH, String text) {
+        if (text == null || text.isEmpty()) return;
+        Key key = keyAt(keyX + keyW / 2f, keyY + keyH / 2f);
+        float d = getResources().getDisplayMetrics().density;
+        int w = (int) Math.max(keyW * 1.25f, 44 * d);
+        int h = (int) Math.max(keyH * 1.35f, 58 * d);
+        if (mPreviewView == null) {
+            mPreviewView = new KeyPreviewView(getContext());
+            mPreviewWindow = new android.widget.PopupWindow(mPreviewView);
+            mPreviewWindow.setTouchable(false);
+            mPreviewWindow.setClippingEnabled(false);
+            mPreviewWindow.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(0));
+            mPreviewWindow.setAnimationStyle(0);
+        }
+        mSpaceHandler.removeCallbacks(mHidePreview);
+        mPreviewView.theme = currentTheme();
+        mPreviewView.text = text;
+        mPreviewView.alt = true;
+        mPreviewView.invalidate();
+        mAltKey = key;
+        mPreviewKey = key;
+        int x = (int) (keyX + keyW / 2f - w / 2f);
+        x = Math.max(0, Math.min(getWidth() - w, x));
+        int gapDp = getContext().getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE)
+                .getInt(getContext().getString(R.string.prefpreviewgap), 24);
+        int y = (int) (keyY - h - gapDp * d);
+        int[] loc = new int[2];
+        getLocationInWindow(loc);
+        y = Math.max(y, -loc[1]);
+        try {
+            if (mPreviewWindow.isShowing()) {
+                mPreviewWindow.update(loc[0] + x, loc[1] + y, w, h);
+            } else {
+                mPreviewWindow.setWidth(w);
+                mPreviewWindow.setHeight(h);
+                mPreviewWindow.showAtLocation(this, android.view.Gravity.NO_GRAVITY, loc[0] + x, loc[1] + y);
+            }
+        } catch (RuntimeException ignored) {
+        }
+    }
+
     private void showKeyPreview(Key key) {
         mSpaceHandler.removeCallbacks(mHidePreview);
+        // the held key's second letter stays until the finger leaves the key or lifts
+        if (mAltKey != null && key == mAltKey && mPreviewWindow != null && mPreviewWindow.isShowing()) return;
+        mAltKey = null;
+        if (mPreviewView != null) mPreviewView.alt = false;
         String text = previewText(key);
         if (text == null || !keyPreviewEnabled()) {
             hideKeyPreview();
@@ -1922,6 +2011,7 @@ public class KKeyboardView extends KeyboardView {
     private void hideKeyPreview() {
         mSpaceHandler.removeCallbacks(mHidePreview);
         mPreviewKey = null;
+        mAltKey = null;
         if (mPreviewWindow != null && mPreviewWindow.isShowing()) {
             try { mPreviewWindow.dismiss(); } catch (RuntimeException ignored) {}
         }
@@ -1954,6 +2044,7 @@ public class KKeyboardView extends KeyboardView {
     private static final class KeyPreviewView extends View {
         KeyboardTheme theme;
         String text;
+        boolean alt; // second letter of a held key: drawn in the accent color
         private final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final android.graphics.RectF r = new android.graphics.RectF();
 
@@ -1979,7 +2070,7 @@ public class KKeyboardView extends KeyboardView {
                 c.drawRoundRect(r, 12 * d, 12 * d, p);
                 p.setStyle(Paint.Style.FILL);
             }
-            p.setColor(theme.text);
+            p.setColor(alt ? theme.accent : theme.text);
             p.setTextAlign(Paint.Align.CENTER);
             float size = getHeight() * 0.48f;
             p.setTextSize(size);

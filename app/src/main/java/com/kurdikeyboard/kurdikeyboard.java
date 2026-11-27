@@ -2052,9 +2052,7 @@ public class kurdikeyboard extends InputMethodService
 
         }else  if(primaryCode==KKeyboardView.KEYCODE_LONG_P_GEH){
             if(mInputView.getKeyboard()==mfarsiKeyboard) {
-                mPreviewPopup.showAtLocation(mInputView.getRootView(), Gravity.NO_GRAVITY, keyx,
-                        keyy +  (keyheight / 2)-tempint-tempintfullscreen
-                                );
+                showTwoLetterPreview();
 
                 onKey(1569, null);
 
@@ -2067,9 +2065,7 @@ public class kurdikeyboard extends InputMethodService
 
         }else  if(primaryCode==KKeyboardView.KEYCODE_LONG_P_KEH){
             //if(mInputView.getKeyboard()==mfarsiKeyboard) {
-                mPreviewPopup.showAtLocation(mInputView.getRootView(), Gravity.NO_GRAVITY, keyx,
-                        keyy + (keyheight / 2) - tempint - tempintfullscreen
-                );
+                showTwoLetterPreview();
 
 
                 onKey(1574, null);
@@ -2079,11 +2075,7 @@ public class kurdikeyboard extends InputMethodService
 
         }else  if(primaryCode==KKeyboardView.KEYCODE_LONG_P_DEH){
             if(mInputView.getKeyboard()==mfarsiKeyboard) {
-                mPreviewPopup.showAtLocation(mInputView.getRootView(), Gravity.NO_GRAVITY, keyx,
-                        keyy +  (keyheight / 2)
-                        -tempint-tempintfullscreen
-
-                );
+                showTwoLetterPreview();
 
                 onKey(1584, null);
 
@@ -2102,9 +2094,7 @@ public class kurdikeyboard extends InputMethodService
                 onKey(1585, null);
 
             }else if(mInputView.getKeyboard()==mkurdishKeyboard) {
-                mPreviewPopup.showAtLocation(mInputView.getRootView(), Gravity.NO_GRAVITY, keyx,
-                        keyy +  (keyheight / 2)-tempint-tempintfullscreen
-                );
+                showTwoLetterPreview();
 
                 onKey(1685, null);
 
@@ -2112,9 +2102,7 @@ public class kurdikeyboard extends InputMethodService
 
 
         }else  if(primaryCode==KKeyboardView.KEYCODE_LONG_P_ZEH){
-            mPreviewPopup.showAtLocation(mInputView.getRootView(), Gravity.NO_GRAVITY, keyx,
-                    keyy + (keyheight / 2)-tempint-tempintfullscreen
-            );
+            showTwoLetterPreview();
 
 
 
@@ -2123,9 +2111,7 @@ public class kurdikeyboard extends InputMethodService
 
 
         }else  if(primaryCode==KKeyboardView.KEYCODE_LONG_P_TEH){
-            mPreviewPopup.showAtLocation(mInputView.getRootView(), Gravity.NO_GRAVITY, keyx,
-                    keyy + (keyheight / 2)-tempint-tempintfullscreen
-            );
+            showTwoLetterPreview();
 
 
 
@@ -2135,9 +2121,7 @@ public class kurdikeyboard extends InputMethodService
 
         }else  if(primaryCode==KKeyboardView.KEYCODE_LONG_P_ALEF){
             if(mInputView.getKeyboard()==mfarsiKeyboard) {
-                mPreviewPopup.showAtLocation(mInputView.getRootView(), Gravity.NO_GRAVITY, keyx,
-                        keyy +  (keyheight / 2)-tempint-tempintfullscreen
-                );
+                showTwoLetterPreview();
 
 
                 onKey(1570, null);
@@ -2153,9 +2137,7 @@ public class kurdikeyboard extends InputMethodService
                 onKey(1604, null);
 
             }else if(mInputView.getKeyboard()==mkurdishKeyboard) {
-                mPreviewPopup.showAtLocation(mInputView.getRootView(), Gravity.NO_GRAVITY, keyx,
-                        keyy +  (keyheight / 2)-tempint-tempintfullscreen
-                );
+                showTwoLetterPreview();
 
                 onKey(1717, null);
 
@@ -2170,9 +2152,7 @@ public class kurdikeyboard extends InputMethodService
 
             }else if(mInputView.getKeyboard()==mfarsiKeyboard
                     ) {
-                mPreviewPopup.showAtLocation(mInputView.getRootView(), Gravity.NO_GRAVITY, keyx,
-                        keyy +  (keyheight / 2)-tempint-tempintfullscreen
-                );
+                showTwoLetterPreview();
                // toastM("veh farsi");
                 onKey(1572, null);
 
@@ -2180,9 +2160,7 @@ public class kurdikeyboard extends InputMethodService
 
 
         }else  if(primaryCode==KKeyboardView.KEYCODE_LONG_P_AYN){
-              mPreviewPopup.showAtLocation(mInputView.getRootView(), Gravity.NO_GRAVITY, keyx,
-                        keyy +  (keyheight / 2)-tempint-tempintfullscreen
-              );
+              showTwoLetterPreview();
 
 
                 onKey(1594, null);
@@ -2197,9 +2175,7 @@ public class kurdikeyboard extends InputMethodService
                 onKey(1601, null);
 
             }else if(mInputView.getKeyboard()==mkurdishKeyboard) {
-                mPreviewPopup.showAtLocation(mInputView.getRootView(), Gravity.NO_GRAVITY, keyx,
-                        keyy +  (keyheight / 2)-tempint-tempintfullscreen
-                );
+                showTwoLetterPreview();
 
                 onKey(1700, null);
 
@@ -2207,17 +2183,13 @@ public class kurdikeyboard extends InputMethodService
 
 
         }else  if(primaryCode==KKeyboardView.KEYCODE_LONG_P_YEH){
-               mPreviewPopup.showAtLocation(mInputView.getRootView(), Gravity.NO_GRAVITY, keyx,
-                        keyy +  (keyheight / 2)-tempint-tempintfullscreen
-                );
+               showTwoLetterPreview();
 
                 onKey(1742, null);
 
 
         } else if (primaryCode == KKeyboardView.KEYCODE_LONG_P_SAD) {
-            mPreviewPopup.showAtLocation(mInputView.getRootView(), Gravity.NO_GRAVITY, keyx,
-                    keyy + (keyheight / 2)-tempint-tempintfullscreen
-            );
+            showTwoLetterPreview();
 
 
 
@@ -2226,9 +2198,7 @@ public class kurdikeyboard extends InputMethodService
 
 
         }else if (primaryCode == KKeyboardView.KEYCODE_LONG_VEHHADKURDI) {
-            mPreviewPopup.showAtLocation(mInputView.getRootView(), Gravity.NO_GRAVITY, keyx,
-                    keyy + (keyheight / 2)-tempint-tempintfullscreen
-            );
+            showTwoLetterPreview();
 
 
 
@@ -3168,6 +3138,12 @@ private void setCurrentLanguage(){
        // toastM("press");
 
 
+    }
+
+    /** held two-letter key: its second letter in the themed key preview bubble */
+    private void showTwoLetterPreview() {
+        if (mInputView == null || mPreviewText == null) return;
+        mInputView.showAltPreview(keyx, keyy, keywidth, keyheight, mPreviewText.getText().toString());
     }
 
     public void onRelease(int primaryCode) {

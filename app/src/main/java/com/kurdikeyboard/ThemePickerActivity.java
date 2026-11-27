@@ -42,19 +42,32 @@ public class ThemePickerActivity extends Activity {
         KeyboardTheme current = KeyboardTheme.forId(prefs.getString(getString(R.string.pref_list_theme_selector),
                 KeyboardTheme.DEFAULT_ID));
         selected = current.id;
-        // two sections, light and dark; open on the one that holds the current theme
-        themes = new java.util.ArrayList<>(KeyboardTheme.section(current.isDark()));
+        // two groups (normal, pro), each with a light and a dark section;
+        // open on the group and section that hold the current theme
+        mPro = current.isPro();
+        mDark = current.isDark();
+        themes = new java.util.ArrayList<>(list(mPro, mDark));
         tabLight = (TextView) findViewById(R.id.tabLight);
         tabDark = (TextView) findViewById(R.id.tabDark);
-        tabLight.setText(getString(R.string.theme_tab_light, faDigits(KeyboardTheme.section(false).size())));
-        tabDark.setText(getString(R.string.theme_tab_dark, faDigits(KeyboardTheme.section(true).size())));
+        tabNormal = (TextView) findViewById(R.id.tabNormal);
+        tabPro = (TextView) findViewById(R.id.tabPro);
+        tabNormal.setText(getString(R.string.theme_group_normal,
+                faDigits(KeyboardTheme.section(false).size() + KeyboardTheme.section(true).size())));
+        tabPro.setText(getString(R.string.theme_group_pro,
+                faDigits(KeyboardTheme.proSection(false).size() + KeyboardTheme.proSection(true).size())));
         tabLight.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { showSection(false); }
+            @Override public void onClick(View v) { show(mPro, false); }
         });
         tabDark.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) { showSection(true); }
+            @Override public void onClick(View v) { show(mPro, true); }
         });
-        markTabs(current.isDark());
+        tabNormal.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { show(false, mDark); }
+        });
+        tabPro.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { show(true, mDark); }
+        });
+        markTabs();
 
         final GridView grid = (GridView) findViewById(R.id.themeGrid);
         final BaseAdapter adapter = new BaseAdapter() {
@@ -94,24 +107,37 @@ public class ThemePickerActivity extends Activity {
         return b.toString();
     }
 
-    private TextView tabLight, tabDark;
+    private TextView tabLight, tabDark, tabNormal, tabPro;
     private GridView mGrid;
+    private boolean mPro, mDark;
 
-    private void showSection(boolean dark) {
+    private static java.util.List<KeyboardTheme> list(boolean pro, boolean dark) {
+        return pro ? KeyboardTheme.proSection(dark) : KeyboardTheme.section(dark);
+    }
+
+    private void show(boolean pro, boolean dark) {
+        mPro = pro;
+        mDark = dark;
         themes.clear();
-        themes.addAll(KeyboardTheme.section(dark));
-        markTabs(dark);
+        themes.addAll(list(pro, dark));
+        markTabs();
         if (mAdapter != null) mAdapter.notifyDataSetChanged();
         if (mGrid != null) mGrid.setSelection(0);
     }
 
-    private void markTabs(boolean dark) {
-        tabLight.setSelected(!dark);
-        tabDark.setSelected(dark);
-        tabLight.setTextColor(getColor(dark ? R.color.kk_text_secondary : R.color.kk_primary));
-        tabDark.setTextColor(getColor(dark ? R.color.kk_primary : R.color.kk_text_secondary));
-        tabLight.setTypeface(null, dark ? android.graphics.Typeface.NORMAL : android.graphics.Typeface.BOLD);
-        tabDark.setTypeface(null, dark ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
+    private void markTabs() {
+        tabLight.setText(getString(R.string.theme_tab_light, faDigits(list(mPro, false).size())));
+        tabDark.setText(getString(R.string.theme_tab_dark, faDigits(list(mPro, true).size())));
+        mark(tabLight, !mDark);
+        mark(tabDark, mDark);
+        mark(tabNormal, !mPro);
+        mark(tabPro, mPro);
+    }
+
+    private void mark(TextView tab, boolean on) {
+        tab.setSelected(on);
+        tab.setTextColor(getColor(on ? R.color.kk_primary : R.color.kk_text_secondary));
+        tab.setTypeface(null, on ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
     }
 
     /** A small keyboard drawn with a theme's palette. */
@@ -140,9 +166,18 @@ public class ThemePickerActivity extends Activity {
             float d = getResources().getDisplayMetrics().density;
             float W = getWidth(), H = getHeight();
             p.setStyle(Paint.Style.FILL);
-            p.setColor(theme.bg);
             r.set(0, 0, W, H);
-            c.drawRoundRect(r, 12 * d, 12 * d, p);
+            if (theme.pro != null) {
+                android.graphics.Path clip = new android.graphics.Path();
+                clip.addRoundRect(r, 12 * d, 12 * d, android.graphics.Path.Direction.CW);
+                c.save();
+                c.clipPath(clip);
+                ProPainter.paintBackground(c, theme, W, H, d * 0.6f);
+                c.restore();
+            } else {
+                p.setColor(theme.bg);
+                c.drawRoundRect(r, 12 * d, 12 * d, p);
+            }
 
             float pad = 6 * d, gap = 2.5f * d;
             float rowH = (H - 2 * pad) / 4f;
@@ -180,7 +215,16 @@ public class ThemePickerActivity extends Activity {
         private void drawKey(Canvas c, float x, float y, float w, float h, int color, float gap, float d, String label) {
             r.set(x + gap, y + gap, x + w - gap, y + h - gap);
             float rad = Math.min(theme.radiusDp * d * 0.6f, h / 2);
-            if (!theme.borderless || color == theme.accent) {
+            int tint = 0;
+            if (theme.pro != null) {
+                int kind = color == theme.accent ? ProPainter.ENTER
+                        : color == theme.fn && theme.fn != theme.key ? ProPainter.FUNCTION : ProPainter.LETTER;
+                tint = theme.pro.rainbow ? ProPainter.rainbow(r.centerX() / getWidth(), r.centerY() / getHeight(),
+                        theme.isDark()) : 0;
+                if (theme.pro.edge != 0) r.bottom -= 1.5f * d; // room for the 3D edge
+                ProPainter.key(c, p, r, rad, theme, kind, false, tint, d * 0.6f, 255);
+                p.clearShadowLayer();
+            } else if (!theme.borderless || color == theme.accent) {
                 p.setStyle(Paint.Style.FILL);
                 p.setColor(color);
                 c.drawRoundRect(r, rad, rad, p);
@@ -193,7 +237,7 @@ public class ThemePickerActivity extends Activity {
             }
             if (label != null) {
                 p.setStyle(Paint.Style.FILL);
-                p.setColor(theme.text);
+                p.setColor(tint != 0 ? tint : theme.text);
                 p.setTextAlign(Paint.Align.CENTER);
                 p.setTextSize(h * 0.5f);
                 c.drawText(label, r.centerX(), r.centerY() + p.getTextSize() / 3, p);

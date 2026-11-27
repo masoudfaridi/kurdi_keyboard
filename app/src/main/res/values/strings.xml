@@ -22,7 +22,7 @@
         کیبورد هوشمند چندزبانه ماپریس
     </string>
 <string name="versionName">
-    2.3.1
+    2.4.0
 </string>
 
 
@@ -391,9 +391,11 @@
     <string name="guide_next">بعدی</string>
     <string name="guide_done">پایان</string>
     <string name="theme_picker_title">تم کیبورد</string>
+    <string name="theme_group_normal">🎨  تم‌های ساده (%1$s)</string>
+    <string name="theme_group_pro">✨  تم‌های حرفه‌ای (%1$s)</string>
     <string name="theme_tab_light">☀️  روشن (%1$s)</string>
     <string name="theme_tab_dark">🌙  تیره (%1$s)</string>
-    <string name="theme_picker_summary">۴۸ تم زیبا در دو بخش روشن و تیره</string>
+    <string name="theme_picker_summary">۴۸ تم ساده و ۲۴ تم حرفه‌ای، هر کدام روشن و تیره</string>
     <!-- space bar gestures -->
     <string name="prefspacecursor" translatable="false">prefspacecursor</string>
     <string name="prefspacecursorspeed" translatable="false">prefspacecursorspeed</string>
@@ -412,7 +414,7 @@
     <string name="top_row_shown">پیش‌بینی کلمات فعال شد</string>
     <string name="summary_enter_hold">نکته: با نگه داشتن کلید پایین سمت چپ (ایموجی)، نوار پیش‌بینی و ابزار پنهان یا نمایش داده می‌شود</string>
     <string name="prefpreviewgap" translatable="false">prefpreviewgap</string>
-    <string name="title_preview_gap">فاصله نمایش کلید از انگشت</string>
+    <string name="title_preview_gap">فاصله نمایش کلید و پنجره نگه داشتن از انگشت</string>
     <string name="contacts_title">مخاطبین</string>
     <string name="contacts_search_hint">جستجوی نام یا شماره</string>
     <string name="contacts_loading">در حال خواندن مخاطبین…</string>
