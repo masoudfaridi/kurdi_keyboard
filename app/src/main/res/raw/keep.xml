@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- guide screenshots are looked up by name (GuidePagerAdapter): keep them in shrunk builds -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/guide_*" />

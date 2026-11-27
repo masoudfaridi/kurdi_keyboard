@@ -50,18 +50,33 @@ final class GuidePagerAdapter extends PagerAdapter {
         page.setOrientation(LinearLayout.VERTICAL);
         page.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
         int pad = (int) (20 * d);
-        page.setPadding(pad, (int) (28 * d), pad, pad);
+        page.setPadding(pad, (int) (16 * d), pad, pad);
 
-        // icon in a soft circle
-        ImageView icon = new ImageView(ctx);
-        icon.setImageResource(ICONS[position % ICONS.length]);
-        icon.setImageTintList(android.content.res.ColorStateList.valueOf(ctx.getColor(R.color.kk_primary)));
-        icon.setBackgroundResource(R.drawable.kk_icon_circle);
-        int ip = (int) (18 * d);
-        icon.setPadding(ip, ip, ip, ip);
-        LinearLayout.LayoutParams ilp = new LinearLayout.LayoutParams((int) (76 * d), (int) (76 * d));
-        ilp.gravity = Gravity.CENTER_HORIZONTAL;
-        page.addView(icon, ilp);
+        // a real screenshot of the feature (guide_01 ... guide_12), in a rounded card
+        int shot = ctx.getResources().getIdentifier(
+                String.format(java.util.Locale.ROOT, "guide_%02d", position + 1), "drawable", ctx.getPackageName());
+        if (shot != 0) {
+            ImageView image = new ImageView(ctx);
+            image.setImageResource(shot);
+            image.setAdjustViewBounds(true);
+            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            image.setBackgroundResource(R.drawable.card_background);
+            int ip = (int) (6 * d);
+            image.setPadding(ip, ip, ip, ip);
+            image.setClipToOutline(true);
+            LinearLayout.LayoutParams ilp = full();
+            page.addView(image, ilp);
+        } else {
+            ImageView icon = new ImageView(ctx);
+            icon.setImageResource(ICONS[position % ICONS.length]);
+            icon.setImageTintList(android.content.res.ColorStateList.valueOf(ctx.getColor(R.color.kk_primary)));
+            icon.setBackgroundResource(R.drawable.kk_icon_circle);
+            int ip = (int) (18 * d);
+            icon.setPadding(ip, ip, ip, ip);
+            LinearLayout.LayoutParams ilp = new LinearLayout.LayoutParams((int) (76 * d), (int) (76 * d));
+            ilp.gravity = Gravity.CENTER_HORIZONTAL;
+            page.addView(icon, ilp);
+        }
 
         TextView step = text(ctx.getString(R.string.guide_step, position + 1, getCount()), 13, R.color.kk_text_secondary);
         step.setGravity(Gravity.CENTER);
