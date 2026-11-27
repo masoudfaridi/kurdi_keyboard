@@ -406,6 +406,6 @@
     <string name="title_space_hold">مدت نگه داشتن برای نمایش زبان‌ها (میلی‌ثانیه)</string>
     <string name="top_row_hidden">پیش‌بینی کلمات غیرفعال شد</string>
     <string name="top_row_shown">پیش‌بینی کلمات فعال شد</string>
-    <string name="summary_enter_hold">نکته: با نگه داشتن کلید Enter، نوار پیش‌بینی و ابزار پنهان یا نمایش داده می‌شود</string>
+    <string name="summary_enter_hold">نکته: با نگه داشتن کلید پایین سمت چپ (ایموجی)، نوار پیش‌بینی و ابزار پنهان یا نمایش داده می‌شود</string>
 </resources>
 

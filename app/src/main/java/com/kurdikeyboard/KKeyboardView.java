@@ -288,11 +288,10 @@ public class KKeyboardView extends KeyboardView {
 
 
              return true;
-        }else if (key.codes[0] == 10) {
+        }else if (key.codes[0] == -3) {
+            // bottom-left key: tap = emoji, long press = hide / show suggestions and tools row
             getOnKeyboardActionListener().onKey(KEYCODE_TOGGLE_TOP_ROW, null);
             return true;
-        }else if (key.codes[0] == -3) {
-            return true; // the emoji key opens emoji on tap; a long press does nothing
         }
 
 
@@ -1618,7 +1617,7 @@ public class KKeyboardView extends KeyboardView {
     // =====================================================================
 
     static final int KEYCODE_LANG_EN = -171, KEYCODE_LANG_FA = -172, KEYCODE_LANG_KR = -173;
-    /** long press on Enter: hide / show the suggestion strip and tools row */
+    /** long press on the bottom-left (emoji) key: hide / show the suggestion strip and tools row */
     static final int KEYCODE_TOGGLE_TOP_ROW = -174;
 
     private boolean mSpaceTracking, mSpaceCursor, mSpaceLangOpen;
