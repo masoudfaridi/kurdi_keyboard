@@ -267,6 +267,12 @@ public class kurdikeyboard extends InputMethodService
     public void onCreate() {
         super.onCreate();
         mPredict = PredictionEngine.get(this);
+        // 2.0: the key preview is on by default (it was off in 2017); turn it on once for everyone
+        SharedPreferences migratePrefs = getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE);
+        if (!migratePrefs.getBoolean("migrated_key_preview_v2", false)) {
+            migratePrefs.edit().putBoolean(getString(R.string.prefnotshowpreview), true)
+                    .putBoolean("migrated_key_preview_v2", true).apply();
+        }
         //trialall
       // trialversionmonth10isend=false;
          mInputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
@@ -3302,7 +3308,7 @@ private void setCurrentLanguage(){
                     || primaryCode == 8204) {
                 // mInputView.setPreviewEnabled(false);
             } else {
-                mInputView.setPreviewEnabled(true);
+                // 2.0: KKeyboardView draws its own themed preview
             }
         }
 

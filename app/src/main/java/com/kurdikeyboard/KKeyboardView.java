@@ -917,6 +917,12 @@ public class KKeyboardView extends KeyboardView {
     public boolean onTouchEvent(android.view.MotionEvent me) {
         mLastTouchX = me.getX();
         mLastTouchY = me.getY();
+        boolean consumed = onTouchEventInner(me);
+        trackKeyPreview(me); // after the gesture handlers, so swipe / slide / space states are known
+        return consumed;
+    }
+
+    private boolean onTouchEventInner(android.view.MotionEvent me) {
         if (mSlideActive) {
             int a = me.getActionMasked();
             boolean r = handleSlideTouch(me);
@@ -1463,6 +1469,7 @@ public class KKeyboardView extends KeyboardView {
         }
         mSlideActive = true;
         mSlideMoved = false;
+        hideKeyPreview();
         return true;
     }
 
@@ -1802,6 +1809,153 @@ public class KKeyboardView extends KeyboardView {
                 return false;
             default:
                 return mSpaceCursor || mSpaceLangOpen;
+        }
+    }
+
+    // =====================================================================
+    // Key preview (2.0): the pressed letter shown large above the finger, in the theme's
+    // colors. Replaces KeyboardView's old preview. Setting: "show key while typing".
+    // =====================================================================
+
+    private android.widget.PopupWindow mPreviewWindow;
+    private KeyPreviewView mPreviewView;
+    private Key mPreviewKey;
+    private final Runnable mHidePreview = new Runnable() {
+        @Override public void run() { hideKeyPreview(); }
+    };
+
+    private boolean keyPreviewEnabled() {
+        return getContext().getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE)
+                .getBoolean(getContext().getString(R.string.prefnotshowpreview), true);
+    }
+
+    /** text shown for a key, or null for keys without a preview (function keys) */
+    private String previewText(Key key) {
+        if (key == null || key.label == null || key.codes == null || key.codes.length == 0) return null;
+        int code = key.codes[0];
+        if (code <= 0 || code == 32 || code == 10) return null;
+        String s = key.label.toString();
+        if (s.isEmpty() || s.length() > 3) return null;
+        return isShifted() ? s.toUpperCase() : s;
+    }
+
+    private void showKeyPreview(Key key) {
+        mSpaceHandler.removeCallbacks(mHidePreview);
+        String text = previewText(key);
+        if (text == null || !keyPreviewEnabled()) {
+            hideKeyPreview();
+            return;
+        }
+        if (key == mPreviewKey && mPreviewWindow != null && mPreviewWindow.isShowing()) return;
+        mPreviewKey = key;
+        float d = getResources().getDisplayMetrics().density;
+        int w = (int) Math.max(key.width * 1.25f, 44 * d);
+        int h = (int) Math.max(key.height * 1.35f, 58 * d);
+        if (mPreviewView == null) {
+            mPreviewView = new KeyPreviewView(getContext());
+            mPreviewWindow = new android.widget.PopupWindow(mPreviewView);
+            mPreviewWindow.setTouchable(false);
+            mPreviewWindow.setClippingEnabled(false);
+            mPreviewWindow.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(0));
+            mPreviewWindow.setAnimationStyle(0);
+        }
+        mPreviewView.theme = currentTheme();
+        mPreviewView.text = text;
+        mPreviewView.invalidate();
+        int x = (int) (key.x + key.width / 2f - w / 2f);
+        x = Math.max(0, Math.min(getWidth() - w, x));
+        int y = (int) (key.y - h + 6 * d);
+        int[] loc = new int[2];
+        getLocationInWindow(loc);
+        // stay inside the keyboard window (nothing is drawn above it): over the tools row if needed
+        y = Math.max(y, -loc[1]);
+        try {
+            if (mPreviewWindow.isShowing()) {
+                mPreviewWindow.update(loc[0] + x, loc[1] + y, w, h);
+            } else {
+                mPreviewWindow.setWidth(w);
+                mPreviewWindow.setHeight(h);
+                mPreviewWindow.showAtLocation(this, android.view.Gravity.NO_GRAVITY, loc[0] + x, loc[1] + y);
+            }
+        } catch (RuntimeException ignored) {
+        }
+    }
+
+    /** hides the preview a moment later, so a quick tap is still visible */
+    private void hideKeyPreviewSoon() {
+        mSpaceHandler.removeCallbacks(mHidePreview);
+        mSpaceHandler.postDelayed(mHidePreview, 70);
+    }
+
+    private void hideKeyPreview() {
+        mSpaceHandler.removeCallbacks(mHidePreview);
+        mPreviewKey = null;
+        if (mPreviewWindow != null && mPreviewWindow.isShowing()) {
+            try { mPreviewWindow.dismiss(); } catch (RuntimeException ignored) {}
+        }
+    }
+
+    /** keeps the preview in step with the finger (called for every touch event) */
+    private void trackKeyPreview(android.view.MotionEvent me) {
+        switch (me.getActionMasked()) {
+            case android.view.MotionEvent.ACTION_DOWN:
+            case android.view.MotionEvent.ACTION_MOVE:
+                if (mSlideActive || mSwiping || mSpaceCursor || mSpaceLangOpen) {
+                    hideKeyPreview();
+                } else {
+                    showKeyPreview(keyAt(me.getX(), me.getY()));
+                }
+                break;
+            case android.view.MotionEvent.ACTION_POINTER_DOWN:
+                showKeyPreview(keyAt(me.getX(me.getActionIndex()), me.getY(me.getActionIndex())));
+                break;
+            case android.view.MotionEvent.ACTION_UP:
+            case android.view.MotionEvent.ACTION_POINTER_UP:
+                hideKeyPreviewSoon();
+                break;
+            case android.view.MotionEvent.ACTION_CANCEL:
+                hideKeyPreview();
+                break;
+        }
+    }
+
+    private static final class KeyPreviewView extends View {
+        KeyboardTheme theme;
+        String text;
+        private final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final android.graphics.RectF r = new android.graphics.RectF();
+
+        KeyPreviewView(Context c) { super(c); }
+
+        @Override
+        protected void onDraw(Canvas c) {
+            if (theme == null || text == null) return;
+            float d = getResources().getDisplayMetrics().density;
+            r.set(0, 0, getWidth(), getHeight() - 2 * d);
+            p.setStyle(Paint.Style.FILL);
+            p.setColor(0x40000000);
+            r.offset(0, 2 * d);
+            c.drawRoundRect(r, 12 * d, 12 * d, p);
+            r.offset(0, -2 * d);
+            int bg = theme.isDark() ? theme.keyPressed : 0xFFFFFFFF;
+            p.setColor(bg);
+            c.drawRoundRect(r, 12 * d, 12 * d, p);
+            if (theme.stroke != 0) {
+                p.setStyle(Paint.Style.STROKE);
+                p.setStrokeWidth(d);
+                p.setColor(theme.stroke);
+                c.drawRoundRect(r, 12 * d, 12 * d, p);
+                p.setStyle(Paint.Style.FILL);
+            }
+            p.setColor(theme.text);
+            p.setTextAlign(Paint.Align.CENTER);
+            float size = getHeight() * 0.48f;
+            p.setTextSize(size);
+            while (p.measureText(text) > getWidth() - 8 * d && size > 10 * d) {
+                size -= d;
+                p.setTextSize(size);
+            }
+            c.drawText(text, getWidth() / 2f, r.height() * 0.5f + size / 3f, p);
         }
     }
 }

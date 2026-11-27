@@ -296,8 +296,7 @@
             android:key="@string/prefnotshowpreview"
             android:title="@string/titleprefnotshowpreview"
             android:summary="@string/summaryprefnotshowpreview"
-            android:checked="false"
-            android:defaultValue="false"
+            android:defaultValue="true"
             />
 
 
