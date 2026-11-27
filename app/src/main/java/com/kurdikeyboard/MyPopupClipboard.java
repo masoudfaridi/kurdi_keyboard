@@ -625,7 +625,7 @@ public class MyPopupClipboard extends PopupWindow {
         }
         ic.beginBatchEdit();
 
-        ic.commitText(text, 0);
+        ic.commitText(text, 1); // cursor after the text (was 0: before it)
         ic.endBatchEdit();
 
 

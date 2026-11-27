@@ -1850,7 +1850,7 @@ public class kurdikeyboard extends InputMethodService
      //   Toast.makeText(getBaseContext(),"committyped",Toast.LENGTH_LONG).show();
 
         if (mComposing.length() > 0) {
-            inputConnection.commitText(mComposing, mComposing.length());
+            inputConnection.commitText(mComposing, 1);
             mComposing.setLength(0);
 
         }
@@ -1911,100 +1911,35 @@ public class kurdikeyboard extends InputMethodService
 
 
         switch (keyCode) {
-            case '\n':
-                //keyDownUp(KeyEvent.KEYCODE_ENTER);
-                final int options = this.getCurrentInputEditorInfo().imeOptions;
-               // final int actionId = options & EditorInfo.IME_MASK_ACTION;
-                final int actionId =options&(EditorInfo.IME_MASK_ACTION
-                        |EditorInfo.IME_FLAG_NO_ENTER_ACTION);
-                switch (  actionId) {
-                        case EditorInfo.IME_ACTION_SEARCH:
-                            sendDefaultEditorAction(true);
-                     //     toastM("search");
-                        break;
-                    case EditorInfo.IME_ACTION_GO:
-                        sendDefaultEditorAction(true);
-                    //  toastM("go");
-                        break;
-                    case EditorInfo.IME_ACTION_SEND:
-                        sendDefaultEditorAction(true);
-                        getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
-                        getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER));
-
-                      //  toastM("send");
-                        break;
-                    case EditorInfo.IME_ACTION_DONE:
-
-                      // handledone();
-                        /*
-                        if(( options)==30198994) {
-                            sendDefaultEditorAction(true);
-                            getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
-
-                            toastM("Imeoptions is: 301" );
-                        }else {
-
-                            keyDownUp(KeyEvent.KEYCODE_ENTER);
-                        }*/
-                       // toastM("Imeoptions is:" +actionId);
-                        //getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
-                        //getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER));
-
-
-                        //getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
-                        sendDefaultEditorAction(true);
-                        //getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER));
-
-                       // toastM("done");
-                       break;
-                    case EditorInfo.IME_ACTION_NEXT:
-                        sendDefaultEditorAction(true);
-                        getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
-
-                       // toastM("next");
-                        break;
-
-                    case EditorInfo.IME_ACTION_PREVIOUS:
-                        sendDefaultEditorAction(true);
-                        getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
-
-                      //  toastM("previse");
-                        break;
-
-                    case EditorInfo.IME_ACTION_NONE:
-                        sendDefaultEditorAction(true);
-                        getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
-
-                      //  toastM("none");
-                        break;
-                    case EditorInfo.IME_ACTION_UNSPECIFIED:
-                        sendDefaultEditorAction(true);
-
-                     // toastM("none");
-                        break;
-
-
-
-                    default:
-                     // toastM("default");
-
-                      getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
-                 }
-
-                  break;
-
+            case '\n': {
+                // The 2017 code sent ENTER key-downs without key-ups for several actions,
+                // sent SEND twice (editor action + Enter), and never typed a newline in
+                // multi-line fields that declare an action.
+                EditorInfo ei = getCurrentInputEditorInfo();
+                int options = ei != null ? ei.imeOptions : 0;
+                int action = options & EditorInfo.IME_MASK_ACTION;
+                boolean noEnterAction = (options & EditorInfo.IME_FLAG_NO_ENTER_ACTION) != 0;
+                boolean multiLine = ei != null
+                        && (ei.inputType & InputType.TYPE_TEXT_FLAG_MULTI_LINE) != 0;
+                if (!noEnterAction && !multiLine && action != EditorInfo.IME_ACTION_NONE
+                        && action != EditorInfo.IME_ACTION_UNSPECIFIED) {
+                    if (!getCurrentInputConnection().performEditorAction(action)) {
+                        keyDownUp(KeyEvent.KEYCODE_ENTER);
+                    }
+                } else {
+                    keyDownUp(KeyEvent.KEYCODE_ENTER);
+                }
+                break;
+            }
 
             default:
                // toastM("spacedefault");
                 if(keyCode==' '){
-                toastM("space");
                 onKey(8203,null);
             }
                 if (keyCode >= '0' && keyCode <= '9') {
-                    toastM("0---9");
                     keyDownUp(keyCode - '0' + KeyEvent.KEYCODE_0);
                 } else {
-                    toastM("separator");
                     commitTyped(getCurrentInputConnection());
                     getCurrentInputConnection().commitText(String.valueOf((char) keyCode), 1);
                 }
@@ -2048,14 +1983,19 @@ public class kurdikeyboard extends InputMethodService
 
             //  toastM("sound: "+volsound);
             // float volume=(float)volsound;
-            float volume=volsound/10.0f;
+            float volume = volsound > 0 ? volsound / 10.0f : -1f; // -1 = system click volume
             playClick(primaryCode,volume);
 
         }
 
         InputConnection ic = getCurrentInputConnection();
-        // used by the cursor / select / copy keys; null when the editor does not support it
-        ExtractedText et = ic.getExtractedText(new ExtractedTextRequest(), 0);
+        // Only the select / copy / cut / paste / cursor keys need the field's text. Reading it
+        // on every key press (as in 2017) made typing slow in long texts.
+        ExtractedText et = null;
+        if (primaryCode <= KKeyboardView.KEYCODE_SELECTALL && primaryCode >= KKeyboardView.KEYCODE_PASTE) {
+            et = ic.getExtractedText(new ExtractedTextRequest(), 0);
+        }
+        final boolean etReal = et != null;
         if (et == null) et = new ExtractedText();
 
 
@@ -2262,30 +2202,11 @@ public class kurdikeyboard extends InputMethodService
 
         }else if(primaryCode==KKeyboardView.KEYCODE_SELECTALL){
 
-           // getCurrentInputConnection().
-            CharSequence totaltext;
-            ic.beginBatchEdit();
-
-            endETselection=et.selectionEnd;
-            startETselection=et.selectionEnd;
-            if(ic.getSelectedText(0)==null){
-                totaltext=  ic.getTextBeforeCursor(999999,0).toString();
-                int lenB=totaltext.length();
-                totaltext=ic.getTextAfterCursor(999999,0).toString();
-                int lenA=totaltext.length();
-                int lenTotal=lenA+lenB;
-
-                ic.setSelection(0,0);
-                ic.setSelection(0,lenTotal);
-                //   Toast.makeText(getBaseContext(),"start: "+et.selectionStart +"  end: "+et.selectionEnd
-                //         ,Toast.LENGTH_SHORT).show();
-                //   Toast.makeText(getBaseContext(),"Ù…ØªÙ† Ø§Ù†ØªØ®Ø§Ø¨ Ø´Ø¯"
-                //          ,Toast.LENGTH_SHORT).show();
+            endETselection = et.selectionEnd;
+            startETselection = et.selectionEnd;
+            if (!ic.performContextMenuAction(android.R.id.selectAll)) {
+                toastM(getString(R.string.select_all_unsupported));
             }
-            ic.endBatchEdit();
-
-
-
 
           /*  CharSequence totaltextbeforcursor;
             CharSequence totalaftercursor;
@@ -2328,8 +2249,7 @@ public class kurdikeyboard extends InputMethodService
             ic.beginBatchEdit();
             strCopytemp=ic.getSelectedText(0).toString();
             setClipboard(strCopytemp);
-                ic.commitText("", et.selectionStart);
-                ic.setSelection(et.selectionStart,et.selectionStart);
+                ic.commitText("", 1);
             ic.endBatchEdit();
 
             Toast.makeText(getBaseContext(),"برش"
@@ -2339,38 +2259,9 @@ public class kurdikeyboard extends InputMethodService
 
 
         }else if(primaryCode==KKeyboardView.KEYCODE_CURSOR_F) {
-
-            if(ic.getSelectedText(0)!=null){
-                //toastM("start: "+et.selectionStart                +"end:   "+et.selectionEnd);
-                ic.beginBatchEdit();
-                ic.setSelection(et.selectionStart, et.selectionEnd+1);
-                ic.endBatchEdit();
-            }else{
-
-                ic.beginBatchEdit();
-
-
-                ic.setSelection(et.selectionEnd+1,et.selectionEnd+1);
-                ic.endBatchEdit();
-            }
-
-
+            moveCursor(ic, et, etReal, +1);
         }else if(primaryCode==KKeyboardView.KEYCODE_CURSOR_B) {
-
-            if(ic.getSelectedText(0)!=null){
-                //toastM("start: "+et.selectionStart                        +"end:   "+et.selectionEnd);
-                ic.beginBatchEdit();
-                ic.setSelection(et.selectionStart, et.selectionEnd - 1);
-                ic.endBatchEdit();
-            }else{
-            ic.beginBatchEdit();
-
-
-            ic.setSelection(et.selectionStart - 1, et.selectionStart - 1);
-            ic.endBatchEdit();
-        }
-
-
+            moveCursor(ic, et, etReal, -1);
         }else if(primaryCode==KKeyboardView.KEYCODE_SYMBOLS_SWITCH){
         handlesymboleswitch();
 
@@ -3212,7 +3103,7 @@ public class kurdikeyboard extends InputMethodService
         }
         if(ic.getSelectedText(0)==null) {
             Toast.makeText(getBaseContext(),"متنی انتخاب نشده",Toast.LENGTH_SHORT).show();
-
+            ic.endBatchEdit();
             return;
 
         }
@@ -3236,7 +3127,7 @@ public class kurdikeyboard extends InputMethodService
         if (mComposing.length() > 0) {
             commitTyped(ic);
         }
-        ic.commitText(text, 0);
+        ic.commitText(text, 1); // cursor after the text (was 0: before it)
         ic.endBatchEdit();
         // updateShiftKeyState(getCurrentInputEditorInfo());
 
@@ -3360,7 +3251,7 @@ public class kurdikeyboard extends InputMethodService
 
             getCurrentInputConnection().finishComposingText();
             getCurrentInputConnection().commitText(
-                    String.valueOf((char) primaryCode), 1);
+                    new String(Character.toChars(primaryCode)), 1);
         }
 
         if(isAlphabet(primaryCode)){
@@ -4123,24 +4014,33 @@ private void setCurrentLanguage(){
         }
     }
     public void paste() {
-        int sdk = Build.VERSION.SDK_INT;
-        if (sdk < Build.VERSION_CODES.HONEYCOMB) {
-            android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            if (clipboard.getText() != null) {
-                onText(clipboard.getText());
-               }else {
-                Toast.makeText(getBaseContext(),"متنی برا چسپاندن وجود ندارد"
-                        ,Toast.LENGTH_SHORT).show();
-            }
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        android.content.ClipData clip = clipboard != null ? clipboard.getPrimaryClip() : null;
+        CharSequence text = clip != null && clip.getItemCount() > 0
+                ? clip.getItemAt(0).coerceToText(this) : null;
+        if (text != null && text.length() > 0) {
+            onText(text);
         } else {
-            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            android.content.ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
-            if (item.getText() != null) {
-                onText(item.getText());
-             }else {
-                Toast.makeText(getBaseContext(),"متنی برا چسپاندن وجود ندارد"
-                        ,Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(getBaseContext(), "متنی برا چسپاندن وجود ندارد", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /** Moves the cursor (or the end of the selection) one character forward/back. */
+    private void moveCursor(InputConnection ic, ExtractedText et, boolean etReal, int dir) {
+        if (!etReal) {
+            keyDownUp(dir > 0 ? KeyEvent.KEYCODE_DPAD_RIGHT : KeyEvent.KEYCODE_DPAD_LEFT);
+            return;
+        }
+        int base = et.startOffset;
+        int len = et.text != null ? base + et.text.length() : Integer.MAX_VALUE;
+        int start = base + et.selectionStart;
+        int end = base + et.selectionEnd;
+        if (start != end) {
+            end = Math.max(start, Math.min(len, end + dir));
+            ic.setSelection(start, end);
+        } else {
+            int p = Math.max(0, Math.min(len, start + dir));
+            ic.setSelection(p, p);
         }
     }
 

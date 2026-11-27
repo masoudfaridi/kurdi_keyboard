@@ -373,5 +373,6 @@
     <string name="setup_enable_toast">کیبورد کردی را روشن کنید و برگردید</string>
     <string name="try_hint">اینجا تایپ کنید و کیبورد را امتحان کنید…</string>
     <string name="open_settings">ورود به تنظیمات</string>
+    <string name="select_all_unsupported">این برنامه انتخاب همه متن را پشتیبانی نمی‌کند</string>
 </resources>
 
