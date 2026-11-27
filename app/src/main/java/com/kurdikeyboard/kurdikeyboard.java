@@ -1267,7 +1267,7 @@ public class kurdikeyboard extends InputMethodService
 
 
         mCurKeyboard.setImeOptions(getResources(), attribute);
-        boolean booleanchangetheme=  preferenceKeyboard.getBoolean(getString(R.string.prefchangethemboolean),  false);
+        boolean booleanchangetheme = false; // 2017 "tick before changing the theme": no longer needed
 
         if(booleanchangetheme || !themeSignature().equals(mBuiltThemeSignature)) {
             setInputView(onCreateInputView());
@@ -4148,7 +4148,9 @@ private void setCurrentLanguage(){
                 + preferenceKeyboard.getBoolean(getString(R.string.prefimagefrbackground), false) + "|"
                 + preferenceKeyboard.getString(getString(R.string.prefkeypathimage), "") + "|"
                 + preferenceKeyboard.getBoolean(getString(R.string.preflanguage_farsi), true) + "|"
-                + preferenceKeyboard.getBoolean(getString(R.string.preflanguage_kurdi), false);
+                + preferenceKeyboard.getBoolean(getString(R.string.preflanguage_kurdi), false) + "|"
+                + preferenceKeyboard.getBoolean(getString(R.string.preftoolbarsivkeyboard), false) + "|"
+                + preferenceKeyboard.getBoolean(getString(R.string.preftoolbarsivkeyboardsetting), false);
     }
 
     // ---------------------------------------------------------------- emoji panel (2.0)

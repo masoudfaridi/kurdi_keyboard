@@ -26,7 +26,6 @@ import com.farsitel.bazaar.IUpdateCheckService;
 public class ImePreferences extends PreferenceActivity
 {
     private static SharedPreferences preferenceKeyboard;
-    private CheckBoxPreference checkboxchangetheme;
     private int oldversion=0;
     private int newvarsion=1;
     IUpdateCheckService service;
@@ -46,8 +45,12 @@ public class ImePreferences extends PreferenceActivity
         manager.setSharedPreferencesMode(MODE_PRIVATE);
         addPreferencesFromResource(R.xml.ime_preferences);
 
-        checkboxchangetheme=
-        (CheckBoxPreference)manager.findPreference(getString(R.string.prefchangethemboolean));
+        // 2.x: the keyboard notices setting changes itself (the "tick before changing the
+        // theme" checkbox of 2017 is gone)
+        Preference about = manager.findPreference(getString(R.string.pref_version));
+        if (about != null) {
+            about.setTitle(getString(R.string.s_about_title) + "  " + BuildConfig.VERSION_NAME);
+        }
        // if(checkboxchangetheme.isChecked()){toastM("checked");}
                 //findPreference("myPreference");
 
@@ -58,9 +61,6 @@ public class ImePreferences extends PreferenceActivity
             Toast.makeText(ImePreferences.this.getApplicationContext(),
             eio.getMessage(),Toast.LENGTH_LONG).show();
 
-        }
-        if(!checkboxchangetheme.isChecked()){
-            checkboxchangetheme.setChecked(true);
         }
 
         Preference clearHistory = manager.findPreference(getString(R.string.prefclearhistory));
@@ -82,9 +82,6 @@ public class ImePreferences extends PreferenceActivity
     @Override
     public void onPause(){
         super.onPause();
-        if(checkboxchangetheme.isChecked()){
-            checkboxchangetheme.setChecked(false);
-        }
     }
     private void initService() {
        // Log.i(TAG, "initService()");

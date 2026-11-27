@@ -82,12 +82,12 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
     @Override
     protected View onCreateView(ViewGroup parent){
         super.onCreateView(parent);
-        RelativeLayout layout =  null;
+        android.view.ViewGroup layout =  null;
 
         try {
             LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            layout = (RelativeLayout)mInflater.inflate(R.layout.seek_bar_preference, parent, false);
+            layout = (android.view.ViewGroup) mInflater.inflate(R.layout.seek_bar_preference, parent, false);
         }
         catch(Exception e)
         {
@@ -133,7 +133,7 @@ public class SeekBarPreference extends Preference implements OnSeekBarChangeList
     protected void updateView(View view) {
 
         try {
-            RelativeLayout layout = (RelativeLayout)view;
+            View layout = view;
 
             mStatusText = (TextView)layout.findViewById(R.id.seekBarPrefValue);
             mStatusText.setText(String.valueOf(mCurrentValue));

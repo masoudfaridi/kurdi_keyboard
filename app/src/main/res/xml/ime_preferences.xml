@@ -1,686 +1,280 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2011 Google Inc.
-
-     Licensed under the Apache License, Version 2.0 (the "License");
-     you may not use this file except in compliance with the License.
-     You may obtain a copy of the License at
-
-          http://www.apache.org/licenses/LICENSE-2.0
-
-     Unless required by applicable law or agreed to in writing, software
-     distributed under the License is distributed on an "AS IS" BASIS,
-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     See the License for the specific language governing permissions and
-     limitations under the License.
+<!--
+  Keyboard settings (2.x). Every key here is read by the keyboard; values live in the
+  "MySharedPreference" file (ImePreferences sets that name).
 -->
-
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-        android:title="@string/settings_name"
+    xmlns:kurdikeyboard="http://kurdikeyboard.com"
     android:key="Setting"
-    android:summary=" تنضیمات ">
+    android:title="@string/settings_name">
 
+    <!-- ============================== appearance -->
     <PreferenceScreen
-        android:icon="@drawable/ic_kk_keyboard"
-        android:title="@string/settings_space_title"
-        android:key="settingspace"
-        android:summary="@string/settings_space_summary">
-        <PreferenceCategory android:title="@string/settings_space_title">
-            <CheckBoxPreference
-                android:key="@string/prefspacecursor"
-                android:title="@string/title_space_cursor"
-                android:summary="@string/summary_space_cursor"
-                android:defaultValue="true" />
+        android:icon="@drawable/ic_kk_palette"
+        android:key="settings_look"
+        android:summary="@string/s_look_summary"
+        android:title="@string/s_look_title">
+
+        <PreferenceCategory android:title="@string/s_cat_theme">
+            <Preference
+                android:key="theme_picker"
+                android:summary="@string/theme_picker_summary"
+                android:title="@string/title_list_theme_selector">
+                <intent
+                    android:targetClass="com.kurdikeyboard.ThemePickerActivity"
+                    android:targetPackage="com.kurdikeyboard" />
+            </Preference>
             <com.kurdikeyboard.SeekBarPreference
-                xmlns:kurdikeyboard="http://kurdikeyboard.com"
-                android:key="@string/prefspacecursorspeed"
-                android:title="@string/title_space_cursor_speed"
-                android:dependency="@string/prefspacecursor"
-                android:defaultValue="5"
-                android:max="10"
-                kurdikeyboard:min="1" />
+                android:defaultValue="116"
+                android:key="@string/prefseekbarfont"
+                android:max="150"
+                android:title="@string/s_font_size"
+                kurdikeyboard:min="50" />
+        </PreferenceCategory>
+
+        <PreferenceCategory android:title="@string/s_cat_preview">
             <CheckBoxPreference
-                android:key="@string/prefspacelang"
-                android:title="@string/title_space_lang"
-                android:summary="@string/summary_space_lang"
-                android:defaultValue="true" />
+                android:defaultValue="true"
+                android:key="@string/prefnotshowpreview"
+                android:summary="@string/s_preview_summary"
+                android:title="@string/s_preview_title" />
             <com.kurdikeyboard.SeekBarPreference
-                xmlns:kurdikeyboard="http://kurdikeyboard.com"
-                android:key="@string/prefspaceholdms"
-                android:title="@string/title_space_hold"
-                android:dependency="@string/prefspacelang"
-                android:defaultValue="450"
-                android:max="1000"
-                kurdikeyboard:min="250"
-                kurdikeyboard:interval="50" />
+                android:defaultValue="24"
+                android:dependency="@string/prefnotshowpreview"
+                android:key="@string/prefpreviewgap"
+                android:max="80"
+                android:title="@string/title_preview_gap"
+                kurdikeyboard:min="0" />
+        </PreferenceCategory>
+
+        <PreferenceCategory android:title="@string/s_cat_background">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="@string/prefimagefrbackground"
+                android:summary="@string/s_bg_summary"
+                android:title="@string/s_bg_title" />
+            <Preference
+                android:dependency="@string/prefimagefrbackground"
+                android:key="pick_background"
+                android:summary="@string/s_bg_pick_summary"
+                android:title="@string/s_bg_pick_title">
+                <intent
+                    android:targetClass="com.kurdikeyboard.ImagePickerActivity"
+                    android:targetPackage="com.kurdikeyboard" />
+            </Preference>
+            <com.kurdikeyboard.SeekBarPreference
+                android:defaultValue="100"
+                android:dependency="@string/prefimagefrbackground"
+                android:key="@string/prefseekbaropacitykey"
+                android:max="220"
+                android:title="@string/s_bg_opacity"
+                kurdikeyboard:min="40" />
+        </PreferenceCategory>
+
+        <PreferenceCategory android:title="@string/s_cat_toolbar">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="@string/preftoolbarsivkeyboard"
+                android:summary="@string/s_hide_ready_summary"
+                android:title="@string/s_hide_ready_title" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="@string/preftoolbarsivkeyboardsetting"
+                android:summary="@string/s_hide_gear_summary"
+                android:title="@string/s_hide_gear_title" />
         </PreferenceCategory>
     </PreferenceScreen>
 
+    <!-- ============================== prediction and swipe -->
     <PreferenceScreen
         android:icon="@drawable/ic_kk_sparkle"
-        android:title="@string/settings_prediction_title"
         android:key="settingprediction"
-        android:summary="@string/settings_prediction_summary">
+        android:summary="@string/settings_prediction_summary"
+        android:title="@string/settings_prediction_title">
         <PreferenceCategory android:title="@string/settings_prediction_title">
             <CheckBoxPreference
+                android:defaultValue="true"
                 android:key="@string/prefprediction"
-                android:title="@string/title_prediction"
                 android:summary="@string/summary_prediction"
-                android:defaultValue="true" />
+                android:title="@string/title_prediction" />
             <CheckBoxPreference
+                android:defaultValue="true"
                 android:key="@string/prefswipe"
-                android:title="@string/title_swipe"
                 android:summary="@string/summary_swipe"
-                android:defaultValue="true" />
+                android:title="@string/title_swipe" />
             <CheckBoxPreference
+                android:defaultValue="true"
                 android:key="@string/prefautospace"
-                android:title="@string/title_autospace"
                 android:summary="@string/summary_autospace"
-                android:defaultValue="true" />
+                android:title="@string/title_autospace" />
             <Preference
                 android:selectable="false"
                 android:summary="@string/summary_enter_hold" />
             <Preference
                 android:key="@string/prefclearhistory"
-                android:title="@string/title_clearhistory"
-                android:summary="@string/summary_clearhistory" />
+                android:summary="@string/summary_clearhistory"
+                android:title="@string/title_clearhistory" />
         </PreferenceCategory>
     </PreferenceScreen>
 
-
-
-
-    <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-        android:icon="@drawable/ic_kk_volume"
-        android:title="@string/settings_name_title_sound_vibrate"
-        android:key="@string/settingvibrate"
-        android:summary="@string/settingvibratesoudsummary">
-     <PreferenceCategory
-         android:title="@string/titlevibrate">
-        <CheckBoxPreference
-            android:key="@string/prefvibreh"
-            android:title="@string/titlevibre"
-            android:summary="@string/summaryvibre"
-            android:checked="true"
-            android:defaultValue="true"
-
-            />
-
-         <EditTextPreference
-
-
-                android:hint="@string/doubleclicknotwork"
-             android:title="@string/titleedittexttest" />
-     </PreferenceCategory>
-
-
-     <PreferenceCategory
-         android:title="@string/titlesound">
-         <CheckBoxPreference
-             android:key="@string/prefsound"
-             android:title="@string/titlesoundboxp"
-             android:summary="@string/summarysoundboxp"
-             android:checked="true"
-             android:defaultValue="true"
-             />
-
-         <EditTextPreference
-
-
-             android:hint="@string/doubleclicknotwork"
-             android:title="@string/titleedittexttest" />
-
-     </PreferenceCategory>
-
-
-
-
-
-    </PreferenceScreen>
-
-
-
-
-
-
-
-
-
-
-
-
-    <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-        android:icon="@drawable/ic_kk_palette"
-        android:title="@string/settings_name_title_theme_screen"
-        android:key="@string/settingthemepage"
-        android:summary="@string/settingthemesummary_screen">
-
-        <!--   android:title="@string/titleprefchangethemboolean"
-                        android:summary="@string/summaryprefchangethemboolean"
-
-                    -->
-        <PreferenceCategory
-            android:title="@string/titletheme_category">
-            <CheckBoxPreference
-            android:key="@string/prefchangethemboolean"
-            android:title="@string/titleprefchangethemboolean"
-            android:summary="@string/summaryprefchangethemboolean"
-            android:checked="false"
-            android:defaultValue="false"
-            />
-            <Preference
-                android:key="theme_picker"
-                android:title="@string/title_list_theme_selector"
-                android:summary="@string/theme_picker_summary">
-                <intent
-                    android:targetPackage="com.kurdikeyboard"
-                    android:targetClass="com.kurdikeyboard.ThemePickerActivity" />
-            </Preference>
-            <EditTextPreference
-
-                android:hint="@string/doubleclicknotwork"
-
-                android:title="@string/titleedittexttest" />
-
-
-        </PreferenceCategory>
-
-        <PreferenceCategory
-            android:title="@string/titletheme_category_font">
-
-            <com.kurdikeyboard.SeekBarPreference
-                xmlns:kurdikeyboard="http://kurdikeyboard.com"
-                android:key="@string/prefseekbarfont"
-                android:title="@string/settings_name_title_seekbar_font"
-                android:defaultValue="116"
-                android:max="150"
-                kurdikeyboard:min="50"
-
-                />
-
-            <EditTextPreference
-
-
-                android:hint="@string/doubleclicknotwork"
-                android:title="@string/titleedittexttest" />
-
-        </PreferenceCategory>
-
-        <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-            android:title="@string/settings_backgroundimagetitle"
-            android:key="Settingbackgroundimagekey"
-            android:summary="@string/settings_backgroundimagesummary">
-
-
-            <PreferenceCategory
-                android:title="@string/titletheme_category_backgroundimage"
-
-                >
-
-                <!-- bg-->
-                <CheckBoxPreference
-                    android:key="@string/prefimagefrbackground"
-                    android:title="@string/titleimagefrbackground"
-                    android:summary="@string/summaryprefimagefrbackground"
-                    android:checked="false"
-                    android:textColor="#ff0000"
-                    android:defaultValue="false"
-                    />
-
-
-                <Preference
-                    android:key="@string/pref_lmagepickerlunch"
-                    android:title="@string/settings_backgroundimagetitle"
-                    android:summary="@string/summarybg"
-                    >
-                    <intent
-                        android:action="android.intent.action.VIEW"
-                        android:targetPackage="com.kurdikeyboard"
-                        android:targetClass="com.kurdikeyboard.ImagePickerActivity"
-                        />
-                </Preference>
-                <com.kurdikeyboard.SeekBarPreference
-                    xmlns:kurdikeyboard="http://kurdikeyboard.com"
-                    android:key="@string/prefseekbaropacitykey"
-                    android:title="@string/settings_name_title_seekbar_opacitykey"
-                    android:defaultValue="100"
-                    android:max="220"
-                    kurdikeyboard:min="0"
-
-                    />
-
-                <EditTextPreference
-                    android:key="@string/prefkeypathimage"
-                    android:editable="false"
-                    android:text="@string/unknown"
-                    android:title="@string/addresspath" />
-
-                <EditTextPreference
-                    android:hint="@string/doubleclicknotwork"
-                    android:title="@string/titleedittexttest" />
-                <EditTextPreference
-                    android:text="@string/summarybg"
-                    android:editable="false"
-                    android:textColor="#ff0000"
-                    android:title="@string/summarybg" />
-            </PreferenceCategory>
-
-
-
-            </PreferenceScreen>
-
-
-        <PreferenceCategory
-            android:title="@string/titletoolbars_category">
-        <CheckBoxPreference
-            android:key="@string/preftoolbarsivkeyboard"
-            android:title="@string/titlepreftoolbarsivkeyboard"
-            android:summary="@string/summarypreftoolbars"
-            android:checked="false"
-            android:defaultValue="false"
-            />
-            <CheckBoxPreference
-                android:key="@string/preftoolbarsivkeyboardsetting"
-                android:title="@string/titlepreftoolbarsivkeyboardsetting"
-                android:summary="@string/summarypreftoolbarssetting"
-                android:checked="false"
-                android:defaultValue="false"
-                />
-
-
-
-
-        </PreferenceCategory>
-
-
-        <CheckBoxPreference
-            android:key="@string/prefnotshowpreview"
-            android:title="@string/titleprefnotshowpreview"
-            android:summary="@string/summaryprefnotshowpreview"
-            android:defaultValue="true"
-            />
-        <com.kurdikeyboard.SeekBarPreference
-            xmlns:kurdikeyboard="http://kurdikeyboard.com"
-            android:key="@string/prefpreviewgap"
-            android:title="@string/title_preview_gap"
-            android:dependency="@string/prefnotshowpreview"
-            android:defaultValue="24"
-            android:max="80"
-            kurdikeyboard:min="0" />
-
-
-
-    </PreferenceScreen>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <!-- ============================== space bar -->
     <PreferenceScreen
-        xmlns:android="http://schemas.android.com/apk/res/android"
-            android:icon="@drawable/ic_kk_text_size"
-        android:title="@string/fontsetting"
-             android:key="@string/fontsettingall"
-             android:summary="@string/fontsettingsummary">
-
-
-        <PreferenceCategory
-        android:title="@string/titleclipboardfont">
-
-        <com.kurdikeyboard.SeekBarPreference
-            xmlns:kurdikeyboard="http://kurdikeyboard.com"
-            android:key="@string/prefseekbarfontclipbooard"
-            android:title="@string/settings_name_title_seekbar_clipboard"
-            android:defaultValue="72"
-            android:max="100"
-            kurdikeyboard:min="0"
-            />
-            <EditTextPreference
-
-
-                android:hint="@string/doubleclicknotwork"
-                android:title="@string/titleedittexttest" />
-
-    </PreferenceCategory>
-
-
-        <PreferenceCategory
-            android:title="@string/titlereadysentencesfont">
-
+        android:icon="@drawable/ic_kk_keyboard"
+        android:key="settingspace"
+        android:summary="@string/settings_space_summary"
+        android:title="@string/settings_space_title">
+        <PreferenceCategory android:title="@string/settings_space_title">
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="@string/prefspacecursor"
+                android:summary="@string/summary_space_cursor"
+                android:title="@string/title_space_cursor" />
             <com.kurdikeyboard.SeekBarPreference
-                xmlns:kurdikeyboard="http://kurdikeyboard.com"
-                android:key="@string/prefseekbarfontreadysentences"
-                android:title="@string/settings_name_title_seekbar_readysentences"
-                android:defaultValue="72"
-                android:max="100"
-                kurdikeyboard:min="0"
-                />
-            <EditTextPreference
-
-                android:hint="@string/doubleclicknotwork"
-
-                android:title="@string/titleedittexttest" />
-
-        </PreferenceCategory>
-
-
-
-        <PreferenceCategory
-            android:title="@string/titlecontactsfont">
-
+                android:defaultValue="5"
+                android:dependency="@string/prefspacecursor"
+                android:key="@string/prefspacecursorspeed"
+                android:max="10"
+                android:title="@string/title_space_cursor_speed"
+                kurdikeyboard:min="1" />
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="@string/prefspacelang"
+                android:summary="@string/summary_space_lang"
+                android:title="@string/title_space_lang" />
             <com.kurdikeyboard.SeekBarPreference
-                xmlns:kurdikeyboard="http://kurdikeyboard.com"
-                android:key="@string/prefseekbarfontcontacts"
-                android:title="@string/settings_name_title_seekbar_contacts"
-                android:defaultValue="72"
-                android:max="100"
-                kurdikeyboard:min="0"
-                />
-            <EditTextPreference
-
-                android:hint="@string/doubleclicknotwork"
-
-                android:title="@string/titleedittexttest" />
+                android:defaultValue="450"
+                android:dependency="@string/prefspacelang"
+                android:key="@string/prefspaceholdms"
+                android:max="1000"
+                android:title="@string/title_space_hold"
+                kurdikeyboard:interval="50"
+                kurdikeyboard:min="250" />
         </PreferenceCategory>
-
     </PreferenceScreen>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    <!-- ============================== languages -->
+    <PreferenceScreen
         android:icon="@drawable/ic_kk_language"
-        android:title="@string/settings_name_title_language"
+        android:key="settings_languages"
+        android:summary="@string/s_lang_summary"
+        android:title="@string/s_lang_title">
 
-        android:summary="@string/settinglanguagesummary">
-        <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-            android:title="@string/settings_name_title_language_kurdi"
-
-            >
-        <PreferenceCategory
-            android:title="@string/titlelanguavekurdi">
+        <PreferenceCategory android:title="@string/s_cat_languages">
             <CheckBoxPreference
-                android:key="@string/preflanguage_kurdi"
-                android:title="@string/titlelanguagekurdi"
-                android:summary="@string/summarykurdi"
-                android:defaultValue="false"
-
-                />
-            <CheckBoxPreference
-                android:key="@string/preflanguage_kurdi_extend"
-                android:title="@string/titlelanguagekurdi_extend"
-                android:summary="@string/summarykurdi_extend"
-                android:checked="false"
-                android:defaultValue="false"
-
-                />
-
-            <EditTextPreference
-
-
-                android:hint="@string/doubleclicknotwork"
-                android:title="@string/titleedittexttest" />
-        </PreferenceCategory>
-        <PreferenceCategory
-            android:title="@string/titlelanguavekurdivabouve">
-            <CheckBoxPreference
-                android:key="@string/preflanguage_kurdi_vabouve"
-                android:title="@string/titlelanguagekurdi_vabouve"
-                android:summary="@string/summarykurdi_vabouve"
-                android:checked="false"
-                android:defaultValue="false"
-
-                />
-
-            <EditTextPreference
-
-
-                android:hint="@string/doubleclicknotwork"
-                android:title="@string/titleedittexttest" />
-        </PreferenceCategory>
-
-        <PreferenceCategory
-            android:title="@string/titlelanguavekurdidoublecick">
-            <CheckBoxPreference
-                android:key="@string/preflanguage_kurdi_doublecick"
-                android:title="@string/titlelanguagekurdi_doublecick"
-                android:summary="@string/summarykurdi_doublecick"
-                android:checked="true"
                 android:defaultValue="true"
-
-                />
-
-            <EditTextPreference
-
-
-                android:hint="@string/doubleclicknotwork"
-                android:title="@string/titleedittexttest" />
-        </PreferenceCategory>
-
-
-
-
-
-
-        </PreferenceScreen>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-            android:title="@string/settings_name_title_language_farsi"
-
-            >
-
-        <PreferenceCategory
-            android:title="@string/titlelanguavefarsi">
-            <CheckBoxPreference
                 android:key="@string/preflanguage_farsi"
-                android:title="@string/titlelanguage"
-                android:summary="@string/summaryfarsi"
-                android:checked="true"
-                android:defaultValue="true"
-
-                />
-
-            <EditTextPreference
-
-
-                android:hint="@string/doubleclicknotwork"
-                android:title="@string/titleedittexttest" />
-
-        </PreferenceCategory>
-
-
-        <PreferenceCategory
-            android:title="@string/titlelanguavefarsidoublecick">
+                android:summary="@string/s_lang_fa_summary"
+                android:title="@string/lang_persian" />
             <CheckBoxPreference
-                android:key="@string/preflanguage_farsi_doublecick"
-                android:title="@string/titlelanguagekurdi_doublecick"
-                android:summary="@string/summaryfarsi_doublecick"
-                android:checked="true"
-                android:defaultValue="true"
-
-                />
-
-            <EditTextPreference
-
-
-                android:hint="@string/doubleclicknotwork"
-                android:title="@string/titleedittexttest" />
+                android:defaultValue="false"
+                android:key="@string/preflanguage_kurdi"
+                android:summary="@string/s_lang_ku_summary"
+                android:title="@string/lang_kurdish" />
         </PreferenceCategory>
 
+        <PreferenceCategory android:title="@string/s_cat_kurdish">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dependency="@string/preflanguage_kurdi"
+                android:key="@string/preflanguage_kurdi_extend"
+                android:summary="@string/s_ku_extend_summary"
+                android:title="@string/s_ku_extend_title" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dependency="@string/preflanguage_kurdi"
+                android:key="@string/preflanguage_kurdi_vabouve"
+                android:summary="@string/s_ku_join_summary"
+                android:title="@string/s_ku_join_title" />
+        </PreferenceCategory>
 
-
-        </PreferenceScreen>
-
-
+        <PreferenceCategory android:title="@string/s_cat_doubletap">
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="@string/preflanguage_farsi_doublecick"
+                android:summary="@string/s_dt_fa_summary"
+                android:title="@string/s_dt_fa_title" />
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="@string/preflanguage_kurdi_doublecick"
+                android:summary="@string/s_dt_ku_summary"
+                android:title="@string/s_dt_ku_title" />
+            <com.kurdikeyboard.SeekBarPreference
+                android:defaultValue="300"
+                android:key="@string/prefseekbartimewordtwofuction"
+                android:max="700"
+                android:title="@string/s_dt_time"
+                kurdikeyboard:interval="25"
+                kurdikeyboard:min="150" />
+        </PreferenceCategory>
     </PreferenceScreen>
 
+    <!-- ============================== sound and vibration -->
+    <PreferenceScreen
+        android:icon="@drawable/ic_kk_volume"
+        android:key="settings_feedback"
+        android:summary="@string/s_feedback_summary"
+        android:title="@string/s_feedback_title">
+        <PreferenceCategory android:title="@string/s_feedback_title">
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="@string/prefvibreh"
+                android:summary="@string/s_vibrate_summary"
+                android:title="@string/s_vibrate_title" />
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="@string/prefsound"
+                android:summary="@string/s_sound_summary"
+                android:title="@string/s_sound_title" />
+        </PreferenceCategory>
+    </PreferenceScreen>
 
-    <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-        android:icon="@drawable/ic_kk_timer"
-        android:title="@string/settings_name_title_wordtwofuction"
-        android:summary="@string/settings_name_summary_wordtwofuction"
-        >
-    <PreferenceCategory
-        android:title="@string/settings_name_title_wordtwofuction"
-        android:shouldDisableView="@string/summarywordtwofuction">
+    <!-- ============================== text size in the keyboard's panels -->
+    <PreferenceScreen
+        android:icon="@drawable/ic_kk_text_size"
+        android:key="settings_panel_text"
+        android:summary="@string/s_panels_summary"
+        android:title="@string/s_panels_title">
+        <PreferenceCategory android:title="@string/s_panels_title">
+            <com.kurdikeyboard.SeekBarPreference
+                android:defaultValue="72"
+                android:key="@string/prefseekbarfontclipbooard"
+                android:max="100"
+                android:title="@string/s_panel_clipboard"
+                kurdikeyboard:min="40" />
+            <com.kurdikeyboard.SeekBarPreference
+                android:defaultValue="72"
+                android:key="@string/prefseekbarfontreadysentences"
+                android:max="100"
+                android:title="@string/s_panel_ready"
+                kurdikeyboard:min="40" />
+        </PreferenceCategory>
+    </PreferenceScreen>
 
-
-        <com.kurdikeyboard.SeekBarPreference
-            xmlns:kurdikeyboard="http://kurdikeyboard.com"
-            android:key="@string/prefseekbartimewordtwofuction"
-            android:title="@string/settings_name_title_seekbar_timewordtwofuction"
-            android:defaultValue="300"
-            android:max="600"
-            kurdikeyboard:min="0"
-            />
-        <EditTextPreference
-
-
-            android:hint="@string/doubleclicknotwork"
-            android:title="@string/titleedittexttest" />
-    </PreferenceCategory>
-
-</PreferenceScreen>
-
-
-
-
-
-
-
-
-
-
-
-
-    <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-        android:icon="@drawable/ic_kk_info"
-        android:title="@string/titleaboutus"
-
-        android:summary="@string/summaryaboutus">
-
-
-        <PreferenceCategory
-            android:title="گروه نرم افزاری ماپریس"
-            />
-        <PreferenceCategory
-            android:title="مسعود فریدی"
-            />
-        <PreferenceCategory
-            android:title="جیمیل:"
-            />
-        <PreferenceCategory
-            android:title="masoud3faridi@gmail.com"
-            />
-        <PreferenceCategory
-            android:title="گروه تلگرام:"
-            />
-        <PreferenceCategory
-            android:title="\@maprys"
-
-
-            />
-
-
-        </PreferenceScreen>
-
-
-
-
-    <PreferenceCategory
-        android:title="@string/app_name"
-        android:key="pref_key_about">
-
+    <!-- ============================== help and about -->
+    <PreferenceCategory android:title="@string/s_cat_about">
         <Preference
-            android:key="@string/pref_version"
-            android:icon="@drawable/ic_kk_keyboard"
-        android:title="@string/versiontextfarsi"
-            android:summary="@string/versionName" />
-        <Preference
-            android:key="@string/pref_forceupdate"
-            android:icon="@drawable/ic_kk_star"
-        android:title="@string/textUpdate"
-            android:summary="@string/unknown"
-
-             >
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetPackage="com.kurdikeyboard"
-            android:targetClass="com.kurdikeyboard.UpdatePage"
-            />
-        </Preference>
-
-    </PreferenceCategory>
-    <PreferenceCategory
-        android:title="@string/guid"
-        >
-        <Preference
-            android:key="pref_guide"
             android:icon="@drawable/ic_kk_help"
-        android:title="@string/guidetext"
-            android:summary="@string/guidesummary" >
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetPackage="com.kurdikeyboard"
-            android:targetClass="com.kurdikeyboard.MainActivityViewPager"
-            />
+            android:key="pref_guide"
+            android:summary="@string/s_guide_summary"
+            android:title="@string/textbuttonguid">
+            <intent
+                android:targetClass="com.kurdikeyboard.MainActivityViewPager"
+                android:targetPackage="com.kurdikeyboard" />
         </Preference>
-
+        <Preference
+            android:icon="@drawable/ic_kk_star"
+            android:key="@string/pref_forceupdate"
+            android:summary="@string/unknown"
+            android:title="@string/textUpdate">
+            <intent
+                android:targetClass="com.kurdikeyboard.UpdatePage"
+                android:targetPackage="com.kurdikeyboard" />
+        </Preference>
+        <Preference
+            android:icon="@drawable/ic_kk_info"
+            android:key="@string/pref_version"
+            android:selectable="false"
+            android:summary="@string/s_about_summary"
+            android:title="@string/s_about_title" />
     </PreferenceCategory>
-
-
-
-
-
-
 </PreferenceScreen>
-
-
-
-
-
