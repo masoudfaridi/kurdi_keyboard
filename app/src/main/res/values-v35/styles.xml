@@ -1,0 +1,6 @@
+<resources>
+    <style name="AppTheme" parent="AppTheme.Base23">
+        <!-- Android 15 forces edge-to-edge for targetSdk 35; these screens keep classic insets -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+    </style>
+</resources>

@@ -374,5 +374,8 @@
     <string name="try_hint">اینجا تایپ کنید و کیبورد را امتحان کنید…</string>
     <string name="open_settings">ورود به تنظیمات</string>
     <string name="select_all_unsupported">این برنامه انتخاب همه متن را پشتیبانی نمی‌کند</string>
+    <string name="home_subtitle">کوردی · فارسی · English</string>
+    <string name="home_settings_summary">تم، صدا، زبان‌ها و پیش‌بینی کلمات</string>
+    <string name="home_guide_summary">معرفی امکانات کیبورد</string>
 </resources>
 

@@ -1,0 +1,17 @@
+<resources>
+    <style name="AppTheme" parent="AppTheme.Base23" />
+    <style name="AppTheme.Base23" parent="android:Theme.Material.Light">
+        <item name="android:colorPrimary">@color/kk_bg</item>
+        <item name="android:colorPrimaryDark">@color/kk_bg</item>
+        <item name="android:colorAccent">@color/kk_primary</item>
+        <item name="android:windowBackground">@color/kk_bg</item>
+        <item name="android:textColorPrimary">@color/kk_text</item>
+        <item name="android:textColorSecondary">@color/kk_text_secondary</item>
+        <item name="android:colorControlNormal">@color/kk_text_secondary</item>
+        <item name="android:actionBarStyle">@style/KK.ActionBar</item>
+        <item name="android:buttonStyle">@style/KK.Button</item>
+        <item name="android:alertDialogTheme">@style/KK.Dialog</item>
+        <item name="android:statusBarColor">@color/kk_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

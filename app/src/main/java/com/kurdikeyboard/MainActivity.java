@@ -65,12 +65,6 @@ public class MainActivity extends Activity {
             startActivity(new Intent(this, ImePreferences.class));
         } else if (id == R.id.buttonGuid) {
             startActivity(new Intent(this, MainActivityViewPager.class));
-        } else if (id == R.id.buttonTelegram || id == R.id.buttonTelegramtrain) {
-            try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/MAPRYS")));
-            } catch (android.content.ActivityNotFoundException e) {
-                Toast.makeText(this, "https://t.me/MAPRYS", Toast.LENGTH_LONG).show();
-            }
         }
     }
 
