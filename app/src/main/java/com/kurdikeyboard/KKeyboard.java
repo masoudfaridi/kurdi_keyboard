@@ -99,137 +99,25 @@ public class KKeyboard extends Keyboard  {
         }
         return key;
     }
+    /**
+     * The "?!" key repeats the last symbol picked from its popup. 2.0: the key shows that
+     * symbol as text (drawn by KKeyboardView), no more one picture per symbol.
+     */
     void changeMultiKey(Resources res,int primarykey){
         if(mMulti_change==null){
             return;
         }
-        switch (primarykey){
-
-            case 33:// !
-                mMulti_change_value=33;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_33);
+        switch (primarykey) {
+            case 33: case 34: case 39: case 40: case 41: case 43: case 44: case 45: case 46: case 47:
+            case 60: case 62: case 63: case 64: case 92: case 124: case 1548: case 1567:
+            case -112: case -116: case -150: case -152: case -157:
+                mMulti_change_value = primarykey;
                 break;
-            case 34:// "
-                mMulti_change_value=34;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_34);
-                break;
-            case 39:// '
-                mMulti_change_value=39;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_39);
-                break;
-            case 40:// (
-                mMulti_change_value=40;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_40);
-                break;
-            case 41:// )
-                mMulti_change_value=41;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_41);
-                break;
-            case 43:// +
-                mMulti_change_value=43;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_43);
-                break;
-            case 44:// ,
-                mMulti_change_value=44;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_44);
-                break;
-            case 45:// -
-                mMulti_change_value=45;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_45);
-                break;
-            case 46:// .
-                mMulti_change_value=46;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en);
-                break;
-            case 47:// /
-                mMulti_change_value=47;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_47);
-                break;
-            case 60:// <
-                mMulti_change_value=60;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_60);
-                break;
-            case 62:// >
-                mMulti_change_value=62;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_62);
-                break;
-
-            case 63:// ?
-                mMulti_change_value=63;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_63);
-                break;
-            case 64:// @
-                mMulti_change_value=64;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_64);
-                break;
-
-            case 92:// \
-                mMulti_change_value=92;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_92);
-                break;
-            case 124:// |
-                mMulti_change_value=124;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_124);
-                break;
-            case 1548:// persian , ==> ،
-                mMulti_change_value=1548;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_1548);
-                break;
-            case 1567:// persian ? ==> ؟
-                mMulti_change_value=1567;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en_1567);
-                break;
-            case -112:// copy
-                mMulti_change_value=-112;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.copy_black);
-                break;
-            case -116:// paste
-                mMulti_change_value=-116;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.paste_black);
-                break;
-            case -150:// clipboard
-                mMulti_change_value=-150;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.clipboard_black);
-                break;
-            case -152:// ready sentences
-                mMulti_change_value=-152;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.ready_sentences_black);
-                break;
-            case -157:// emoji
-                mMulti_change_value=-157;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.emoji_black);
-                break;
-
             default:
-                mMulti_change_value=46;
-                mMulti_change.label=null;
-                mMulti_change.icon=res.getDrawable(R.drawable.dot_black_en);
-
-                break;
+                mMulti_change_value = 46;
         }
+        mMulti_change.label = null;
+        mMulti_change.icon = null;
     }
    /* @Override
     public int[] getNearestKeys(int x, int y) {
@@ -304,10 +192,10 @@ public class KKeyboard extends Keyboard  {
                // mEnterKey.icon = null;
                // mEnterKey.label ="Send";
               //  if(listS.equals("5")||listS.equals("6")){
-                //    mEnterKey.icon = res.getDrawable(R.drawable.enter_send_white);
+                //    mEnterKey.icon = null;
 
                // }else {
-                    mEnterKey.icon = res.getDrawable(R.drawable.enter_send_black);
+                    mEnterKey.icon = null;
                // }
 
 
@@ -319,10 +207,10 @@ public class KKeyboard extends Keyboard  {
               //  mEnterKey.icon = null;
               //  mEnterKey.label ="Go";
               //  if(listS.equals("5")||listS.equals("6")){
-                //    mEnterKey.icon = res.getDrawable(R.drawable.enter_go_white);
+                //    mEnterKey.icon = null;
 
                // }else {
-                    mEnterKey.icon = res.getDrawable(R.drawable.enter_go_black);
+                    mEnterKey.icon = null;
                // }
 
 
@@ -333,23 +221,23 @@ public class KKeyboard extends Keyboard  {
                // mEnterKey.icon = null;
                // mEnterKey.label = "Next";
                // if(listS.equals("5")||listS.equals("6")){
-                 //   mEnterKey.icon = res.getDrawable(R.drawable.enter_next_white);
+                 //   mEnterKey.icon = null;
 
               //  }else {
-                    mEnterKey.icon = res.getDrawable(R.drawable.enter_next_black);
+                    mEnterKey.icon = null;
                // }
 
 
                 mEnterKey.label = null;
                 break;
             case EditorInfo.IME_ACTION_SEARCH:
-               // mEnterKey.icon = res.getDrawable(R.drawable.a_1_theme_1_background_key_icon_search);
+               // mEnterKey.icon = null;
                // mEnterKey.label = null;
               //  if(listS.equals("5")||listS.equals("6")){
-              //      mEnterKey.icon = res.getDrawable(R.drawable.enter_search_white);
+              //      mEnterKey.icon = null;
 
               //  }else {
-                    mEnterKey.icon = res.getDrawable(R.drawable.enter_search_black);
+                    mEnterKey.icon = null;
                // }
 
 
@@ -361,10 +249,10 @@ public class KKeyboard extends Keyboard  {
               //  mEnterKey.label = "Enter";
                // mEnterKey.icon = null;
               //  if(listS.equals("5")||listS.equals("6")){
-               //     mEnterKey.icon = res.getDrawable(R.drawable.enter_enter_white);
+               //     mEnterKey.icon = null;
 
               //  }else {
-                    mEnterKey.icon = res.getDrawable(R.drawable.enter_enter_black);
+                    mEnterKey.icon = null;
               //  }
 
 
@@ -382,42 +270,42 @@ public class KKeyboard extends Keyboard  {
       /*  if(mhalfspace!=null){
        //          if(listS.equals("5")||listS.equals("6")){
 
-        //         mhalfspace.icon=res.getDrawable(R.drawable.halfspace_white);
+        //         mhalfspace.icon=null;
        // }else {
-                     mhalfspace.icon=res.getDrawable(R.drawable.half_space_black);
+                     mhalfspace.icon=null;
               //   }
         }
         if(mdelete!=null){
           //  if(listS.equals("5")||listS.equals("6")){
 
-           //     mdelete.icon=res.getDrawable(R.drawable.delete_white);
+           //     mdelete.icon=null;
            // }else {
-                mdelete.icon=res.getDrawable(R.drawable.delete_black);
+                mdelete.icon=null;
            // }
         }
         if(mclose!=null){
           //  if(listS.equals("5")||listS.equals("6")){
 
-           //     mclose.icon=res.getDrawable(R.drawable.close_keyboard_white);
+           //     mclose.icon=null;
            // }else {
-                mclose.icon=res.getDrawable(R.drawable.close_keyboard_black);
+                mclose.icon=null;
             //}
         }
         if(mnumbers!=null){
             if(listS.equals("5")||listS.equals("6")){
 
-                mnumbers.icon=res.getDrawable(R.drawable.numbers_white);
+                mnumbers.icon=null;
             }else {
-                mnumbers.icon=res.getDrawable(R.drawable.numbers_black);
+                mnumbers.icon=null;
             }
             mnumbers.label=null;
         }
         if(mdot!=null){
             if(listS.equals("5")||listS.equals("6")){
 
-                mdot.icon=res.getDrawable(R.drawable.dot_white);
+                mdot.icon=null;
             }else {
-                mdot.icon=res.getDrawable(R.drawable.dot_black);
+                mdot.icon=null;
             }
             mdot.label=null;
         }*/

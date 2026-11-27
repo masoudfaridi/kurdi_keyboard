@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/kk_bg"
+    android:layoutDirection="rtl"
+    android:orientation="vertical">
+
+    <GridView
+        android:id="@+id/themeGrid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:horizontalSpacing="12dp"
+        android:listSelector="@android:color/transparent"
+        android:numColumns="2"
+        android:padding="12dp"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="12dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:background="@drawable/kk_field"
+        android:hint="@string/try_hint"
+        android:inputType="text"
+        android:padding="14dp"
+        android:textColor="@color/kk_text"
+        android:textColorHint="@color/kk_text_secondary" />
+</LinearLayout>

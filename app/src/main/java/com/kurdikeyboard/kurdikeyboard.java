@@ -553,234 +553,24 @@ public class kurdikeyboard extends InputMethodService
 
 
          listS=
-        preferenceKeyboard.getString(getString(R.string.pref_list_theme_selector),"35");
+        preferenceKeyboard.getString(getString(R.string.pref_list_theme_selector), KeyboardTheme.DEFAULT_ID);
         language_kurdi_enable=
                 preferenceKeyboard.getBoolean(getString(R.string.preflanguage_kurdi), true);
         language_farsi_enable=
                 preferenceKeyboard.getBoolean(getString(R.string.preflanguage_farsi),true);
 
 
-        View root = getLayoutInflater().inflate(R.layout.a_0_mf_theme_0_input, null);
+        mBuiltThemeSignature = themeSignature();
+        // 2.0: one layout for every theme; colors come from the KeyboardTheme palette
         boolean isactiveimagebg=
                 preferenceKeyboard.getBoolean(getString(R.string.prefimagefrbackground)
                         , false);
-        if(isactiveimagebg) {
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_0_mf_theme_0_input, null);
-        }else if(listS.equals("1")) {
-            //toastM(listS);
-             root = getLayoutInflater().inflate(R.layout.a_1_mf_theme_1_input, null);
-        }else if(listS.equals("1x")) {
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_1x_mf_theme_1x_input, null);
-        }else if(listS.equals("1xx")) {
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_1xx_mf_theme_1xx_input, null);
-        }else if (listS.equals("2")){
-            //toastM(listS);
-             root = getLayoutInflater().inflate(R.layout.a_2_mf_theme_2_input, null);
-
-        }else if (listS.equals("2x")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_2x_mf_theme_2x_input, null);
-
-        }else if (listS.equals("2xx")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_2xx_mf_theme_2xx_input, null);
-
-        }else if (listS.equals("3")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_3_mf_theme_3_input, null);
-
-        }else if (listS.equals("3x")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_3x_mf_theme_3x_input, null);
-
-        }else if (listS.equals("3xx")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_3xx_mf_theme_3xx_input, null);
-
-        }else if (listS.equals("4")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_4_mf_theme_4_input, null);
-
-        }else if (listS.equals("5")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_5_mf_theme_5_input, null);
-
-        }else if (listS.equals("5x")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_5x_mf_theme_5x_input, null);
-
-        }else if (listS.equals("5xx")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_5xx_mf_theme_5xx_input, null);
-
-        }else if (listS.equals("6")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_6_mf_theme_6_input, null);
-
-        }else if (listS.equals("6x")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_6x_mf_theme_6x_input, null);
-
-        }else if (listS.equals("6xx")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_6xx_mf_theme_6xx_input, null);
-
-        }else if (listS.equals("7")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_7_mf_theme_7_input, null);
-
-        }else if (listS.equals("7x")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_7x_mf_theme_7x_input, null);
-
-        }else if (listS.equals("7xx")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_7xx_mf_theme_7xx_input, null);
-
-        }else if (listS.equals("8")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_8_mf_theme_8_input, null);
-
-        }else if (listS.equals("8x")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_8x_mf_theme_8x_input, null);
-
-        }else if (listS.equals("8xx")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_8xx_mf_theme_8xx_input, null);
-
-        }else if (listS.equals("9x")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_9x_mf_theme_9x_input, null);
-
-        }else if (listS.equals("9xx")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_9xx_mf_theme_9xx_input, null);
-
-        }else if (listS.equals("10")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_10_mf_theme_10_input, null);
-
-        }else if (listS.equals("10x")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_10x_mf_theme_10x_input, null);
-
-        }else if (listS.equals("10xx")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_10xx_mf_theme_10xx_input, null);
-
-        }else if (listS.equals("11")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_11_mf_theme_11_input, null);
-
-        }else if (listS.equals("11x")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_11x_mf_theme_11x_input, null);
-
-        }else if (listS.equals("11xx")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_11xx_mf_theme_11xx_input, null);
-
-        }else if (listS.equals("12")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_12_mf_theme_12_input, null);
-
-        }else if (listS.equals("13")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_13_mf_theme_13_input, null);
-
-        }else if (listS.equals("14")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_14_mf_theme_14_input, null);
-
-        }else if (listS.equals("15")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_15_mf_theme_15_input, null);
-
-        }else if (listS.equals("16")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_16_mf_theme_16_input, null);
-
-        }else if (listS.equals("17")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_17_mf_theme_17_input, null);
-
-        }else if (listS.equals("18")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_18_mf_theme_18_input, null);
-
-        }else if (listS.equals("19")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_19_mf_theme_19_input, null);
-
-        }else if (listS.equals("20")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_20_mf_theme_20_input, null);
-
-        }else if (listS.equals("21")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_21_mf_theme_21_input, null);
-
-        }else if (listS.equals("22")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_22_mf_theme_22_input, null);
-
-        }else if (listS.equals("23")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_23_mf_theme_23_input, null);
-
-        }else if (listS.equals("24")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_24_mf_theme_24_input, null);
-
-        }else if (listS.equals("25")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_25_mf_theme_25_input, null);
-
-        }else if (listS.equals("26")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_26_mf_theme_26_input, null);
-
-        }else if (listS.equals("27")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_27_mf_theme_27_input, null);
-
-        }else if (listS.equals("28")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_28_mf_theme_28_input, null);
-
-        }else if (listS.equals("29")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_29_mf_theme_29_input, null);
-
-        }else if (listS.equals("30")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_30_mf_theme_30_input, null);
-
-        }else if (listS.equals("31")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_31_mf_theme_31_input, null);
-
-        }else if (listS.equals("32")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_32_mf_theme_32_input, null);
-
-        }else if (listS.equals("33")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_33_mf_theme_33_input, null);
-
-        }else if (listS.equals("34")){
-            //toastM(listS);
-            root = getLayoutInflater().inflate(R.layout.a_34_mf_theme_34_input, null);
-
-        }else if (listS.equals("35")){
-            root = getLayoutInflater().inflate(R.layout.a_35_mf_theme_35_input, null); // modern light
-        }else if (listS.equals("36")){
-            root = getLayoutInflater().inflate(R.layout.a_36_mf_theme_36_input, null); // modern dark
-        }
+        View root = getLayoutInflater().inflate(R.layout.keyboard_input, null);
+        KeyboardTheme theme = KeyboardTheme.forId(listS);
+        View toolsRow = root.findViewById(R.id.layouttools);
+        if (toolsRow != null) toolsRow.setBackgroundColor(theme.bg);
+        View keyboardView = root.findViewById(R.id.keyboard);
+        if (keyboardView != null) keyboardView.setBackgroundColor(theme.bg);
         mInputView = (KKeyboardView) root.findViewById(R.id.keyboard);
 
 
@@ -1659,7 +1449,7 @@ public class kurdikeyboard extends InputMethodService
         mCurKeyboard.setImeOptions(getResources(), attribute);
         boolean booleanchangetheme=  preferenceKeyboard.getBoolean(getString(R.string.prefchangethemboolean),  false);
 
-        if(booleanchangetheme) {
+        if(booleanchangetheme || !themeSignature().equals(mBuiltThemeSignature)) {
             setInputView(onCreateInputView());
             //toastM("پس از انتخاب تم لطفا ");
         }
@@ -3807,7 +3597,7 @@ private void setCurrentLanguage(){
             if(valueshift==1){
 
                     keyboardtemp.setShiftIcon(
-                            getResources().getDrawable(R.drawable.shift_shifted)
+                            null
                     );
 
 
@@ -3816,16 +3606,16 @@ private void setCurrentLanguage(){
 
                // if(listS.equals("5")||listS.equals("6")){
                 //    keyboardtemp.setShiftIcon(
-                   //         getResources().getDrawable(R.drawable.shift_white));
+                   //         null);
              //   }else {
                     keyboardtemp.setShiftIcon(
-                            getResources().getDrawable(R.drawable.shift_black)
+                            null
                     );
                // }
 
             }else if(valueshift==2){
                 keyboardtemp.setShiftIcon(
-                        getResources().getDrawable(R.drawable.shift_lock_black));
+                        null);
             }
         }
 
@@ -3851,17 +3641,17 @@ private void setCurrentLanguage(){
                     if(valueshift==1){
                         currentKey.label = null;
                         currentKey.icon =
-                                getResources().getDrawable(R.drawable.a_1_theme_1_background_key_icon_shift_shifted);
+                                null;
 
                     }
                     else if(valueshift==0){
                         currentKey.label = null;
-                        currentKey.icon = getResources().getDrawable(R.drawable.a_1_theme_1_background_key_icon_shift);
+                        currentKey.icon = null;
 
 
                     }else if(valueshift==2){
                         currentKey.label = null;
-                        currentKey.icon = getResources().getDrawable(R.drawable.a_1_theme_1_background_key_icon_shift_shifted);
+                        currentKey.icon = null;
 
 
                     }
@@ -4099,22 +3889,22 @@ private void setCurrentLanguage(){
         if(listS.equals("5")||listS.equals("6")){
             if(currentKeyboardtemp==mfarsiKeyboard){
                 currentKeyboardtemp.setSpaceIcon(
-                        getResources().getDrawable(R.drawable.spacebarfa_white)
+                        null
                 );
 
             }else if(currentKeyboardtemp==mkurdishKeyboard){
                 currentKeyboardtemp.setSpaceIcon(
-                        getResources().getDrawable(R.drawable.spacebarkur_white)
+                        null
                 );
 
             }else if(currentKeyboardtemp==mQwertyKeyboard){
                 currentKeyboardtemp.setSpaceIcon(
-                        getResources().getDrawable(R.drawable.spacebaren_white)
+                        null
                 );
 
             }else {
                 currentKeyboardtemp.setSpaceIcon(
-                        getResources().getDrawable(R.drawable.spacebarwhite)
+                        null
                 );
 
             }
@@ -4122,22 +3912,22 @@ private void setCurrentLanguage(){
         }else{
             if(currentKeyboardtemp==mfarsiKeyboard){
                 currentKeyboardtemp.setSpaceIcon(
-                        getResources().getDrawable(R.drawable.spacebarfa)
+                        null
                 );
 
             }else if(currentKeyboardtemp==mkurdishKeyboard){
                 currentKeyboardtemp.setSpaceIcon(
-                        getResources().getDrawable(R.drawable.spacebarkur)
+                        null
                 );
 
             }else if(currentKeyboardtemp==mQwertyKeyboard){
                 currentKeyboardtemp.setSpaceIcon(
-                        getResources().getDrawable(R.drawable.spacebaren)
+                        null
                 );
 
             }else {
                 currentKeyboardtemp.setSpaceIcon(
-                        getResources().getDrawable(R.drawable.spacebar)
+                        null
                 );
 
             }
@@ -4706,6 +4496,19 @@ private void setCurrentLanguage(){
             iv.setImageTintList(android.content.res.ColorStateList.valueOf(tint));
             iv.setBackgroundResource(R.drawable.kk_icon_button);
         }
+    }
+
+    /** theme + photo-background settings the current input view was built with */
+    private String mBuiltThemeSignature = "";
+
+    private String themeSignature() {
+        if (preferenceKeyboard == null) {
+            preferenceKeyboard = getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE);
+        }
+        return KeyboardTheme.forId(preferenceKeyboard.getString(getString(R.string.pref_list_theme_selector),
+                KeyboardTheme.DEFAULT_ID)).id + "|"
+                + preferenceKeyboard.getBoolean(getString(R.string.prefimagefrbackground), false) + "|"
+                + preferenceKeyboard.getString(getString(R.string.prefkeypathimage), "");
     }
 }
 

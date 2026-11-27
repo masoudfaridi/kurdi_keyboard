@@ -128,14 +128,14 @@
             android:checked="false"
             android:defaultValue="false"
             />
-            <ListPreference
-                android:key="@string/pref_list_theme_selector"
+            <Preference
+                android:key="theme_picker"
                 android:title="@string/title_list_theme_selector"
-                android:summary="@string/summary_list_theme_selector"
-                android:entries="@array/listentries_list_theme_selector"
-                android:entryValues="@array/listvalues_list_theme_selector"
-                android:defaultValue="35"
-            />
+                android:summary="@string/theme_picker_summary">
+                <intent
+                    android:targetPackage="com.kurdikeyboard"
+                    android:targetClass="com.kurdikeyboard.ThemePickerActivity" />
+            </Preference>
             <EditTextPreference
 
                 android:hint="@string/doubleclicknotwork"

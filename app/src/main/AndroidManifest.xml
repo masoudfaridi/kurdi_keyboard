@@ -78,6 +78,11 @@
 
 
 
+          <activity android:name=".ThemePickerActivity"
+              android:exported="false"
+              android:windowSoftInputMode="adjustResize"
+              android:theme="@style/AppTheme" />
+
           <activity android:name=".PermissionActivity"
               android:exported="false"
               android:excludeFromRecents="true"

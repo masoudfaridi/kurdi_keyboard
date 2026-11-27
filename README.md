@@ -7,6 +7,9 @@ Based on the 2017 version `BACKUP3/2017.12.13.01` (v1.5.6).
 - **Swipe typing**: put your finger on the first letter and slide over the letters of the word without lifting. Other guesses appear in the bar; tap one to replace the word.
 - Settings → "پیش‌بینی کلمات و تایپ سوایپی": turn prediction, swipe and auto-space on or off, or clear the learned words.
 
+## Themes
+The 2017 bitmap themes are gone. `KeyboardTheme.java` holds 24 themes, each just a palette and a key style, drawn in code (`KKeyboardView.onDraw`). Old theme choices map to the closest new theme automatically. Pick one in Settings -> Theme (live previews, `ThemePickerActivity`). To add a theme, add one `add(...)` line.
+
 ## Bugs fixed
 - Builds with today's Android Studio (Gradle 9.1 / AGP 8.13 / SDK 35, minSdk 21).
 - Clipboard history and ready sentences failed on Android 10+ (they wrote to `/sdcard/data/data/...`). They are now stored in the app's private storage.

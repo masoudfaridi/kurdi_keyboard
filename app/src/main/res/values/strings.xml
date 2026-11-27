@@ -388,5 +388,7 @@
     <string name="guide_prev">قبلی</string>
     <string name="guide_next">بعدی</string>
     <string name="guide_done">پایان</string>
+    <string name="theme_picker_title">تم کیبورد</string>
+    <string name="theme_picker_summary">۲۴ تم ساده و زیبا، روشن و تیره</string>
 </resources>
 
