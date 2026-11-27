@@ -19,6 +19,33 @@
     android:key="Setting"
     android:summary=" تنضیمات ">
 
+    <PreferenceScreen
+        android:title="@string/settings_prediction_title"
+        android:key="settingprediction"
+        android:summary="@string/settings_prediction_summary">
+        <PreferenceCategory android:title="@string/settings_prediction_title">
+            <CheckBoxPreference
+                android:key="@string/prefprediction"
+                android:title="@string/title_prediction"
+                android:summary="@string/summary_prediction"
+                android:defaultValue="true" />
+            <CheckBoxPreference
+                android:key="@string/prefswipe"
+                android:title="@string/title_swipe"
+                android:summary="@string/summary_swipe"
+                android:defaultValue="true" />
+            <CheckBoxPreference
+                android:key="@string/prefautospace"
+                android:title="@string/title_autospace"
+                android:summary="@string/summary_autospace"
+                android:defaultValue="true" />
+            <Preference
+                android:key="@string/prefclearhistory"
+                android:title="@string/title_clearhistory"
+                android:summary="@string/summary_clearhistory" />
+        </PreferenceCategory>
+    </PreferenceScreen>
+
 
 
 

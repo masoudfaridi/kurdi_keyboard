@@ -63,6 +63,18 @@ public class ImePreferences extends PreferenceActivity
             checkboxchangetheme.setChecked(true);
         }
 
+        Preference clearHistory = manager.findPreference(getString(R.string.prefclearhistory));
+        if (clearHistory != null) {
+            clearHistory.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    com.kurdikeyboard.predict.PredictionEngine.get(ImePreferences.this).clearHistory();
+                    toastM(getString(R.string.history_cleared));
+                    return true;
+                }
+            });
+        }
+
 
 
     }

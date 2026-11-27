@@ -107,6 +107,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.ActionBarOverlayLayout;
 import java.util.Calendar;
+import android.view.ViewGroup;
+import com.kurdikeyboard.predict.PredictionEngine;
+import com.kurdikeyboard.predict.SwipeDecoder;
+import com.kurdikeyboard.predict.TextNormalizer;
+import com.kurdikeyboard.predict.WordDictionary;
 //import github.ankushsachdeva.emojicon.
 
 
@@ -279,6 +284,7 @@ public class kurdikeyboard extends InputMethodService
     @Override
     public void onCreate() {
         super.onCreate();
+        mPredict = PredictionEngine.get(this);
         //trialall
       // trialversionmonth10isend=false;
          mInputMethodManager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
@@ -453,6 +459,12 @@ public class kurdikeyboard extends InputMethodService
         */
         mInputView.setKeyboard(nextKeyboard);
        mInputView.invalidateAllKeys();
+        mSwipeDecoder = null;
+        if (mPredict != null) {
+            mPredict.preload(keyboardLang());
+            mKeepSwipeAlternatives = false;
+            scheduleSuggestionUpdate();
+        }
 
     }
 
@@ -1375,6 +1387,11 @@ public class kurdikeyboard extends InputMethodService
                 */
             }
         }
+        readPredictionPrefs();
+        installSuggestionStrip();
+        mInputView.setSwipeListener(mSwipeListener);
+        mSwipeDecoder = null;
+
         String pathimage=
         preferenceKeyboard.getString(getString(R.string.prefkeypathimage), "unknown");
 
@@ -1566,6 +1583,9 @@ public class kurdikeyboard extends InputMethodService
        // Toast.makeText(getBaseContext(),"onFinishInput",Toast.LENGTH_LONG).show();
 
         super.onFinishInput();
+        mKeepSwipeAlternatives = false;
+        mSuggestHandler.removeCallbacks(mUpdateSuggestionsRunnable);
+        if (mPredict != null) mPredict.saveAsync();
         InputConnection ic = getCurrentInputConnection();
         if (ic != null) {
             commitTyped(ic);
@@ -1605,7 +1625,15 @@ public class kurdikeyboard extends InputMethodService
       // Toast.makeText(getBaseContext(),"onStartInputView",Toast.LENGTH_LONG).show();
 
         super.onStartInputView(attribute, restarting);
+        readPredictionPrefs();
+        mFieldAllowsPrediction = fieldAllowsPrediction(attribute);
+        mKeepSwipeAlternatives = false;
+        mJustAutoSpaced = false;
+        mLastInserted = null;
        // handleevent(attribute);
+        if (mCurKeyboard == null) {
+            mCurKeyboard = mQwertyKeyboard;
+        }
         setKKeyboard(mCurKeyboard);
        //Action Unspecified
 
@@ -1622,6 +1650,9 @@ public class kurdikeyboard extends InputMethodService
             setInputView(onCreateInputView());
             //toastM("پس از انتخاب تم لطفا ");
         }
+        mPredict.preload(keyboardLang());
+        refreshStripVisibility();
+        scheduleSuggestionUpdate();
 
 
     }
@@ -1659,6 +1690,7 @@ public class kurdikeyboard extends InputMethodService
 
         super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd,
                 candidatesStart, candidatesEnd);
+        scheduleSuggestionUpdate();
 
         // If the current selection in the text view changes, we should
         // clear whatever candidate text we have.
@@ -1997,6 +2029,26 @@ public class kurdikeyboard extends InputMethodService
 
 
     public void onKey(int primaryCode, int[] keyCodes) {
+        boolean wasAutoSpaced = mJustAutoSpaced;
+        mJustAutoSpaced = false;
+        mKeepSwipeAlternatives = false;
+        if (primaryCode > 0 && !TextNormalizer.isWordChar((char) primaryCode)) {
+            if (wasAutoSpaced && primaryCode == 32 && !spacemove) {
+                // the space is already there (added after a swipe / suggestion)
+                InputConnection icSpace = getCurrentInputConnection();
+                CharSequence last = icSpace != null ? icSpace.getTextBeforeCursor(1, 0) : null;
+                if (last != null && " ".contentEquals(last)) {
+                    scheduleSuggestionUpdate();
+                    return;
+                }
+            }
+            learnWordBeforeCursor();
+            if (wasAutoSpaced) {
+                mJustAutoSpaced = true;
+                removeAutoSpaceBeforePunctuation(primaryCode);
+                mJustAutoSpaced = false;
+            }
+        }
 
         boolean soundb=  preferenceKeyboard.getBoolean(getString(R.string.prefsound),  true);
         int volsound=preferenceKeyboard.getInt(getString(R.string.prefseekbarsound),0);
@@ -2077,6 +2129,7 @@ public class kurdikeyboard extends InputMethodService
                     */
                 }
             }
+            refreshStripVisibility();
            // handleClose();
 
 
@@ -3706,7 +3759,7 @@ private void setCurrentLanguage(){
         // 32=space -3=done(exit) -2= 123 10=return(go,enter)
         // -5=delete  -1=shift
         if(isFullscreenMode()) {
-            if (toollayout.getVisibility() == View.VISIBLE) {
+            if (isTopRowVisible()) {
                 //  if(isPortrait()) {
                 tempint = -(int) getResources().
                         getDimension(R.dimen.key_height_firstrow);
@@ -3725,7 +3778,7 @@ private void setCurrentLanguage(){
 
             }
         }else{
-            if (toollayout.getVisibility() == View.VISIBLE) {
+            if (isTopRowVisible()) {
                 //  if(isPortrait()) {
                 tempint = -(int) getResources().
                         getDimension(R.dimen.key_height_firstrow);
@@ -3818,6 +3871,7 @@ private void setCurrentLanguage(){
    //  Toast.makeText(getBaseContext(),"onDestroy",Toast.LENGTH_LONG).show();
 
      super.onDestroy();
+        if (mPredict != null) mPredict.saveAsync();
       //  toastM("onDestroy");
         try {
             trimCache(this);
@@ -4229,6 +4283,345 @@ private void setCurrentLanguage(){
     }
 
 
+
+    // =====================================================================
+    // Word prediction (English / Persian / Kurdish) and swipe typing
+    // =====================================================================
+
+    private PredictionEngine mPredict;
+    private SuggestionStripView mStrip;
+    private FrameLayout mTopRow;
+    private final Handler mSuggestHandler = new Handler();
+    private boolean mPredictionEnabled = true;
+    private boolean mSwipeEnabled = true;
+    private boolean mAutoSpace = true;
+    /** false in password, e-mail, URL and number fields */
+    private boolean mFieldAllowsPrediction = false;
+    /** the strip shows swipe alternatives; keep them until the next key press */
+    private boolean mKeepSwipeAlternatives = false;
+    /** text the last swipe (or suggestion pick) inserted, so another pick can replace it */
+    private String mLastInserted = null;
+    private String mLastInsertedLang = null;
+    private boolean mJustAutoSpaced = false;
+    private SwipeDecoder mSwipeDecoder;
+    private Keyboard mSwipeDecoderKeyboard;
+    private int mSwipeDecoderWidth;
+    private List<String> mStripWords = new ArrayList<String>();
+    private String mStripLang = PredictionEngine.EN;
+
+    private static final String PUNCT_AFTER_WORD = ".,!?;:،؛؟";
+
+    private final Runnable mUpdateSuggestionsRunnable = new Runnable() {
+        @Override public void run() {
+            updateSuggestions();
+        }
+    };
+
+    private void readPredictionPrefs() {
+        if (preferenceKeyboard == null) {
+            preferenceKeyboard = getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE);
+        }
+        mPredictionEnabled = preferenceKeyboard.getBoolean(getString(R.string.prefprediction), true);
+        mSwipeEnabled = preferenceKeyboard.getBoolean(getString(R.string.prefswipe), true);
+        mAutoSpace = preferenceKeyboard.getBoolean(getString(R.string.prefautospace), true);
+    }
+
+    private static boolean fieldAllowsPrediction(EditorInfo attribute) {
+        if (attribute == null) return false;
+        int type = attribute.inputType;
+        if ((type & InputType.TYPE_MASK_CLASS) != InputType.TYPE_CLASS_TEXT) return false;
+        int variation = type & InputType.TYPE_MASK_VARIATION;
+        return variation != InputType.TYPE_TEXT_VARIATION_PASSWORD
+                && variation != InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                && variation != InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD
+                && variation != InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+                && variation != InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS
+                && variation != InputType.TYPE_TEXT_VARIATION_URI;
+    }
+
+    private boolean predictionActive() {
+        return mPredictionEnabled && mFieldAllowsPrediction && mStrip != null;
+    }
+
+    /** Dictionary language of the keyboard on screen (symbol pages keep the last language). */
+    private String keyboardLang() {
+        Keyboard cur = mInputView != null ? mInputView.getKeyboard() : null;
+        if (cur != null) {
+            if (cur == mQwertyKeyboard) return PredictionEngine.EN;
+            if (cur == mfarsiKeyboard) return PredictionEngine.FA;
+            if (cur == mkurdishKeyboard) return PredictionEngine.CKB;
+        }
+        if ("fa".equals(language)) return PredictionEngine.FA;
+        if ("kr".equals(language)) return PredictionEngine.CKB;
+        return PredictionEngine.EN;
+    }
+
+    private boolean isAlphabetKeyboardShown() {
+        Keyboard cur = mInputView != null ? mInputView.getKeyboard() : null;
+        return cur != null && (cur == mQwertyKeyboard || cur == mfarsiKeyboard || cur == mkurdishKeyboard);
+    }
+
+    /** Puts the suggestion strip on top of the tools row (same place, same background). */
+    private void installSuggestionStrip() {
+        mStrip = null;
+        mTopRow = null;
+        if (toollayout == null || !(toollayout.getParent() instanceof ViewGroup)) return;
+        ViewGroup parent = (ViewGroup) toollayout.getParent();
+        int index = parent.indexOfChild(toollayout);
+        ViewGroup.LayoutParams lp = toollayout.getLayoutParams();
+        parent.removeView(toollayout);
+        mTopRow = new FrameLayout(this);
+        parent.addView(mTopRow, index, lp);
+        mTopRow.addView(toollayout, new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        mStrip = new SuggestionStripView(this);
+        mStrip.matchBackground(toollayout.getBackground());
+        mTopRow.addView(mStrip, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                (int) getResources().getDimension(R.dimen.key_height_firstrow)));
+        mStrip.setListener(new SuggestionStripView.Listener() {
+            @Override public void onSuggestionPicked(int index, String word) {
+                pickSuggestion(word);
+            }
+
+            @Override public void onSuggestionLongPressed(int index, String word) {
+                String lang = mStripLang;
+                WordDictionary d = mPredict.dictionary(lang);
+                boolean inDict = d != null && d.indexOfKey(TextNormalizer.key(word)) >= 0;
+                if (!inDict) {
+                    mPredict.forget(lang, word);
+                    mPredict.saveAsync();
+                    toastM(getString(R.string.suggestion_removed, word));
+                    updateSuggestions();
+                }
+            }
+        });
+        refreshStripVisibility();
+    }
+
+    /** The tools row or the suggestion strip takes up the row above the keys. */
+    private boolean isTopRowVisible() {
+        return (toollayout != null && toollayout.getVisibility() == View.VISIBLE)
+                || (mStrip != null && mStrip.getVisibility() == View.VISIBLE);
+    }
+
+    private void refreshStripVisibility() {
+        if (mStrip == null) return;
+        boolean toolsShown = toollayout != null && toollayout.getVisibility() == View.VISIBLE;
+        boolean show = predictionActive() && (!mStrip.isEmpty() || !toolsShown);
+        mStrip.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    private void showSuggestions(List<String> words, int literalIndex, String lang) {
+        if (mStrip == null) return;
+        mStripWords = words == null ? new ArrayList<String>() : new ArrayList<String>(words);
+        mStripLang = lang;
+        mStrip.setRtl(!PredictionEngine.EN.equals(lang));
+        mStrip.setSuggestions(mStripWords, literalIndex);
+        refreshStripVisibility();
+    }
+
+    private void scheduleSuggestionUpdate() {
+        mSuggestHandler.removeCallbacks(mUpdateSuggestionsRunnable);
+        mSuggestHandler.postDelayed(mUpdateSuggestionsRunnable, 30);
+    }
+
+    /** length of the run of word characters at the end of s */
+    private static int trailingWordLength(CharSequence s) {
+        int i = s.length();
+        while (i > 0 && TextNormalizer.isWordChar(s.charAt(i - 1))) i--;
+        return s.length() - i;
+    }
+
+    private static int leadingWordLength(CharSequence s) {
+        int i = 0;
+        while (i < s.length() && TextNormalizer.isWordChar(s.charAt(i))) i++;
+        return i;
+    }
+
+    /** the word before the current one, if only spaces separate them */
+    private static String previousWord(CharSequence before, int currentLen) {
+        int end = before.length() - currentLen;
+        int i = end;
+        while (i > 0 && before.charAt(i - 1) == ' ') i--;
+        if (i == end && currentLen > 0) return null;  // no space between: not a separate word
+        int wordEnd = i;
+        while (i > 0 && TextNormalizer.isWordChar(before.charAt(i - 1))) i--;
+        if (i == wordEnd) return null;
+        return before.subSequence(i, wordEnd).toString();
+    }
+
+    private void updateSuggestions() {
+        if (mKeepSwipeAlternatives) return;
+        if (!predictionActive()) {
+            if (mStrip != null) showSuggestions(null, -1, keyboardLang());
+            return;
+        }
+        InputConnection ic = getCurrentInputConnection();
+        if (ic == null) return;
+        CharSequence selected = ic.getSelectedText(0);
+        if (selected != null && selected.length() > 0) {
+            showSuggestions(null, -1, keyboardLang());
+            return;
+        }
+        CharSequence before = ic.getTextBeforeCursor(80, 0);
+        if (before == null) before = "";
+        int curLen = trailingWordLength(before);
+        String current = before.subSequence(before.length() - curLen, before.length()).toString();
+        String prev = previousWord(before, curLen);
+        String lang = PredictionEngine.languageFor(keyboardLang(), current.length() > 0 ? current : prev);
+        if (current.length() == 0 && (before.length() == 0
+                || !Character.isWhitespace(before.charAt(before.length() - 1)))) {
+            prev = null; // only predict the next word right after a space
+        }
+        List<String> words = mPredict.suggest(lang, prev, current, 3);
+        int literal = current.length() > 0 && !words.isEmpty() && words.get(0).equals(current)
+                && !mPredict.isKnown(lang, current) ? 0 : -1;
+        showSuggestions(words, literal, lang);
+    }
+
+    /** Inserts a word picked on the strip: it replaces the word at the cursor. */
+    private void pickSuggestion(String word) {
+        InputConnection ic = getCurrentInputConnection();
+        if (ic == null) return;
+        handlehapticfeedback();
+        ic.finishComposingText();
+        mComposing.setLength(0);
+        String lang = mStripLang;
+        ic.beginBatchEdit();
+        CharSequence before = ic.getTextBeforeCursor(80, 0);
+        if (before == null) before = "";
+        String prev;
+        if (mKeepSwipeAlternatives && mLastInserted != null && before.toString().endsWith(mLastInserted)) {
+            // replace what the swipe inserted
+            ic.deleteSurroundingText(mLastInserted.length(), 0);
+            CharSequence b2 = ic.getTextBeforeCursor(80, 0);
+            prev = previousWord(b2 == null ? "" : b2, 0);
+        } else {
+            int curLen = trailingWordLength(before);
+            CharSequence after = ic.getTextAfterCursor(40, 0);
+            int afterLen = after == null ? 0 : leadingWordLength(after);
+            prev = previousWord(before, curLen);
+            ic.deleteSurroundingText(curLen, afterLen);
+        }
+        CharSequence after = ic.getTextAfterCursor(1, 0);
+        boolean spaceFollows = after != null && after.length() > 0 && Character.isWhitespace(after.charAt(0));
+        String insert = word + (mAutoSpace && !spaceFollows ? " " : "");
+        ic.commitText(insert, 1);
+        ic.endBatchEdit();
+        mPredict.learn(lang, prev, word);
+        mLastInserted = insert;
+        mLastInsertedLang = lang;
+        mJustAutoSpaced = insert.endsWith(" ");
+        mKeepSwipeAlternatives = false;
+        scheduleSuggestionUpdate();
+    }
+
+    /** Learns the word that the user just finished typing (called before a separator is typed). */
+    private void learnWordBeforeCursor() {
+        if (!predictionActive()) return;
+        InputConnection ic = getCurrentInputConnection();
+        if (ic == null) return;
+        CharSequence before = ic.getTextBeforeCursor(80, 0);
+        if (before == null) return;
+        int curLen = trailingWordLength(before);
+        if (curLen == 0) return;
+        String word = before.subSequence(before.length() - curLen, before.length()).toString();
+        String lang = PredictionEngine.languageFor(keyboardLang(), word);
+        mPredict.learn(lang, previousWord(before, curLen), word);
+    }
+
+    /** "word ." → "word." when the space was added automatically */
+    private void removeAutoSpaceBeforePunctuation(int primaryCode) {
+        if (!mJustAutoSpaced || PUNCT_AFTER_WORD.indexOf((char) primaryCode) < 0) return;
+        InputConnection ic = getCurrentInputConnection();
+        if (ic == null) return;
+        CharSequence before = ic.getTextBeforeCursor(1, 0);
+        if (before != null && " ".contentEquals(before)) ic.deleteSurroundingText(1, 0);
+    }
+
+    // ---------------------------------------------------------------- swipe
+
+    private final KKeyboardView.SwipeListener mSwipeListener = new KKeyboardView.SwipeListener() {
+        @Override public boolean isSwipeAllowed() {
+            return mSwipeEnabled && mFieldAllowsPrediction && isAlphabetKeyboardShown();
+        }
+
+        @Override public void onSwipeStarted() {
+            if (mPreviewPopup != null && mPreviewPopup.isShowing()) mPreviewPopup.dismiss();
+            mInputView.setPreviewEnabled(false);
+        }
+
+        @Override public void onSwipe(float[] xs, float[] ys, int count) {
+            handleSwipe(xs, ys, count);
+        }
+    };
+
+    private SwipeDecoder swipeDecoderFor(Keyboard kb) {
+        if (mSwipeDecoder == null || mSwipeDecoderKeyboard != kb || mSwipeDecoderWidth != mInputView.getWidth()) {
+            List<int[]> codes = new ArrayList<int[]>();
+            List<int[]> rects = new ArrayList<int[]>();
+            for (Keyboard.Key k : kb.getKeys()) {
+                codes.add(k.codes);
+                rects.add(new int[]{k.x, k.y, k.width, k.height});
+            }
+            mSwipeDecoder = new SwipeDecoder(codes, rects);
+            mSwipeDecoderKeyboard = kb;
+            mSwipeDecoderWidth = mInputView.getWidth();
+        }
+        return mSwipeDecoder;
+    }
+
+    private void handleSwipe(float[] xs, float[] ys, int count) {
+        InputConnection ic = getCurrentInputConnection();
+        Keyboard kb = mInputView.getKeyboard();
+        if (ic == null || kb == null) return;
+        String lang = keyboardLang();
+        WordDictionary dict = mPredict.dictionary(lang);
+        if (dict == null) {
+            toastM(getString(R.string.dictionary_loading));
+            return;
+        }
+        SwipeDecoder decoder = swipeDecoderFor(kb);
+        if (!decoder.isUsable()) return;
+        ic.finishComposingText();
+        mComposing.setLength(0);
+        CharSequence before = ic.getTextBeforeCursor(80, 0);
+        if (before == null) before = "";
+        int curLen = trailingWordLength(before);
+        String prev = previousWord(before, curLen);
+        List<String> words = decoder.decode(xs, ys, count, dict, mPredict, lang, prev, 3);
+        if (words.isEmpty()) {
+            handlehapticfeedback();
+            return;
+        }
+        boolean shifted = mInputView.isShifted();
+        List<String> shown = new ArrayList<String>();
+        for (String w : words) {
+            if (PredictionEngine.EN.equals(lang) && shifted) {
+                w = mCapsLock ? w.toUpperCase(java.util.Locale.ROOT) : TextNormalizer.capitalize(w);
+            }
+            shown.add(w);
+        }
+        String word = shown.get(0);
+        ic.beginBatchEdit();
+        if (curLen > 0 || (before.length() > 0 && !Character.isWhitespace(before.charAt(before.length() - 1))
+                && PUNCT_AFTER_WORD.indexOf(before.charAt(before.length() - 1)) >= 0)) {
+            ic.commitText(" ", 1); // a swiped word never sticks to the text before it
+        }
+        String insert = word + (mAutoSpace ? " " : "");
+        ic.commitText(insert, 1);
+        ic.endBatchEdit();
+        mPredict.learn(lang, prev, words.get(0));
+        mLastInserted = insert;
+        mLastInsertedLang = lang;
+        mJustAutoSpaced = mAutoSpace;
+        if (shifted && !mCapsLock && (kb == mQwertyKeyboard)) {
+            mInputView.setShifted(false);
+            changeIconShift(0);
+        }
+        showSuggestions(shown, -1, lang);
+        mKeepSwipeAlternatives = true;
+    }
 }
 
 

@@ -117,6 +117,7 @@ public class KKeyboardView extends KeyboardView {
     }
     @Override
     protected boolean onLongPress(Key key) {
+        mSwipeLongPressed = true; // a popup is opening: this touch is not a swipe
 
 
 
@@ -5483,4 +5484,205 @@ public class KKeyboardView extends KeyboardView {
         }
     }
 
+
+    // =====================================================================
+    // Swipe (glide) typing: hold a letter and slide over the keys.
+    // =====================================================================
+
+    public interface SwipeListener {
+        /** whether swiping is enabled for the keyboard currently shown */
+        boolean isSwipeAllowed();
+        /** the finger was lifted after a swipe; points are in this view's coordinates */
+        void onSwipe(float[] xs, float[] ys, int count);
+        /** a swipe started (the key under the finger will not be typed) */
+        void onSwipeStarted();
+    }
+
+    private SwipeListener mSwipeListener;
+    private boolean mSwipeTracking;   // finger is down on a letter key, may become a swipe
+    private boolean mSwiping;         // the touch is a swipe
+    private boolean mSwipeLongPressed;
+    private float[] mSwipeX = new float[256], mSwipeY = new float[256];
+    private int mSwipeCount;
+    private long mSwipeDownTime;
+    private Key mSwipeLastKey;
+    private int mSwipeKeysVisited;
+    private SwipeTrail mTrail;
+
+    public void setSwipeListener(SwipeListener l) {
+        mSwipeListener = l;
+    }
+
+    public boolean isSwiping() {
+        return mSwiping;
+    }
+
+    private Key letterKeyAt(float x, float y) {
+        Keyboard kb = getKeyboard();
+        if (kb == null) return null;
+        for (Key k : kb.getKeys()) {
+            if (k.isInside((int) x, (int) y)) {
+                if (k.codes != null && k.codes.length > 0 && k.codes[0] > 0
+                        && Character.isLetter(k.codes[0])) return k;
+                return null;
+            }
+        }
+        return null;
+    }
+
+    private void addSwipePoint(float x, float y) {
+        if (mSwipeCount == mSwipeX.length) {
+            mSwipeX = java.util.Arrays.copyOf(mSwipeX, mSwipeCount * 2);
+            mSwipeY = java.util.Arrays.copyOf(mSwipeY, mSwipeCount * 2);
+        }
+        mSwipeX[mSwipeCount] = x;
+        mSwipeY[mSwipeCount] = y;
+        mSwipeCount++;
+        if (mSwiping && mTrail != null) mTrail.add(x, y);
+    }
+
+    private void endSwipe() {
+        mSwipeTracking = false;
+        mSwiping = false;
+        mSwipeCount = 0;
+        if (mTrail != null) mTrail.clear();
+    }
+
+    @Override
+    public boolean onTouchEvent(android.view.MotionEvent me) {
+        if (mSwipeListener == null) return super.onTouchEvent(me);
+        int action = me.getActionMasked();
+        switch (action) {
+            case android.view.MotionEvent.ACTION_DOWN: {
+                endSwipe();
+                mSwipeLongPressed = false;
+                Key k = letterKeyAt(me.getX(), me.getY());
+                if (k != null && mSwipeListener.isSwipeAllowed()) {
+                    mSwipeTracking = true;
+                    mSwipeDownTime = me.getEventTime();
+                    mSwipeLastKey = k;
+                    mSwipeKeysVisited = 1;
+                    addSwipePoint(me.getX(), me.getY());
+                }
+                return super.onTouchEvent(me);
+            }
+            case android.view.MotionEvent.ACTION_POINTER_DOWN:
+                if (mSwiping) return true;     // ignore a second finger during a swipe
+                mSwipeTracking = false;        // two-finger typing: never a swipe
+                return super.onTouchEvent(me);
+            case android.view.MotionEvent.ACTION_MOVE: {
+                if (mSwiping) {
+                    for (int h = 0; h < me.getHistorySize(); h++) {
+                        addSwipePoint(me.getHistoricalX(0, h), me.getHistoricalY(0, h));
+                    }
+                    addSwipePoint(me.getX(0), me.getY(0));
+                    return true;
+                }
+                if (mSwipeTracking && !mSwipeLongPressed && me.getPointerCount() == 1) {
+                    for (int h = 0; h < me.getHistorySize(); h++) {
+                        addSwipePoint(me.getHistoricalX(0, h), me.getHistoricalY(0, h));
+                    }
+                    addSwipePoint(me.getX(), me.getY());
+                    Key k = letterKeyAt(me.getX(), me.getY());
+                    if (k != null && k != mSwipeLastKey) {
+                        mSwipeKeysVisited++;
+                        mSwipeLastKey = k;
+                    }
+                    float dx = me.getX() - mSwipeX[0], dy = me.getY() - mSwipeY[0];
+                    float keyW = mSwipeLastKey != null ? mSwipeLastKey.width : 60;
+                    boolean far = dx * dx + dy * dy > keyW * keyW * 0.8f;
+                    boolean heldStill = me.getEventTime() - mSwipeDownTime > 450 && mSwipeKeysVisited < 2;
+                    if (heldStill) {
+                        mSwipeTracking = false; // a long press: leave it to the normal handling
+                    } else if (far && mSwipeKeysVisited >= 2) {
+                        startSwipe(me);
+                        return true;
+                    }
+                }
+                return super.onTouchEvent(me);
+            }
+            case android.view.MotionEvent.ACTION_UP: {
+                if (mSwiping) {
+                    addSwipePoint(me.getX(), me.getY());
+                    float[] xs = java.util.Arrays.copyOf(mSwipeX, mSwipeCount);
+                    float[] ys = java.util.Arrays.copyOf(mSwipeY, mSwipeCount);
+                    int n = mSwipeCount;
+                    endSwipe();
+                    mSwipeListener.onSwipe(xs, ys, n);
+                    return true;
+                }
+                endSwipe();
+                return super.onTouchEvent(me);
+            }
+            case android.view.MotionEvent.ACTION_CANCEL:
+                endSwipe();
+                return super.onTouchEvent(me);
+            default:
+                if (mSwiping) return true;
+                return super.onTouchEvent(me);
+        }
+    }
+
+    private void startSwipe(android.view.MotionEvent me) {
+        mSwiping = true;
+        // make KeyboardView forget the pressed key so it is not typed
+        android.view.MotionEvent cancel = android.view.MotionEvent.obtain(me);
+        cancel.setAction(android.view.MotionEvent.ACTION_CANCEL);
+        super.onTouchEvent(cancel);
+        cancel.recycle();
+        if (mTrail == null) {
+            mTrail = new SwipeTrail(getResources().getDisplayMetrics().density);
+            getOverlay().add(mTrail);
+        }
+        mTrail.setBounds(0, 0, getWidth(), getHeight());
+        mTrail.clear();
+        for (int i = 0; i < mSwipeCount; i++) mTrail.add(mSwipeX[i], mSwipeY[i]);
+        mSwipeListener.onSwipeStarted();
+    }
+
+    /** The line drawn under the finger while swiping (drawn in the view overlay). */
+    static final class SwipeTrail extends Drawable {
+        private final android.graphics.Path path = new android.graphics.Path();
+        private final Paint glow = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint line = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private boolean empty = true;
+
+        SwipeTrail(float density) {
+            for (Paint p : new Paint[]{glow, line}) {
+                p.setStyle(Paint.Style.STROKE);
+                p.setStrokeCap(Paint.Cap.ROUND);
+                p.setStrokeJoin(Paint.Join.ROUND);
+            }
+            glow.setColor(0x5539A7FF);
+            glow.setStrokeWidth(12 * density);
+            line.setColor(0xDD1E88E5);
+            line.setStrokeWidth(5 * density);
+        }
+
+        void add(float x, float y) {
+            if (empty) {
+                path.moveTo(x, y);
+                empty = false;
+            } else {
+                path.lineTo(x, y);
+            }
+            invalidateSelf();
+        }
+
+        void clear() {
+            path.reset();
+            empty = true;
+            invalidateSelf();
+        }
+
+        @Override public void draw(Canvas c) {
+            if (empty) return;
+            c.drawPath(path, glow);
+            c.drawPath(path, line);
+        }
+
+        @Override public void setAlpha(int a) {}
+        @Override public void setColorFilter(android.graphics.ColorFilter cf) {}
+        @Override public int getOpacity() { return android.graphics.PixelFormat.TRANSLUCENT; }
+    }
 }

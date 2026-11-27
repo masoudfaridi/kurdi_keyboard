@@ -345,5 +345,25 @@
     </string>
 
 
+
+    <!-- word prediction and swipe typing -->
+    <string name="prefprediction" translatable="false">prefprediction</string>
+    <string name="prefswipe" translatable="false">prefswipe</string>
+    <string name="prefautospace" translatable="false">prefautospace</string>
+    <string name="prefclearhistory" translatable="false">prefclearhistory</string>
+    <string name="settings_prediction_title">پیش‌بینی کلمات و تایپ سوایپی</string>
+    <string name="settings_prediction_summary">پیشنهاد کلمه برای کوردی، فارسی و انگلیسی؛ تایپ با کشیدن انگشت روی حروف</string>
+    <string name="title_prediction">پیش‌بینی کلمات</string>
+    <string name="summary_prediction">هنگام تایپ، کلمات پیشنهادی بالای کیبورد نمایش داده شوند</string>
+    <string name="title_swipe">تایپ سوایپی (کشیدن انگشت)</string>
+    <string name="summary_swipe">انگشت را روی حرف اول نگه دارید و بدون برداشتن روی حروف کلمه بکشید</string>
+    <string name="title_autospace">فاصله خودکار</string>
+    <string name="summary_autospace">بعد از انتخاب کلمه پیشنهادی یا سوایپ، یک فاصله اضافه شود</string>
+    <string name="title_clearhistory">پاک کردن کلمات یادگرفته‌شده</string>
+    <string name="summary_clearhistory">کیبورد کلماتی را که تایپ می‌کنید فقط روی همین گوشی ذخیره می‌کند</string>
+    <string name="history_cleared">کلمات یادگرفته‌شده پاک شدند</string>
+    <string name="suggestion_removed">«%1$s» از پیشنهادها حذف شد</string>
+    <string name="dictionary_loading">دیکشنری در حال بارگذاری است، کمی صبر کنید</string>
+
 </resources>
 
