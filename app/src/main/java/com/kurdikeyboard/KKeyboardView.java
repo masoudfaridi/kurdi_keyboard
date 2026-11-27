@@ -1208,7 +1208,7 @@ public class KKeyboardView extends KeyboardView {
                 ProPainter.key(canvas, mKeyPaint, mKeyRect, r, t,
                         isEnter ? ProPainter.ENTER : isFn ? ProPainter.FUNCTION : ProPainter.LETTER,
                         key.pressed, tint, d, keyAlpha);
-                mKeyRect.offset(0, ProPainter.sink(t, key.pressed, d));
+                mKeyRect.offset(0, ProPainter.labelShift(t, key.pressed, d));
                 int lc = t.pro.rainbow ? tint : t.text;
                 mLabelPaint.setColor(lc);
                 mNumberPaint.setColor(lc);

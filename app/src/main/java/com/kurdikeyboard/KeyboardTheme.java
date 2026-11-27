@@ -143,7 +143,9 @@ public final class KeyboardTheme {
     /** Themes of one section of the "pro" theme list: light or dark. */
     public static List<KeyboardTheme> proSection(boolean dark) {
         List<KeyboardTheme> out = new ArrayList<>();
-        for (KeyboardTheme t : THEMES.values()) if (t.isPro() && t.isDark() == dark) out.add(t);
+        // the newest ("future", ids fx_*) first
+        for (KeyboardTheme t : THEMES.values()) if (t.isPro() && t.isDark() == dark && t.id.startsWith("fx_")) out.add(t);
+        for (KeyboardTheme t : THEMES.values()) if (t.isPro() && t.isDark() == dark && !t.id.startsWith("fx_")) out.add(t);
         return out;
     }
 
@@ -206,6 +208,9 @@ public final class KeyboardTheme {
         boolean rainbow;          // outline and labels change color across the keyboard
         boolean labelGlow;        // labels glow too
         int sheen;                // light reflection on the upper half of the key, 0 = none
+        int shape;                // ProPainter.SHAPE_*: rounded, keycap, chamfer, bubble
+        int fx, fxColor;          // ProPainter.FX_*: flames, gloss, inner glow inside the keys
+        int art, artColor, artColor2; // ProPainter.ART_*: artwork on the background
     }
 
     private static final class P {
@@ -240,6 +245,9 @@ public final class KeyboardTheme {
         P rainbow() { x.rainbow = true; return this; }
         P labelGlow() { x.labelGlow = true; return this; }
         P sheen(int c) { x.sheen = c; return this; }
+        P shape(int sh) { x.shape = sh; return this; }
+        P fx(int f, int color) { x.fx = f; x.fxColor = color; return this; }
+        P art(int a, int color, int color2) { x.art = a; x.artColor = color; x.artColor2 = color2; return this; }
         P text(int t, int h) { text = t; hint = h; return this; }
         P accent(int a, int on) { accent = a; onAccent = on; return this; }
         P pressed(int c) { pressed = c; return this; }
@@ -352,6 +360,73 @@ public final class KeyboardTheme {
         pro("pro_sky_3d", "آبی سه‌بعدی", false).bg(0xFFDBEAFE, 0xFFBFDBFE)
                 .keys(0xFFFFFFFF, 0xFFF8FBFF).edge(0xFF60A5FA).sheen(0x0A000000).text(0xFF1E3A8A, 0xFF2563EB)
                 .accent(0xFF2563EB, 0xFFFFFFFF).radius(12).done();
+    }
+
+
+    static {
+        final int KEYCAP = ProPainter.SHAPE_KEYCAP, CHAMFER = ProPainter.SHAPE_CHAMFER, BUBBLE = ProPainter.SHAPE_BUBBLE;
+        // ---------------------------------------------------------------- future, dark
+        pro("fx_keycap_midnight", "کی‌کپ نیمه‌شب", true).bg(0xFF16161F, 0xFF0A0A10)
+                .blob(0x221D4ED8, 0.5f, 0f, 0.7f)
+                .shape(KEYCAP).keys(0xFF26262F, 0xFF14141A).edge(0xFF4A4A57).fn(0xFF3157E8, 0xFF1C35B0)
+                .text(0xFF8FD3FF, 0xFF6BA8D9).accent(0xFF2546D1, 0xFFDCEBFF).radius(7).done();
+        pro("fx_hud", "رابط آینده", true).bg(0xFF0C2136, 0xFF06111C)
+                .art(ProPainter.ART_HEX, 0x2632D7FF, 0).blob(0x3300C8FF, 0.5f, 0.1f, 0.6f)
+                .shape(CHAMFER).keys(0xFF0F2C44, 0xFF0A2135).line(0xFF3BE3FF, 1.3f).glow(0xFF00D5FF, 3)
+                .fx(ProPainter.FX_INNER_GLOW, 0xFF3BE3FF)
+                .text(0xFF8AF2FF, 0xAA3BE3FF).accent(0xFF00B8D9, 0xFF041019).done();
+        pro("fx_heartbeat", "ضربان قلب نئونی", true).bg(0xFF000716, 0xFF00030B)
+                .blob(0x441E40FF, 0.5f, 0.45f, 0.55f).stars(0xAA7FB2FF)
+                .art(ProPainter.ART_HEARTBEAT, 0xFF2F7BFF, 0xFF66AAFF)
+                .shape(CHAMFER).keys(0x99000614, 0x99000309).line(0xFF3D8BFF, 1.3f).glow(0xFF2F6BFF, 5)
+                .text(0xFFE8F1FF, 0xCC7FB2FF).labelGlow().accent(0xFF2563EB, 0xFFFFFFFF).done();
+        pro("fx_blue_inferno", "دوزخ آبی", true).bg(0xFF020518, 0xFF000208)
+                .art(ProPainter.ART_FLAMES, 0xFF1E5BFF, 0xFF8DBBFF).stars(0x8860A5FA)
+                .keys(0xFF060A18, 0xFF02040A).line(0xFF3B74FF, 1).glow(0xFF2F6BFF, 4)
+                .fx(ProPainter.FX_FLAME, 0xFF2F7BFF)
+                .text(0xFFFFFFFF, 0xFF9DC2FF).accent(0xFF1D4ED8, 0xFFFFFFFF).radius(9).done();
+        pro("fx_crimson_gloss", "قرمز براق", true).bg(0xFF1C1C21, 0xFF0B0B0D)
+                .blob(0x33E11D2E, 0.9f, 0f, 0.5f).art(ProPainter.ART_WAVES, 0x22E11D2E, 0x11FFFFFF)
+                .keys(0xFF2E2E33, 0xFF0F0F11).line(0xFF4A0D14, 1).fx(ProPainter.FX_GLOSS, 0xFFE11D2E)
+                .text(0xFFFFFFFF, 0xFFFF7A84).accent(0xFFE11D2E, 0xFFFFFFFF).radius(7).done();
+        pro("fx_emerald_glint", "زمرد درخشان", true).bg(0xFF06380F, 0xFF021A07)
+                .blob(0x5522C55E, 0.2f, 0.2f, 0.5f).blob(0x4484CC16, 0.9f, 0.9f, 0.5f)
+                .art(ProPainter.ART_SPARKLE, 0xFF9DFF6B, 0)
+                .keys(0xFF14501A, 0xFF051F08).line(0xFF5EF06E, 1.2f).glow(0xFF22FF44, 3).sheen(0x2EFFFFFF)
+                .text(0xFFE1FFD6, 0xFF9AE6A6).accent(0xFF22C55E, 0xFF021A07).radius(8).done();
+        pro("fx_synth_city", "شهر آینده", true).bg(0xFF0D0221, 0xFF26074D, 0xFF3A0A4F)
+                .art(ProPainter.ART_GRID, 0xFFFF2BD6, 0xFFFFD319).stars(0xAAFFFFFF)
+                .shape(CHAMFER).keys(0xCC1A0638, 0xCC0D0221).line(0xFF00F0FF, 1.2f).glow(0xFF00F0FF, 4)
+                .text(0xFFE6FDFF, 0xCC7DF9FF).labelGlow().accent(0xFFFF2BD6, 0xFFFFFFFF).done();
+        pro("fx_circuit", "مدار الکترونیکی", true).bg(0xFF04130F, 0xFF010705)
+                .art(ProPainter.ART_CIRCUIT, 0x6632FFB4, 0).blob(0x2200FFA2, 0.5f, 0.5f, 0.6f)
+                .keys(0xEE072219, 0xEE03100C).line(0xFF2BFFB0, 1.1f).glow(0xFF00FFA2, 3)
+                .fx(ProPainter.FX_INNER_GLOW, 0xFF2BFFB0)
+                .text(0xFFA6FFE4, 0xAA2BFFB0).accent(0xFF00C98A, 0xFF01110C).radius(4).done();
+        pro("fx_keycap_neon", "کی‌کپ رنگین‌کمان", true).bg(0xFF09090D, 0xFF000000)
+                .shape(KEYCAP).keys(0xFF22222B, 0xFF14141A).line(0xFFFFFFFF, 1).glow(0xFFFFFFFF, 4).rainbow()
+                .text(0xFFFFFFFF, 0xCCFFFFFF).accent(0xFFEC4899, 0xFFFFFFFF).radius(7).done();
+        pro("fx_ocean_waves", "امواج آینده", true).bg(0xFF031427, 0xFF062A44)
+                .art(ProPainter.ART_WAVES, 0xFF22D3EE, 0xFF6366F1).stars(0x99BAE6FD)
+                .shape(BUBBLE).keys(0x40FFFFFF, 0x14FFFFFF).line(0x99FFFFFF, 1.1f)
+                .text(0xFFFFFFFF, 0xCCBAE6FD).accent(0xFF06B6D4, 0xFF031427).done();
+        // ---------------------------------------------------------------- future, light
+        pro("fx_bubble_galaxy", "قطره کهکشانی", false).bg(0xFF8EC5FF, 0xFFC4A8FF, 0xFFF7B8E8).diagonal()
+                .blob(0x88FFFFFF, 0.5f, 0.45f, 0.45f).stars(0xEEFFFFFF)
+                .shape(BUBBLE).keys(0x99FFFFFF, 0x4DFFFFFF).line(0xE6FFFFFF, 1.2f)
+                .text(0xFF2A1F5C, 0xFF5B4B9A).accent(0xFF8B5CF6, 0xFFFFFFFF).done();
+        pro("fx_keycap_cream", "کی‌کپ کرم", false).bg(0xFFE9E4DA, 0xFFD6CFC0)
+                .shape(KEYCAP).keys(0xFFFFFDF8, 0xFFF0EBE1).fn(0xFFF5AE66, 0xFFE07B39)
+                .text(0xFF3D3529, 0xFF8C7F6A).accent(0xFFE07B39, 0xFFFFFFFF).radius(7).done();
+        pro("fx_holo_pearl", "مروارید هولوگرام", false).bg(0xFFF5F3FF, 0xFFE0F2FE, 0xFFFCE7F3).diagonal()
+                .art(ProPainter.ART_HEX, 0x448B5CF6, 0).stars(0xCCFFFFFF)
+                .shape(BUBBLE).keys(0xCCFFFFFF, 0x99FFFFFF).line(0xFFFFFFFF, 1.3f).rainbow()
+                .text(0xFF3B2F63, 0xFF7C6FA8).accent(0xFF8B5CF6, 0xFFFFFFFF).done();
+        pro("fx_hud_light", "رابط روشن", false).bg(0xFFEAF6FF, 0xFFD3EAFE)
+                .art(ProPainter.ART_CIRCUIT, 0x400EA5E9, 0)
+                .shape(CHAMFER).keys(0xFFFFFFFF, 0xFFEFF8FF).line(0xFF0EA5E9, 1.2f).glow(0x660EA5E9, 3)
+                .fx(ProPainter.FX_INNER_GLOW, 0xFF0EA5E9)
+                .text(0xFF075985, 0xFF0284C7).accent(0xFF0284C7, 0xFFFFFFFF).done();
     }
 
 }

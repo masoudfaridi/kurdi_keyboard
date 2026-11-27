@@ -22,7 +22,7 @@
         کیبورد هوشمند چندزبانه ماپریس
     </string>
 <string name="versionName">
-    2.4.0
+    2.5.0
 </string>
 
 
@@ -395,7 +395,7 @@
     <string name="theme_group_pro">✨  تم‌های حرفه‌ای (%1$s)</string>
     <string name="theme_tab_light">☀️  روشن (%1$s)</string>
     <string name="theme_tab_dark">🌙  تیره (%1$s)</string>
-    <string name="theme_picker_summary">۴۸ تم ساده و ۲۴ تم حرفه‌ای، هر کدام روشن و تیره</string>
+    <string name="theme_picker_summary">۴۸ تم ساده و ۳۸ تم حرفه‌ای و آینده‌نگر، هر کدام روشن و تیره</string>
     <!-- space bar gestures -->
     <string name="prefspacecursor" translatable="false">prefspacecursor</string>
     <string name="prefspacecursorspeed" translatable="false">prefspacecursorspeed</string>

@@ -17,8 +17,8 @@ android {
         applicationId "com.kurdikeyboard"
         minSdk 21
         targetSdk 35
-        versionCode 240
-        versionName '2.4.0'
+        versionCode 250
+        versionName '2.5.0'
     }
 
     buildFeatures {
