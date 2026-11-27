@@ -711,111 +711,17 @@ public class kurdikeyboard extends InputMethodService
 
             }
         });
-        final myPopupWindow popupWindowsetting = new myPopupWindow(root,getApplicationContext()
-        ,this);
-
-        // sized from the keyboard itself (was setSizeForSoftKeyboard(): screen-size guesswork)
-        final float popUpheight2 = getResources().getDimension(
-                R.dimen.keyboard_height);
-        popupWindowsetting.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
-
+        // 2.0: the gear opens the settings (the 2017 option grid is gone; contacts have their own icon)
         ivKeyboardSetting.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            //  option
-                PopupWindow popupWindow1=
-                        new PopupWindow();
-                LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-                final View viewtemp = inflater.inflate(R.layout.layout_contacts, null, false);
-
-                final ListView listview = (ListView) viewtemp.findViewById(R.id.listView);
-
-                popupWindow1.setContentView(listview);
-                if(popupWindow1.isShowing()){
-
-                    popupWindow1.dismiss();
-
-
+            @Override public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), ImePreferences.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                try {
+                    startActivity(i);
+                } catch (RuntimeException ignored) {
                 }
-
-                if(popupWindowsetting.isShowing()){
-
-                    popupWindowsetting.dismiss();
-
-
-                }
-                else {
-
-
-                    int screenHeight = mInputView.getRootView().getHeight();
-                    int bottomHeight = (int) getResources().getDimension(R.dimen.key_height_firstrow);
-                    int equalizer = (int) getResources().getDimension(R.dimen.hiegh_for_emoji);
-                    int defHeight = (screenHeight - 2 * bottomHeight - equalizer);
-
-                    int locationforwhatsup[] = new int[2];
-                    ivKeyboardSelectall.getLocationOnScreen(locationforwhatsup);
-                    int bottomHeight3forwhatsup = locationforwhatsup[1];
-
-                    int height2 = (int) (locationforwhatsup[1] +
-                            ivKeyboardSelectall.getMeasuredHeight());
-
-                    int equalizerforwhatsup = (int) getResources().getDimension(R.dimen.hiegh_for_emoji_whatsup);
-
-                    int defHeight2 = Math.min(defHeight, height2 - equalizerforwhatsup);
-                    if(isPortrait()){
-                        defHeight2-=getResources().getDimension(
-                                R.dimen.key_height_firstrow
-                        );
-                    }
-                    popupWindowsetting.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
-                    popupWindowsetting.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
-                mOpenPopup = popupWindowsetting;
-
-
-                    InputMethodManager mInputMethodManager = (InputMethodManager) getBaseContext()
-                            .getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                    // mInputMethodManager.showSoftInput(root, 0);
-
-                    mInputMethodManager.showSoftInput(mInputView, 0);
-
-                    popupWindowsetting.setOnSoftKeyboardOpenCloseListener(
-                            new myPopupWindow.OnSoftKeyboardOpenCloseListener() {
-
-                                @Override
-                                public void onKeyboardOpen(int keyBoardHeight) {
-
-                                }
-
-                                @Override
-                                public void onKeyboardClose() {
-                                    if (popupWindowsetting.isShowing())
-                                        popupWindowsetting.dismiss();
-                                }
-                            });
-
-
-                }
-
-
-
             }
         });
-        ivKeyboardSetting.setOnLongClickListener(
-                new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        Intent i1 = new Intent(getBaseContext(),Main2Activity.class);
-                        i1.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
-                        i1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(i1); return true;
-                    }
-                }
-
-        );
-
         mInputView.setOnKeyboardActionListener(this);
         if (mCurKeyboard != null && mCurKeyboard == mSymbolsnumbers) {
             setKKeyboard(mSymbolsnumbers); // number / phone field: keep the number pad
@@ -1068,6 +974,7 @@ public class kurdikeyboard extends InputMethodService
             }
         }
         readPredictionPrefs();
+        addContactsToolbarButton(root);
         modernizeToolbar(root);
         installSuggestionStrip();
         mInputView.setSwipeListener(mSwipeListener);
@@ -1314,6 +1221,17 @@ public class kurdikeyboard extends InputMethodService
       // Toast.makeText(getBaseContext(),"onStartInputView",Toast.LENGTH_LONG).show();
 
         super.onStartInputView(attribute, restarting);
+        if (attribute != null && !ContactPickerActivity.isShowing()) {
+            final String contactText = ContactPickerActivity.takePendingText();
+            if (contactText != null) {
+                // after the field is ready
+                mSuggestHandler.postDelayed(new Runnable() {
+                    @Override public void run() {
+                        getCurrentInputConnection().commitText(contactText, 1);
+                    }
+                }, 150);
+            }
+        }
         if (mQwertyKeyboard != null && !layoutPrefsSignature().equals(mLastLayoutPrefs)) {
             // double-tap / extended-Kurdish settings changed: rebuild the keyboards now
             onInitializeInterface();
@@ -2449,105 +2367,7 @@ public class kurdikeyboard extends InputMethodService
 
 
         }else  if(primaryCode==KKeyboardView.KEYCODE_CONTACCTS_READ_2){
-            if (closeOpenPopup()) return; // pressing again closes it (they used to stack up)
-            if (!PermissionActivity.ensure(this, android.Manifest.permission.READ_CONTACTS)) {
-                return; // the permission dialog opens; tap the key again afterwards
-            }
-            final MyPopupPhoneContacts
-                    popupphonecontacts =new MyPopupPhoneContacts(
-                    rootTemp,getApplicationContext()
-                    ,this);
-
-            popupphonecontacts.setOutsideTouchable(true);
-            //popupcontacts.setFocusable(true);
-            // Removes default background.
-            //popupcontacts.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            popupphonecontacts.setBackgroundDrawable(new ColorDrawable(getColor(R.color.kk_popup_bg)));
-
-            final float popUpheight2 = getResources().getDimension(
-                    R.dimen.keyboard_height);
-            // sized from the keyboard itself (was setSizeForSoftKeyboard(): screen-size guesswork)
-            popupphonecontacts.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
-            if(popupphonecontacts.isShowing()){
-
-                popupphonecontacts.dismiss();
-
-
-            }
-            else {
-
-
-
-                int screenHeight = mInputView.getRootView().getHeight();
-                int bottomHeight= (int) getResources().getDimension(R.dimen.key_height_firstrow);
-                int equalizer=(int) getResources().getDimension(R.dimen.hiegh_for_emoji);
-                int defHeight=(screenHeight-2*bottomHeight-equalizer);
-
-                int locationforwhatsup[] = new int[2];
-                ivTemp.getLocationOnScreen(locationforwhatsup);
-                int bottomHeight3forwhatsup= locationforwhatsup[1];
-
-                int height2 = (int) (locationforwhatsup[1] +
-                        ivTemp.getMeasuredHeight());
-
-                int equalizerforwhatsup=(int) getResources().getDimension(R.dimen.hiegh_for_emoji_whatsup);
-
-                int defHeight2=Math.min(defHeight, height2-equalizerforwhatsup);
-                if(isPortrait()){
-                    defHeight2-=getResources().getDimension(
-                            R.dimen.key_height_firstrow
-                    );
-                }
-                popupphonecontacts.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
-                // popupcontacts.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
-
-
-
-                InputMethodManager mInputMethodManager = (InputMethodManager) getBaseContext()
-                        .getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                // mInputMethodManager.showSoftInput(root, 0);
-
-                mInputMethodManager.showSoftInput(mInputView, 0);
-
-                popupphonecontacts.setOnSoftKeyboardOpenCloseListener(
-                        new MyPopupPhoneContacts.OnSoftKeyboardOpenCloseListener() {
-
-                            @Override
-                            public void onKeyboardOpen(int keyBoardHeight) {
-
-                            }
-
-                            @Override
-                            public void onKeyboardClose() {
-                                if (popupphonecontacts.isShowing())
-                                    popupphonecontacts.dismiss();
-                            }
-                        });
-
-
-
-
-
-
-
-
-
-
-
-            }
-
-
-
-
-           try {
-               popupphonecontacts.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
-                mOpenPopup = popupphonecontacts;
-           }catch (Exception ei){
-               toastM(ei.getMessage());
-           }
-
-
+            openContactPicker();
         }else  if(primaryCode==KKeyboardView.KEYCODE_Ready_Sentences){
             if (closeOpenPopup()) return; // pressing again closes it (they used to stack up)
             final MyPopupReadySentences
@@ -4289,6 +4109,14 @@ private void setCurrentLanguage(){
                 {R.id.ivKeyboardsetting, R.drawable.ic_kk_settings},
         };
         int pad = (int) (12 * getResources().getDisplayMetrics().density);
+        View contactsButton = root.findViewWithTag("contacts");
+        if (contactsButton instanceof ImageView) {
+            ImageView iv = (ImageView) contactsButton;
+            iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            iv.setPadding(pad, pad, pad, pad);
+            iv.setImageTintList(android.content.res.ColorStateList.valueOf(tint));
+            iv.setBackgroundResource(R.drawable.kk_icon_button);
+        }
         for (int[] m : map) {
             View v = root.findViewById(m[0]);
             if (!(v instanceof ImageView)) continue;
@@ -4372,6 +4200,38 @@ private void setCurrentLanguage(){
             refreshStripVisibility();
             scheduleSuggestionUpdate();
         }
+    }
+
+    // ---------------------------------------------------------------- contacts (2.0)
+
+    /** opens the contact picker (search, then send a number / card into the current field) */
+    private void openContactPicker() {
+        closeOpenPopup();
+        Intent i = new Intent(getApplicationContext(), ContactPickerActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        try {
+            startActivity(i);
+        } catch (RuntimeException ignored) {
+        }
+    }
+
+    /** a contacts icon in the tools row, before the settings gear */
+    private void addContactsToolbarButton(View root) {
+        View gear = root.findViewById(R.id.ivKeyboardsetting);
+        if (gear == null || !(gear.getParent() instanceof LinearLayout)) return;
+        LinearLayout row = (LinearLayout) gear.getParent();
+        if (row.findViewWithTag("contacts") != null) return;
+        ImageView iv = new ImageView(this);
+        iv.setTag("contacts");
+        iv.setContentDescription(getString(R.string.contacts_title));
+        iv.setImageResource(R.drawable.ic_kk_person);
+        iv.setLayoutParams(new LinearLayout.LayoutParams((LinearLayout.LayoutParams) gear.getLayoutParams())); // keeps the weight
+        iv.setOnClickListener(new OnClickListener() {
+            @Override public void onClick(View v) {
+                openContactPicker();
+            }
+        });
+        row.addView(iv, row.indexOfChild(gear));
     }
 }
 

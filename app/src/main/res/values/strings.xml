@@ -409,5 +409,13 @@
     <string name="summary_enter_hold">نکته: با نگه داشتن کلید پایین سمت چپ (ایموجی)، نوار پیش‌بینی و ابزار پنهان یا نمایش داده می‌شود</string>
     <string name="prefpreviewgap" translatable="false">prefpreviewgap</string>
     <string name="title_preview_gap">فاصله نمایش کلید از انگشت</string>
+    <string name="contacts_title">مخاطبین</string>
+    <string name="contacts_search_hint">جستجوی نام یا شماره</string>
+    <string name="contacts_loading">در حال خواندن مخاطبین…</string>
+    <string name="contacts_need_permission">برای نمایش مخاطبین، اجازه دسترسی بدهید.</string>
+    <string name="contacts_permission_denied">بدون اجازه دسترسی، مخاطبین نمایش داده نمی‌شوند.</string>
+    <string name="contacts_no_match">مخاطبی با این نام یا شماره پیدا نشد.</string>
+    <string name="contacts_send_name_number">نام و شماره</string>
+    <string name="contacts_send_card">کارت کامل (نام، شماره‌ها و ایمیل)</string>
 </resources>
 

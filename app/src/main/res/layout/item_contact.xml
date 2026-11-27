@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 2.0: one card per item -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,26 +7,24 @@
     android:layoutDirection="rtl"
     android:minHeight="64dp"
     android:orientation="horizontal"
-    android:paddingStart="6dp"
+    android:paddingStart="12dp"
     android:paddingTop="8dp"
-    android:paddingEnd="6dp"
+    android:paddingEnd="12dp"
     android:paddingBottom="8dp">
 
-    <ImageView
-        android:id="@+id/imageviewhumancontacts"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:background="@drawable/kk_icon_button"
-        android:contentDescription="insert"
-        android:padding="10dp"
-        android:src="@drawable/ic_kk_person"
-        android:tint="@color/kk_primary" />
+    <TextView
+        android:id="@+id/contactAvatar"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
+        android:layout_marginStart="12dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -36,11 +33,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:gravity="start"
             android:maxLines="1"
             android:textAlignment="viewStart"
             android:textColor="@color/kk_text"
-            android:textDirection="anyRtl"
             android:textSize="16sp" />
 
         <TextView
@@ -49,11 +44,17 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:ellipsize="end"
-            android:gravity="start"
-            android:maxLines="2"
+            android:maxLines="1"
             android:textAlignment="viewStart"
             android:textColor="@color/kk_text_secondary"
-            android:textDirection="anyRtl"
-            android:textSize="13sp" />
+            android:textDirection="ltr"
+            android:textSize="14sp" />
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_kk_send"
+        android:tint="@color/kk_primary" />
 </LinearLayout>

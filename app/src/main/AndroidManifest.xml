@@ -59,8 +59,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Main2Activity"
-            android:theme="@style/AppTheme"/>
         <activity android:name=".Main22Activity"
             android:theme="@style/AppTheme">
 
@@ -81,6 +79,13 @@
           <activity android:name=".ThemePickerActivity"
               android:exported="false"
               android:windowSoftInputMode="adjustResize"
+              android:theme="@style/AppTheme" />
+
+          <activity android:name=".ContactPickerActivity"
+              android:exported="false"
+              android:excludeFromRecents="true"
+              android:taskAffinity=""
+              android:windowSoftInputMode="stateVisible|adjustResize"
               android:theme="@style/AppTheme" />
 
           <activity android:name=".PermissionActivity"
