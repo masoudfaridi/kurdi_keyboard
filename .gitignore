@@ -13,3 +13,9 @@ build-sign-apksigner.jar
 build/
 .gradle/
 .kotlin/
+
+# signing secrets
+keystore.properties
+.env
+*.jks
+*.keystore
