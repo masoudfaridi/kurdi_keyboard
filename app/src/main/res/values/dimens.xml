@@ -84,4 +84,6 @@
     <!-- theme 1 defaul values     -->
 
 
+    <!-- was defined by the removed emojicon library -->
+    <dimen name="keyboard_height">250dp</dimen>
 </resources>

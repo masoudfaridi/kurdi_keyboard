@@ -9,3 +9,7 @@
 
 build-sign-apksigner.jar
 *.apk
+
+build/
+.gradle/
+.kotlin/

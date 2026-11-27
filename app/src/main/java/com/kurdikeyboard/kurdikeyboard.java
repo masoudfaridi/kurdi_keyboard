@@ -77,13 +77,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import github.ankushsachdeva.emojicon.EmojiconEditText;
-import github.ankushsachdeva.emojicon.EmojiconGridView.OnEmojiconClickedListener;
-import github.ankushsachdeva.emojicon.EmojiconsPopup;
-import github.ankushsachdeva.emojicon.EmojiconsPopup.OnEmojiconBackspaceClickedListener;
-import github.ankushsachdeva.emojicon.EmojiconsPopup.OnSoftKeyboardOpenCloseListener;
-import github.ankushsachdeva.emojicon.emoji.Emojicon;
-import github.ankushsachdeva.emojicon.EmojiconsPopup.*;
 
 
 import android.view.KeyEvent;
@@ -101,7 +94,6 @@ import com.kurdikeyboard.predict.PredictionEngine;
 import com.kurdikeyboard.predict.SwipeDecoder;
 import com.kurdikeyboard.predict.TextNormalizer;
 import com.kurdikeyboard.predict.WordDictionary;
-//import github.ankushsachdeva.emojicon.
 
 
 

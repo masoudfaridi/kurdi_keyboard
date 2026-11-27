@@ -14,4 +14,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = 'KurdiKeyboard'
 include ':app'
-include ':lib'

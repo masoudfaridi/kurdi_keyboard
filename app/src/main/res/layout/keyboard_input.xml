@@ -27,7 +27,7 @@
 
             android:padding="@dimen/padding_firstrow"
             android:scaleType="center"
-            android:src="@drawable/ic_emoji_people_light_activated" />
+            android:src="@drawable/ic_kk_emoji" />
 
         <ImageView
             android:id="@+id/ivKeyboardselectall"
