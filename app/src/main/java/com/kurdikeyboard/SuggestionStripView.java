@@ -160,7 +160,8 @@ public class SuggestionStripView extends LinearLayout {
         for (View d : dividers) d.setBackgroundColor((textColor & 0x00FFFFFF) | 0x55000000);
     }
 
-    private static double luminance(Drawable d) {
+    /** average brightness (0..1) of a drawable; transparent parts count as dark */
+    public static double luminance(Drawable d) {
         try {
             Bitmap b = Bitmap.createBitmap(16, 4, Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(b);

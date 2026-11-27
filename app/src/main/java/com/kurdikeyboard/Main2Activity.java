@@ -20,6 +20,7 @@ public class Main2Activity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().getDecorView().setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
         setContentView(R.layout.activity_main2);
     }
     static final int PICK_CONTACT_REQUEST = 1;  // The request code

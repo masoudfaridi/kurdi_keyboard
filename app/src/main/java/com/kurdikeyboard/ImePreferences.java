@@ -38,6 +38,7 @@ public class ImePreferences extends PreferenceActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().getDecorView().setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
 
         PreferenceManager manager=getPreferenceManager();
 

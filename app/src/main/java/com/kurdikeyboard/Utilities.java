@@ -257,4 +257,22 @@ public class Utilities {
                 "-" + String.format(loc, "%02d", cal2.get(Calendar.SECOND))+ "-" +
                 String.format(sc.strWeekDay);
     }
+
+    /** "جمعه-1405-09-06-14-43-22" -> "جمعه ۱۴۰۵/۰۹/۰۶ · ۱۴:۴۳" (anything else is returned as is) */
+    public static String prettyShamsiDate(String raw) {
+        if (raw == null) return "";
+        java.util.regex.Matcher m = java.util.regex.Pattern
+                .compile("^(.*?)-(\\d{4})-(\\d{1,2})-(\\d{1,2})-(\\d{1,2})-(\\d{1,2})(?:-\\d{1,2})?$")
+                .matcher(raw.trim());
+        if (!m.matches()) return raw;
+        String out = m.group(1) + " " + m.group(2) + "/" + pad(m.group(3)) + "/" + pad(m.group(4))
+                + " · " + pad(m.group(5)) + ":" + pad(m.group(6));
+        StringBuilder sb = new StringBuilder(out.length());
+        for (char c : out.toCharArray()) sb.append(c >= '0' && c <= '9' ? (char) ('۰' + (c - '0')) : c);
+        return sb.toString();
+    }
+
+    private static String pad(String n) {
+        return n.length() == 1 ? "0" + n : n;
+    }
 }

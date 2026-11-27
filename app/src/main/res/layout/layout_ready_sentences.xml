@@ -1,64 +1,86 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 2.0: header with icon buttons, list of cards -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:gravity="center_horizontal">
+    android:background="@color/kk_popup_bg"
+    android:layoutDirection="rtl"
+    android:orientation="vertical">
+
     <LinearLayout
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
         android:id="@+id/linearLayout"
-        android:weightSum="1"
-        android:gravity="center_horizontal">
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_weight=".1"
-            android:layout_height="50dp"
-            android:id="@+id/delete_ready_sentences_all"
-            android:src="@drawable/clear_all_png"
-
-            />
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp">
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight=".2"
-            android:layout_height="50dp"
-            android:text="@string/clearall_text2"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/popup_ready_title"
+            android:textColor="@color/kk_text"
             android:textSize="18sp"
-            android:textColor="#4e0000"
-            android:gravity="center_horizontal" />
+            android:textStyle="bold" />
         <ImageView
-            android:layout_width="0dp"
-            android:layout_weight=".1"
-            android:layout_height="50dp"
             android:id="@+id/create_ready_sentences"
-            android:src="@drawable/add_new_items"
-         />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight=".2"
-            android:layout_height="50dp"
-            android:text="@string/add_text"
-            android:textSize="18sp"
-            android:textColor="#4e0000"
-            android:gravity="center_horizontal" />
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/kk_icon_button"
+            android:contentDescription="add"
+            android:padding="10dp"
+            android:src="@drawable/ic_kk_add"
+            android:tint="@color/kk_text" />
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="0.2"
+            android:id="@+id/delete_ready_sentences_all"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/kk_icon_button"
+            android:contentDescription="delete all"
+            android:padding="10dp"
+            android:src="@drawable/ic_kk_delete_sweep"
+            android:tint="@color/kk_text" />
+        <ImageView
             android:id="@+id/exitpopupreadys"
-            android:src="@drawable/exit_black"/>
-
-
-
-
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/kk_icon_button"
+            android:contentDescription="close"
+            android:padding="10dp"
+            android:src="@drawable/ic_kk_close"
+            android:tint="@color/kk_text" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/listreadysentences"
-        android:layout_height="wrap_content"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_below="@+id/linearLayout"
-        android:layout_centerHorizontal="true">
-    </ListView>
-</RelativeLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/listreadysentences"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="8dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="12dp"
+            android:scrollbarStyle="outsideOverlay" />
+
+        <TextView
+            android:id="@+id/emptyText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="24dp"
+            android:text="@string/popup_ready_empty"
+            android:textColor="@color/kk_text_secondary"
+            android:textSize="15sp" />
+    </FrameLayout>
+</LinearLayout>

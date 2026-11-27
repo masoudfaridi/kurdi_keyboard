@@ -1,41 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 2.0: one card per item -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/kk_card_item"
+    android:gravity="center_vertical"
+    android:layoutDirection="rtl"
+    android:minHeight="64dp"
     android:orientation="horizontal"
-    android:weightSum="1"
-    android:gravity="center_horizontal">
+    android:paddingStart="6dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="6dp"
+    android:paddingBottom="8dp">
 
     <ImageView
-        android:src="@drawable/enter_send_white"
-        android:layout_width="0dp"
         android:id="@+id/imageviewsendreadysentences"
-        android:layout_weight=".1"
-        android:layout_height="50dp" />
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/kk_icon_button"
+        android:contentDescription="insert"
+        android:padding="10dp"
+        android:src="@drawable/ic_kk_send"
+        android:tint="@color/kk_primary" />
+
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:orientation="vertical"
-        android:layout_weight="0.60">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/clipboarddate2"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:paddingTop="5dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="2"
+            android:textAlignment="viewStart"
+            android:textColor="@color/kk_text"
+            android:textDirection="anyRtl"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/clipboardstring2"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:paddingTop="5dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="2"
+            android:textAlignment="viewStart"
+            android:textColor="@color/kk_text_secondary"
+            android:textDirection="anyRtl"
+            android:textSize="13sp" />
     </LinearLayout>
     <ImageView
-        android:src="@drawable/recyclebin_png"
-        android:layout_width="50dp"
         android:id="@+id/clipboarddelete2"
-        android:layout_weight=".1"
-        android:layout_height="50dp" />
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/kk_icon_button"
+        android:contentDescription="delete"
+        android:padding="11dp"
+        android:src="@drawable/ic_kk_delete"
+        android:tint="@color/kk_text_secondary" />
 </LinearLayout>

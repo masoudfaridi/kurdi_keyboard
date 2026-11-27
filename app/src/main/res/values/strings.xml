@@ -377,5 +377,16 @@
     <string name="home_subtitle">کوردی · فارسی · English</string>
     <string name="home_settings_summary">تم، صدا، زبان‌ها و پیش‌بینی کلمات</string>
     <string name="home_guide_summary">معرفی امکانات کیبورد</string>
+    <string name="popup_clipboard_title">کلیپ‌بورد</string>
+    <string name="popup_clipboard_empty">هنوز متنی کپی نکرده‌اید. متن‌هایی که کپی کنید اینجا می‌آیند.</string>
+    <string name="popup_ready_title">جمله‌های آماده</string>
+    <string name="popup_ready_empty">جمله‌ای ندارید. با دکمه + یک جمله آماده بسازید.</string>
+    <string name="popup_contacts_title">مخاطبین</string>
+    <string name="popup_contacts_empty">مخاطبی پیدا نشد.</string>
+    <string name="ready_title_hint">مثلاً: آدرس، شماره کارت، سلام رسمی</string>
+    <string name="ready_text_hint">متنی که با یک لمس تایپ می‌شود</string>
+    <string name="guide_prev">قبلی</string>
+    <string name="guide_next">بعدی</string>
+    <string name="guide_done">پایان</string>
 </resources>
 

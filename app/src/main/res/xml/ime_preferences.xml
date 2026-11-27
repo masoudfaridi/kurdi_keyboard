@@ -20,6 +20,7 @@
     android:summary=" تنضیمات ">
 
     <PreferenceScreen
+        android:icon="@drawable/ic_kk_sparkle"
         android:title="@string/settings_prediction_title"
         android:key="settingprediction"
         android:summary="@string/settings_prediction_summary">
@@ -50,6 +51,7 @@
 
 
     <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        android:icon="@drawable/ic_kk_volume"
         android:title="@string/settings_name_title_sound_vibrate"
         android:key="@string/settingvibrate"
         android:summary="@string/settingvibratesoudsummary">
@@ -108,6 +110,7 @@
 
 
     <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        android:icon="@drawable/ic_kk_palette"
         android:title="@string/settings_name_title_theme_screen"
         android:key="@string/settingthemepage"
         android:summary="@string/settingthemesummary_screen">
@@ -279,7 +282,8 @@
 
     <PreferenceScreen
         xmlns:android="http://schemas.android.com/apk/res/android"
-            android:title="@string/fontsetting"
+            android:icon="@drawable/ic_kk_text_size"
+        android:title="@string/fontsetting"
              android:key="@string/fontsettingall"
              android:summary="@string/fontsettingsummary">
 
@@ -364,6 +368,7 @@
 
 
     <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        android:icon="@drawable/ic_kk_language"
         android:title="@string/settings_name_title_language"
 
         android:summary="@string/settinglanguagesummary">
@@ -510,6 +515,7 @@
 
 
     <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        android:icon="@drawable/ic_kk_timer"
         android:title="@string/settings_name_title_wordtwofuction"
         android:summary="@string/settings_name_summary_wordtwofuction"
         >
@@ -547,6 +553,7 @@
 
 
     <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        android:icon="@drawable/ic_kk_info"
         android:title="@string/titleaboutus"
 
         android:summary="@string/summaryaboutus">
@@ -585,11 +592,13 @@
 
         <Preference
             android:key="@string/pref_version"
-            android:title="@string/versiontextfarsi"
+            android:icon="@drawable/ic_kk_keyboard"
+        android:title="@string/versiontextfarsi"
             android:summary="@string/versionName" />
         <Preference
             android:key="@string/pref_forceupdate"
-            android:title="@string/textUpdate"
+            android:icon="@drawable/ic_kk_star"
+        android:title="@string/textUpdate"
             android:summary="@string/unknown"
 
              >
@@ -606,7 +615,8 @@
         >
         <Preference
             android:key="pref_guide"
-            android:title="@string/guidetext"
+            android:icon="@drawable/ic_kk_help"
+        android:title="@string/guidetext"
             android:summary="@string/guidesummary" >
         <intent
             android:action="android.intent.action.VIEW"

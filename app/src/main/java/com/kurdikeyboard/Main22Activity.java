@@ -40,6 +40,7 @@ public class Main22Activity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().getDecorView().setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
         setContentView(R.layout.activity_main22);
         reloadlistview();
 

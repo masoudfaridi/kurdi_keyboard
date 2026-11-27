@@ -23,6 +23,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().getDecorView().setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
         setContentView(R.layout.activity_main);
         stepEnable = (TextView) findViewById(R.id.stepEnable);
         stepSelect = (TextView) findViewById(R.id.stepSelect);

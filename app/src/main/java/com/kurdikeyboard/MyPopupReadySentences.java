@@ -284,6 +284,7 @@ public class MyPopupReadySentences extends PopupWindow {
         final ContactsAdapter adapter = new ContactsAdapter(MyPopupReadySentences.this.mContext,
                 R.layout.listview_textview_textview_readysentences, contacts);
         lview.setAdapter(adapter);
+        lview.setEmptyView(view.findViewById(R.id.emptyText));
 
       //  final ImageView imageViewIV= (ImageView) view.findViewById(R.id.delete_ready_sentences_all);
 
@@ -634,7 +635,7 @@ public class MyPopupReadySentences extends PopupWindow {
 
             final TextView contactPhone = (TextView)contactsView.findViewById(R.id.clipboardstring2);
            // contactPhone.setTextSize(TypedValue.COMPLEX_UNIT_PX,60);
-            contactPhone.setTextSize(TypedValue.COMPLEX_UNIT_SP,convertedtospfontsize);
+            contactPhone.setTextSize(TypedValue.COMPLEX_UNIT_SP, Math.max(11, convertedtospfontsize * 0.75f));
             contactName.setText(contact.getName().
                     substring(0, contact.getName().length()-4));
             contactPhone.setText(contact.getPhone());
@@ -646,6 +647,12 @@ public class MyPopupReadySentences extends PopupWindow {
             // final ViewGroup parentfinal=parent;
             ImageView btnImgsend= (ImageView)
                     contactsView.findViewById(R.id.imageviewsendreadysentences);
+            final ImageView sendForRow = btnImgsend;
+            contactsView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    sendForRow.performClick(); // the whole card inserts the text
+                }
+            });
             btnImgsend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

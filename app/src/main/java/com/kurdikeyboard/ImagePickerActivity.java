@@ -40,6 +40,7 @@ public class ImagePickerActivity extends Activity {
     @Override
     public void onCreate(Bundle sis) {
         super.onCreate(sis);
+        getWindow().getDecorView().setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
         setContentView(R.layout.pickerlayout);
         ivpic = (ImageView) findViewById(R.id.ivimage);
         Button btnpick = (Button) findViewById(R.id.idselect_picture);

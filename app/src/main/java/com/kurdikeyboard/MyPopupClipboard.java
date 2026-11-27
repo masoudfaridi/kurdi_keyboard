@@ -266,6 +266,7 @@ public class MyPopupClipboard extends PopupWindow {
         final ContactsAdapter adapter = new ContactsAdapter(MyPopupClipboard.this.mContext,
                 R.layout.listview_textview_textview_clipboard, contacts);
         lview.setAdapter(adapter);
+        lview.setEmptyView(view.findViewById(R.id.emptyText));
 
         final ImageView imageViewIV= (ImageView) view.findViewById(R.id.clipboarddelete);
 
@@ -563,11 +564,17 @@ public class MyPopupClipboard extends PopupWindow {
 
             contactName.setTextSize(TypedValue.COMPLEX_UNIT_SP,convertedtospfontsize);
             final TextView contactPhone = (TextView)contactsView.findViewById(R.id.clipboardstring);
-            contactPhone.setTextSize(TypedValue.COMPLEX_UNIT_SP,convertedtospfontsize);
+            contactPhone.setTextSize(TypedValue.COMPLEX_UNIT_SP, Math.max(11, convertedtospfontsize * 0.75f));
             contactName.setText(contact.getName());
-            contactPhone.setText(contact.getPhone());
+            contactPhone.setText(Utilities.prettyShamsiDate(contact.getPhone()));
             ImageView btnImgsend= (ImageView)
                     contactsView.findViewById(R.id.sendclipboardtext);
+            final ImageView sendForRow = btnImgsend;
+            contactsView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    sendForRow.performClick(); // the whole card inserts the text
+                }
+            });
             btnImgsend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

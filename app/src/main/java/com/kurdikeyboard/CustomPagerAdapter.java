@@ -450,7 +450,9 @@ public class CustomPagerAdapter extends PagerAdapter {
     ,String str){
         if(webviewguidpage1!=null) {
             String text;
-            text = "<html><body dir=\"rtl\"; style=\"text-align:justify;background-color:#fff3eb;\">";
+            text = "<html><head><meta name=\"viewport\" content=\"width=device-width\"><style>"
+                    + "body{margin:0;padding:16px 18px;background:#F4F6F8;color:#1A2433;font-size:17px;line-height:1.85;text-align:justify}"
+                    + "</style></head><body dir=\"rtl\">";
             text += str;
             text += "</body></html>";
             //  webviewguidpage1.loadData(text, "text/html", "utf-8",null);

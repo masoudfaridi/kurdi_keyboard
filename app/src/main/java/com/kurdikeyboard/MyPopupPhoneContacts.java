@@ -185,6 +185,15 @@ public class MyPopupPhoneContacts extends PopupWindow {
         final ContactsAdapter adapter = new ContactsAdapter(MyPopupPhoneContacts.this.mContext,
                 R.layout.listview_textview_textview, contacts);
         lview.setAdapter(adapter);
+        lview.setEmptyView(view.findViewById(R.id.emptyText));
+        View closeContacts = view.findViewById(R.id.exitpopupcontacts);
+        if (closeContacts != null) {
+            closeContacts.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    dismiss();
+                }
+            });
+        }
 
         // The 2017 code queried all contacts on the main thread while opening the popup,
         // which froze the keyboard with a big address book. Load them in the background.

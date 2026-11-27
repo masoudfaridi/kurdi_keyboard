@@ -1380,6 +1380,7 @@ public class kurdikeyboard extends InputMethodService
             }
         }
         readPredictionPrefs();
+        modernizeToolbar(root);
         installSuggestionStrip();
         mInputView.setSwipeListener(mSwipeListener);
         mSwipeDecoder = null;
@@ -2645,7 +2646,7 @@ public class kurdikeyboard extends InputMethodService
             //popupcontacts.setFocusable(true);
             // Removes default background.
             //popupcontacts.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            popupphonecontacts.setBackgroundDrawable(new ColorDrawable(Color.GRAY));
+            popupphonecontacts.setBackgroundDrawable(new ColorDrawable(getColor(R.color.kk_popup_bg)));
 
             final float popUpheight2 = getResources().getDimension(
                     R.dimen.keyboard_height);
@@ -2747,7 +2748,7 @@ public class kurdikeyboard extends InputMethodService
             //popupcontacts.setFocusable(true);
             // Removes default background.
             //popupcontacts.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            popupphonecontacts.setBackgroundDrawable(new ColorDrawable(Color.GRAY));
+            popupphonecontacts.setBackgroundDrawable(new ColorDrawable(getColor(R.color.kk_popup_bg)));
 
             final float popUpheight2 = getResources().getDimension(
                     R.dimen.keyboard_height);
@@ -2844,7 +2845,7 @@ public class kurdikeyboard extends InputMethodService
             //popupcontacts.setFocusable(true);
             // Removes default background.
             //popupcontacts.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            popupphonecontacts2.setBackgroundDrawable(new ColorDrawable(Color.GRAY));
+            popupphonecontacts2.setBackgroundDrawable(new ColorDrawable(getColor(R.color.kk_popup_bg)));
 
             final float popUpheight2 = getResources().getDimension(
                     R.dimen.keyboard_height);
@@ -4665,6 +4666,42 @@ private void setCurrentLanguage(){
         if (h <= 0 && mInputView != null) h = mInputView.getHeight();
         if (h <= 0) h = (int) getResources().getDimension(R.dimen.keyboard_height);
         return h;
+    }
+
+    // ---------------------------------------------------------------- toolbar icons
+
+    /**
+     * The tools row used old Holo bitmap icons. Replace them with the app's vector icons,
+     * tinted dark or light to read well on each theme's background.
+     */
+    private void modernizeToolbar(View root) {
+        View row = root.findViewById(R.id.layouttools);
+        if (row == null) return;
+        android.graphics.drawable.Drawable bg = row.getBackground();
+        boolean light = bg != null && SuggestionStripView.luminance(
+                bg.getConstantState() != null ? bg.getConstantState().newDrawable(getResources()) : bg) > 0.55;
+        int tint = light ? 0xFF2B3442 : 0xFFF2F4F7;
+        int[][] map = {
+                {R.id.ivKeyboard, R.drawable.ic_kk_emoji},
+                {R.id.ivKeyboardselectall, R.drawable.ic_kk_select_all},
+                {R.id.ivKeyboardcopy, R.drawable.ic_kk_copy},
+                {R.id.ivKeyboardback, R.drawable.ic_kk_arrow_left},
+                {R.id.ivKeyboardforward, R.drawable.ic_kk_arrow_right},
+                {R.id.ivKeyboardcut, R.drawable.ic_kk_cut},
+                {R.id.ivKeyboardpaste, R.drawable.ic_kk_paste},
+                {R.id.ivKeyboardsetting, R.drawable.ic_kk_settings},
+        };
+        int pad = (int) (12 * getResources().getDisplayMetrics().density);
+        for (int[] m : map) {
+            View v = root.findViewById(m[0]);
+            if (!(v instanceof ImageView)) continue;
+            ImageView iv = (ImageView) v;
+            iv.setImageResource(m[1]);
+            iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            iv.setPadding(pad, pad, pad, pad);
+            iv.setImageTintList(android.content.res.ColorStateList.valueOf(tint));
+            iv.setBackgroundResource(R.drawable.kk_icon_button);
+        }
     }
 }
 

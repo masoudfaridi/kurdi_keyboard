@@ -1,32 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 2.0: keyboard background photo -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/kk_bg"
+    android:layoutDirection="rtl"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/idselect_picture"
-        android:text="@string/select_picture"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/titleenobackgroundimageaddress"
-        android:id="@+id/idaddressimage"/>
-    <ImageView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_image"
-        android:id="@+id/ivimage"
-        android:contentDescription="@string/titleenobackgroundimageaddress"/>
-    <Button
+        android:background="@drawable/card_background"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/ivimage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/titleenobackgroundimageaddress"
+            android:scaleType="centerCrop" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/idaddressimage"
+        style="@style/KK.Caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnsavepic"
-        android:text="@string/savetext"/>
+        android:layout_marginTop="8dp"
+        android:ellipsize="middle"
+        android:singleLine="true"
+        android:text="@string/titleenobackgroundimageaddress" />
+
     <Button
+        android:id="@+id/idselect_picture"
+        style="@style/KK.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btncancelpic"
-        android:text="@string/canceltext"/>
+        android:layout_marginTop="16dp"
+        android:text="@string/select_picture" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnsavepic"
+            style="@style/KK.Button.Primary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/savetext" />
+
+        <Button
+            android:id="@+id/btncancelpic"
+            style="@style/KK.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:text="@string/canceltext" />
+    </LinearLayout>
 </LinearLayout>

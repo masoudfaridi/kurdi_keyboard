@@ -1,86 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:fillViewport="true">
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<!-- 2.0: create a ready sentence -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.kurdikeyboard.Main22Activity"
-    android:orientation="vertical">
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/titlereadyS"
-        android:id="@+id/textviewtitle"/>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/doubleclicknotwork"
-        android:id="@+id/editTextTiltle"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:text="@string/textoutputRS"
-        android:id="@+id/textviewtext"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/doubleclicknotwork"
-        android:id="@+id/editTextText"/>
+    android:background="@color/kk_bg"
+    android:fillViewport="true"
+    android:layoutDirection="rtl">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1">
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/textviewtitle"
+                style="@style/KK.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/titlereadyS" />
+
+            <EditText
+                android:id="@+id/editTextTiltle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:hint="@string/ready_title_hint"
+                android:inputType="text"
+                android:background="@drawable/kk_field"
+            android:padding="14dp"
+            android:textColor="@color/kk_text"
+            android:textColorHint="@color/kk_text_secondary"
+            android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/textviewtext"
+                style="@style/KK.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="@string/textoutputRS" />
+
+            <EditText
+                android:id="@+id/editTextText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="top|start"
+                android:hint="@string/ready_text_hint"
+                android:inputType="textMultiLine"
+                android:minLines="3"
+                android:background="@drawable/kk_field"
+            android:padding="14dp"
+            android:textColor="@color/kk_text"
+            android:textColorHint="@color/kk_text_secondary"
+            android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnsave"
+                    style="@style/KK.Button.Primary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onClick"
+                    android:text="@string/savetext" />
+
+                <Button
+                    android:id="@+id/btncancel"
+                    style="@style/KK.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:onClick="onClick"
+                    android:text="@string/canceltext" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            style="@style/KK.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/matneqabli" />
+
+        <ListView
+            android:id="@+id/listView3"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="8dp"
+            android:nestedScrollingEnabled="true" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:id="@+id/btnexitactivity22"
+            style="@style/KK.Button"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/canceltext"
-            android:layout_weight="0.46"
-            android:id="@+id/btncancel"
-            android:onClick="onClick"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/savetext"
-            android:layout_weight="0.48"
-            android:id="@+id/btnsave"
-            android:onClick="onClick"/>
-
+            android:layout_marginTop="16dp"
+            android:onClick="onClick"
+            android:text="@string/exit_text" />
     </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/matneqabli"
-        android:padding="15dp"
-       />
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="185dp"
-        android:id="@+id/listView3"
-        android:background="#949494"
-        android:layout_gravity="center_horizontal" />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/exit_text"
-        android:id="@+id/btnexitactivity22"
-        android:onClick="onClick"/>
-
-</LinearLayout>
 </ScrollView>
