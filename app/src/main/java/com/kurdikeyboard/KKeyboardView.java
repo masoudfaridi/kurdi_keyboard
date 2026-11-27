@@ -1864,7 +1864,10 @@ public class KKeyboardView extends KeyboardView {
         mPreviewView.invalidate();
         int x = (int) (key.x + key.width / 2f - w / 2f);
         x = Math.max(0, Math.min(getWidth() - w, x));
-        int y = (int) (key.y - h + 6 * d);
+        // gap between the bubble and the key, so the finger does not cover it (setting, dp)
+        int gapDp = getContext().getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE)
+                .getInt(getContext().getString(R.string.prefpreviewgap), 24);
+        int y = (int) (key.y - h - gapDp * d);
         int[] loc = new int[2];
         getLocationInWindow(loc);
         // stay inside the keyboard window (nothing is drawn above it): over the tools row if needed

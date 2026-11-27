@@ -298,6 +298,14 @@
             android:summary="@string/summaryprefnotshowpreview"
             android:defaultValue="true"
             />
+        <com.kurdikeyboard.SeekBarPreference
+            xmlns:kurdikeyboard="http://kurdikeyboard.com"
+            android:key="@string/prefpreviewgap"
+            android:title="@string/title_preview_gap"
+            android:dependency="@string/prefnotshowpreview"
+            android:defaultValue="24"
+            android:max="80"
+            kurdikeyboard:min="0" />
 
 
 

@@ -407,5 +407,7 @@
     <string name="top_row_hidden">پیش‌بینی کلمات غیرفعال شد</string>
     <string name="top_row_shown">پیش‌بینی کلمات فعال شد</string>
     <string name="summary_enter_hold">نکته: با نگه داشتن کلید پایین سمت چپ (ایموجی)، نوار پیش‌بینی و ابزار پنهان یا نمایش داده می‌شود</string>
+    <string name="prefpreviewgap" translatable="false">prefpreviewgap</string>
+    <string name="title_preview_gap">فاصله نمایش کلید از انگشت</string>
 </resources>
 
