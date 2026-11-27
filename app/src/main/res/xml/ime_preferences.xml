@@ -38,6 +38,15 @@
                 android:key="@string/prefnotshowpreview"
                 android:summary="@string/s_preview_summary"
                 android:title="@string/s_preview_title" />
+            <Preference
+                android:dependency="@string/prefnotshowpreview"
+                android:key="popup_style"
+                android:summary="@string/popup_style_summary"
+                android:title="@string/popup_style_title">
+                <intent
+                    android:targetClass="com.kurdikeyboard.PopupStyleActivity"
+                    android:targetPackage="com.kurdikeyboard" />
+            </Preference>
             <com.kurdikeyboard.SeekBarPreference
                 android:defaultValue="24"
                 android:dependency="@string/prefnotshowpreview"

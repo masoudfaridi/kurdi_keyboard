@@ -1208,12 +1208,11 @@ public class KKeyboardView extends KeyboardView {
                 ProPainter.key(canvas, mKeyPaint, mKeyRect, r, t,
                         isEnter ? ProPainter.ENTER : isFn ? ProPainter.FUNCTION : ProPainter.LETTER,
                         key.pressed, tint, d, keyAlpha);
-                mKeyRect.offset(0, ProPainter.labelShift(t, key.pressed, d));
-                int lc = t.pro.rainbow ? tint : t.text;
+                mKeyRect.offset(0, ProPainter.labelShift(t, key.pressed, d, key.height));
+                int lc = t.text; // labels stay plain and readable; colors belong to outlines and background
                 mLabelPaint.setColor(lc);
                 mNumberPaint.setColor(lc);
                 mFnTextPaint.setColor(lc);
-                if (t.pro.rainbow) mHintPaint.setColor((tint & 0x00FFFFFF) | 0xB3000000);
                 if (t.pro.labelGlow) {
                     mLabelPaint.setShadowLayer(4 * d, 0, 0, lc);
                     mNumberPaint.setShadowLayer(4 * d, 0, 0, lc);
@@ -1883,7 +1882,7 @@ public class KKeyboardView extends KeyboardView {
     // =====================================================================
 
     private android.widget.PopupWindow mPreviewWindow;
-    private KeyPreviewView mPreviewView;
+    private PressEffectView mPreviewView;
     private Key mPreviewKey;
     private final Runnable mHidePreview = new Runnable() {
         @Override public void run() { hideKeyPreview(); }
@@ -1908,104 +1907,141 @@ public class KKeyboardView extends KeyboardView {
     private Key mAltKey;
 
     /**
-     * Held two-letter key (ا → آ, ص → ض ...): shows the second letter in the key preview
-     * bubble, in the theme's colors and at the preview distance from the finger. Replaces
-     * the 2017 white popup. Shown even when the normal key preview is turned off.
+     * Held two-letter key (ا → آ, ص → ض ...): shows the second letter in the key popup, in
+     * the theme's colors and the chosen popup style, at the preview distance from the finger.
+     * Shown even when the normal key preview is turned off.
      */
     void showAltPreview(int keyX, int keyY, int keyW, int keyH, String text) {
         if (text == null || text.isEmpty()) return;
-        Key key = keyAt(keyX + keyW / 2f, keyY + keyH / 2f);
-        float d = getResources().getDisplayMetrics().density;
-        int w = (int) Math.max(keyW * 1.25f, 44 * d);
-        int h = (int) Math.max(keyH * 1.35f, 58 * d);
-        if (mPreviewView == null) {
-            mPreviewView = new KeyPreviewView(getContext());
-            mPreviewWindow = new android.widget.PopupWindow(mPreviewView);
-            mPreviewWindow.setTouchable(false);
-            mPreviewWindow.setClippingEnabled(false);
-            mPreviewWindow.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(0));
-            mPreviewWindow.setAnimationStyle(0);
-        }
         mSpaceHandler.removeCallbacks(mHidePreview);
-        mPreviewView.theme = currentTheme();
-        mPreviewView.text = text;
-        mPreviewView.alt = true;
-        mPreviewView.invalidate();
+        Key key = keyAt(keyX + keyW / 2f, keyY + keyH / 2f);
         mAltKey = key;
         mPreviewKey = key;
-        int x = (int) (keyX + keyW / 2f - w / 2f);
-        x = Math.max(0, Math.min(getWidth() - w, x));
-        int gapDp = getContext().getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE)
-                .getInt(getContext().getString(R.string.prefpreviewgap), 24);
-        int y = (int) (keyY - h - gapDp * d);
-        int[] loc = new int[2];
-        getLocationInWindow(loc);
-        y = Math.max(y, -loc[1]);
-        try {
-            if (mPreviewWindow.isShowing()) {
-                mPreviewWindow.update(loc[0] + x, loc[1] + y, w, h);
-            } else {
-                mPreviewWindow.setWidth(w);
-                mPreviewWindow.setHeight(h);
-                mPreviewWindow.showAtLocation(this, android.view.Gravity.NO_GRAVITY, loc[0] + x, loc[1] + y);
-            }
-        } catch (RuntimeException ignored) {
-        }
+        presentPreview(keyX, keyY, keyW, keyH, text, true);
     }
 
     private void showKeyPreview(Key key) {
         mSpaceHandler.removeCallbacks(mHidePreview);
+        boolean live = mPreviewWindow != null && mPreviewWindow.isShowing()
+                && mPreviewView != null && !mPreviewView.releasing();
         // the held key's second letter stays until the finger leaves the key or lifts
-        if (mAltKey != null && key == mAltKey && mPreviewWindow != null && mPreviewWindow.isShowing()) return;
+        if (mAltKey != null && key == mAltKey && live) return;
         mAltKey = null;
-        if (mPreviewView != null) mPreviewView.alt = false;
         String text = previewText(key);
         if (text == null || !keyPreviewEnabled()) {
             hideKeyPreview();
             return;
         }
-        if (key == mPreviewKey && mPreviewWindow != null && mPreviewWindow.isShowing()) return;
+        if (key == mPreviewKey && live) return;
         mPreviewKey = key;
-        float d = getResources().getDisplayMetrics().density;
-        int w = (int) Math.max(key.width * 1.25f, 44 * d);
-        int h = (int) Math.max(key.height * 1.35f, 58 * d);
+        presentPreview(key.x, key.y, key.width, key.height, text, false);
+    }
+
+    /**
+     * Shows the key popup in the style chosen in the settings ("popup theme"): the plain bubble,
+     * or a light effect (beam, lightning, rays, plasma, hologram) whose window reaches down over
+     * the pressed key. The window never takes touches.
+     */
+    private void presentPreview(float keyX, float keyY, float keyW, float keyH, String text, boolean alt) {
         if (mPreviewView == null) {
-            mPreviewView = new KeyPreviewView(getContext());
+            mPreviewView = new PressEffectView(getContext());
             mPreviewWindow = new android.widget.PopupWindow(mPreviewView);
             mPreviewWindow.setTouchable(false);
             mPreviewWindow.setClippingEnabled(false);
             mPreviewWindow.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(0));
             mPreviewWindow.setAnimationStyle(0);
         }
-        mPreviewView.theme = currentTheme();
-        mPreviewView.text = text;
-        mPreviewView.invalidate();
-        int x = (int) (key.x + key.width / 2f - w / 2f);
-        x = Math.max(0, Math.min(getWidth() - w, x));
-        // gap between the bubble and the key, so the finger does not cover it (setting, dp)
-        int gapDp = getContext().getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE)
-                .getInt(getContext().getString(R.string.prefpreviewgap), 24);
-        int y = (int) (key.y - h - gapDp * d);
+        SharedPreferences prefs = getContext().getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE);
+        KeyboardTheme theme = currentTheme();
+        String style = PressEffect.resolve(prefs.getString(getContext().getString(R.string.prefpopupstyle),
+                PressEffect.AUTO), theme);
+        boolean fancy = PressEffect.fancy(style);
+        float d = getResources().getDisplayMetrics().density;
+        int gapDp = prefs.getInt(getContext().getString(R.string.prefpreviewgap), 24);
         int[] loc = new int[2];
         getLocationInWindow(loc);
-        // stay inside the keyboard window (nothing is drawn above it): over the tools row if needed
-        y = Math.max(y, -loc[1]);
+        float minTop = -loc[1]; // stay inside the keyboard window: over the tools row if needed
+
+        float bw, bh, gap;
+        if (fancy) {
+            bw = Math.max(keyW * 1.4f, 52 * d);
+            bh = Math.max(keyH * 1.25f, 58 * d);
+            gap = Math.max(gapDp, PressEffect.minGapDp(style)) * d;
+        } else {
+            bw = Math.max(keyW * 1.25f, 44 * d);
+            bh = Math.max(keyH * 1.35f, 58 * d);
+            gap = gapDp * d;
+        }
+        float bx = keyX + keyW / 2f - bw / 2f;
+        bx = Math.max(fancy ? 3 * d : 0, Math.min(getWidth() - bw - (fancy ? 3 * d : 0), bx));
+        float by = Math.max(keyY - bh - gap, minTop + (fancy ? 4 * d : 0));
+
+        // the window: just the bubble, or for the light effects one fixed area over the whole
+        // keyboard and the room above it, so a key press only redraws (no window resizing)
+        float wl, wt, wr, wb;
+        if (fancy) {
+            wl = 0;
+            wr = getWidth();
+            wt = minTop;
+            wb = getHeight();
+        } else {
+            wl = bx;
+            wt = by;
+            wr = bx + bw;
+            wb = by + bh;
+        }
+        int w = (int) Math.ceil(wr - wl), h = (int) Math.ceil(wb - wt);
+        if (w <= 0 || h <= 0) return;
+
+        PressEffectView v = mPreviewView;
+        v.theme = theme;
+        v.style = style;
+        v.text = text;
+        v.alt = alt;
+        v.bubble.set(bx - wl, by - wt, bx + bw - wl, by + bh - wt);
+        v.key.set(keyX - wl, keyY - wt, keyX + keyW - wl, keyY + keyH - wt);
+        v.tipX = keyX + keyW / 2f - wl;
+        v.tipY = keyY + keyH * 0.38f - wt;
+        v.color = PressEffect.color(theme, (keyX + keyW / 2f) / Math.max(1, getWidth()),
+                (keyY + keyH / 2f) / Math.max(1, getHeight()));
+        if (fancy) { // where the effect draws: the layer used for fading out stays this small
+            float m = PressEffect.margin(style, bw, bh, d);
+            v.bounds.set(Math.min(bx - m, keyX - 4 * d) - wl, by - m - wt,
+                    Math.max(bx + bw + m, keyX + keyW + 4 * d) - wl, keyY + keyH + 4 * d - wt);
+        } else {
+            v.bounds.set(0, 0, w, h);
+        }
+        v.begin();
+        int sx = loc[0] + (int) wl, sy = loc[1] + (int) wt;
         try {
             if (mPreviewWindow.isShowing()) {
-                mPreviewWindow.update(loc[0] + x, loc[1] + y, w, h);
+                if (sx != mPreviewX || sy != mPreviewY || w != mPreviewWindow.getWidth()
+                        || h != mPreviewWindow.getHeight()) {
+                    mPreviewWindow.update(sx, sy, w, h);
+                }
             } else {
                 mPreviewWindow.setWidth(w);
                 mPreviewWindow.setHeight(h);
-                mPreviewWindow.showAtLocation(this, android.view.Gravity.NO_GRAVITY, loc[0] + x, loc[1] + y);
+                mPreviewWindow.showAtLocation(this, android.view.Gravity.NO_GRAVITY, sx, sy);
             }
+            mPreviewX = sx;
+            mPreviewY = sy;
         } catch (RuntimeException ignored) {
         }
     }
 
-    /** hides the preview a moment later, so a quick tap is still visible */
+    private int mPreviewX, mPreviewY;
+
+    /** hides the preview a moment later, so a quick tap is still visible; light effects fade out */
     private void hideKeyPreviewSoon() {
         mSpaceHandler.removeCallbacks(mHidePreview);
-        mSpaceHandler.postDelayed(mHidePreview, 70);
+        if (mPreviewView != null && PressEffect.fancy(mPreviewView.style)
+                && mPreviewWindow != null && mPreviewWindow.isShowing()) {
+            mPreviewView.release();
+            mSpaceHandler.postDelayed(mHidePreview, PressEffectView.FADE + 30);
+        } else {
+            mSpaceHandler.postDelayed(mHidePreview, 70);
+        }
     }
 
     private void hideKeyPreview() {
@@ -2038,47 +2074,6 @@ public class KKeyboardView extends KeyboardView {
             case android.view.MotionEvent.ACTION_CANCEL:
                 hideKeyPreview();
                 break;
-        }
-    }
-
-    private static final class KeyPreviewView extends View {
-        KeyboardTheme theme;
-        String text;
-        boolean alt; // second letter of a held key: drawn in the accent color
-        private final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final android.graphics.RectF r = new android.graphics.RectF();
-
-        KeyPreviewView(Context c) { super(c); }
-
-        @Override
-        protected void onDraw(Canvas c) {
-            if (theme == null || text == null) return;
-            float d = getResources().getDisplayMetrics().density;
-            r.set(0, 0, getWidth(), getHeight() - 2 * d);
-            p.setStyle(Paint.Style.FILL);
-            p.setColor(0x40000000);
-            r.offset(0, 2 * d);
-            c.drawRoundRect(r, 12 * d, 12 * d, p);
-            r.offset(0, -2 * d);
-            int bg = theme.isDark() ? theme.keyPressed : 0xFFFFFFFF;
-            p.setColor(bg);
-            c.drawRoundRect(r, 12 * d, 12 * d, p);
-            if (theme.stroke != 0) {
-                p.setStyle(Paint.Style.STROKE);
-                p.setStrokeWidth(d);
-                p.setColor(theme.stroke);
-                c.drawRoundRect(r, 12 * d, 12 * d, p);
-                p.setStyle(Paint.Style.FILL);
-            }
-            p.setColor(alt ? theme.accent : theme.text);
-            p.setTextAlign(Paint.Align.CENTER);
-            float size = getHeight() * 0.48f;
-            p.setTextSize(size);
-            while (p.measureText(text) > getWidth() - 8 * d && size > 10 * d) {
-                size -= d;
-                p.setTextSize(size);
-            }
-            c.drawText(text, getWidth() / 2f, r.height() * 0.5f + size / 3f, p);
         }
     }
 

@@ -237,7 +237,7 @@ public class ThemePickerActivity extends Activity {
             }
             if (label != null) {
                 p.setStyle(Paint.Style.FILL);
-                p.setColor(tint != 0 ? tint : theme.text);
+                p.setColor(theme.text);
                 p.setTextAlign(Paint.Align.CENTER);
                 p.setTextSize(h * 0.5f);
                 c.drawText(label, r.centerX(), r.centerY() + p.getTextSize() / 3, p);

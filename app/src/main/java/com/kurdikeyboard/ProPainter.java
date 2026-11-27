@@ -14,33 +14,49 @@ import java.util.Random;
 
 /**
  * Draws the effects of the pro themes (see {@link KeyboardTheme.Pro}): gradient backgrounds
- * with glows, sparkles and artwork (heartbeat, circuits, perspective grid, flames, hexagons),
- * and keys in several shapes (rounded, mechanical keycap, sci-fi chamfer, glass bubble) with
- * gradients, neon outlines, 3D edges, flames, gloss and rainbow colors.
- * Used by the keyboard itself and by the previews in the theme list. Everything is drawn in
- * code; there are no images.
+ * with glows, sparkles and artwork (heartbeat, circuits, perspective grid, flames, hexagons,
+ * waves, carbon), and keys in many outlines (hexagon, cut corners, leaf, ticket, slanted,
+ * notched, drop ...) drawn flat, as mechanical keycaps or as glass, with gradients, neon
+ * outlines, 3D edges, flames, gloss and rainbow outlines.
+ *
+ * Rules of the pro themes (2.6): the artwork stays behind the keys (a backing plate under
+ * see-through keys keeps the letters readable), Enter and the function keys differ only a
+ * little from the letter keys.
+ *
+ * Used by the keyboard itself, by the theme list previews and by the key press popups.
+ * Everything is drawn in code; there are no images.
  */
 final class ProPainter {
 
     private ProPainter() {}
 
-    // key shapes
-    static final int SHAPE_ROUND = 0, SHAPE_KEYCAP = 1, SHAPE_CHAMFER = 2, SHAPE_BUBBLE = 3;
+    // key outlines
+    static final int SHAPE_ROUND = 0, SHAPE_CHAMFER = 2, SHAPE_BUBBLE = 3, SHAPE_HEX = 4, SHAPE_TECH = 5,
+            SHAPE_LEAF = 6, SHAPE_TICKET = 7, SHAPE_SLANT = 8, SHAPE_NOTCH = 9, SHAPE_DROP = 10;
     // key effects
     static final int FX_NONE = 0, FX_FLAME = 1, FX_GLOSS = 2, FX_INNER_GLOW = 3;
     // background artwork
     static final int ART_NONE = 0, ART_HEARTBEAT = 1, ART_CIRCUIT = 2, ART_GRID = 3, ART_FLAMES = 4,
-            ART_SPARKLE = 5, ART_HEX = 6, ART_WAVES = 7;
+            ART_SPARKLE = 5, ART_HEX = 6, ART_WAVES = 7, ART_CARBON = 8;
 
     public static final int LETTER = 0, FUNCTION = 1, ENTER = 2;
 
-    /** a color laid over another (alpha blending), used for pressed keys */
+    /** a color laid over another (alpha blending), used for pressed keys and tints */
     static int over(int base, int top) {
         float a = Color.alpha(top) / 255f;
         int r = (int) (Color.red(base) * (1 - a) + Color.red(top) * a);
         int g = (int) (Color.green(base) * (1 - a) + Color.green(top) * a);
         int b = (int) (Color.blue(base) * (1 - a) + Color.blue(top) * a);
         return Color.argb(Math.max(Color.alpha(base), Color.alpha(top)), r, g, b);
+    }
+
+    /** two colors mixed: f = 0 gives a, f = 1 gives b */
+    static int mix(int a, int b, float f) {
+        f = Math.max(0, Math.min(1, f));
+        return Color.argb((int) (Color.alpha(a) + (Color.alpha(b) - Color.alpha(a)) * f),
+                (int) (Color.red(a) + (Color.red(b) - Color.red(a)) * f),
+                (int) (Color.green(a) + (Color.green(b) - Color.green(a)) * f),
+                (int) (Color.blue(a) + (Color.blue(b) - Color.blue(a)) * f));
     }
 
     /** rainbow color for a spot across the keyboard (0..1 from the left edge) */
@@ -76,7 +92,6 @@ final class ProPainter {
         } else {
             float[] pos = new float[x.bg.length];
             for (int i = 0; i < pos.length; i++) pos[i] = i / (float) (pos.length - 1);
-            p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
             p.setShader(new LinearGradient(0, 0, x.diagonal ? w : 0, h, x.bg, pos, Shader.TileMode.CLAMP));
         }
         c.drawRect(0, 0, w, h, p);
@@ -85,7 +100,7 @@ final class ProPainter {
         for (int i = 0; i < x.blobColor.length; i++) {
             float cx = x.blobX[i] * w, cy = x.blobY[i] * h, r = Math.max(1, x.blobR[i] * size);
             int col = x.blobColor[i];
-            p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+            p.setColor(Color.BLACK); // opaque: a shader takes the paint's alpha
             p.setShader(new RadialGradient(cx, cy, r, col, col & 0x00FFFFFF, Shader.TileMode.CLAMP));
             c.drawCircle(cx, cy, r, p);
         }
@@ -98,6 +113,7 @@ final class ProPainter {
             case ART_FLAMES: edgeFlames(c, p, x, w, h, d, rnd); break;
             case ART_HEX: hexes(c, p, x, w, h, d); break;
             case ART_WAVES: waves(c, p, x, w, h, d); break;
+            case ART_CARBON: carbon(c, p, x, w, h, d); break;
             default: break;
         }
         if (x.stars != 0) {
@@ -118,8 +134,9 @@ final class ProPainter {
         if (x.art == ART_SPARKLE) sparkles(c, p, x, w, h, d, rnd);
     }
 
-    /** glowing line: a soft wide stroke under a crisp one */
-    private static void glowPath(Canvas c, Paint p, Path path, int color, float width, float d) {
+    /** glowing line: soft wide strokes under a crisp one with a white core */
+    static void glowPath(Canvas c, Paint p, Path path, int color, float width, float d) {
+        p.setShader(null);
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeCap(Paint.Cap.ROUND);
         p.setStrokeJoin(Paint.Join.ROUND);
@@ -145,7 +162,7 @@ final class ProPainter {
         heart.cubicTo(cx - s * 0.95f, cy - s * 0.15f, cx - s * 0.45f, cy - s * 0.75f, cx, cy - s * 0.28f);
         heart.cubicTo(cx + s * 0.45f, cy - s * 0.75f, cx + s * 0.95f, cy - s * 0.15f, cx, cy + s * 0.42f);
         heart.close();
-        p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+        p.setColor(Color.BLACK);
         p.setShader(new RadialGradient(cx, cy, s, (x.artColor & 0x00FFFFFF) | 0x26000000,
                 x.artColor & 0x00FFFFFF, Shader.TileMode.CLAMP));
         c.drawPath(heart, p);
@@ -193,7 +210,7 @@ final class ProPainter {
         // a striped sun on the horizon
         if (x.artColor2 != 0) {
             float sr = Math.min(w, h) * 0.28f;
-            p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+            p.setColor(Color.BLACK);
             p.setShader(new LinearGradient(0, horizon - sr, 0, horizon, x.artColor2, x.artColor,
                     Shader.TileMode.CLAMP));
             c.save();
@@ -209,7 +226,6 @@ final class ProPainter {
         }
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(1.2f * d);
-        p.setColor(x.artColor);
         for (int i = -12; i <= 12; i++) {
             float bx = vx + i * w * 0.11f;
             p.setColor(i == 0 ? x.artColor : (x.artColor & 0x00FFFFFF) | 0xAA000000);
@@ -222,21 +238,21 @@ final class ProPainter {
             c.drawLine(0, y, w, y, p);
         }
         p.setStyle(Paint.Style.FILL);
-        p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+        p.setColor(Color.BLACK);
         p.setShader(new LinearGradient(0, horizon - 4 * d, 0, horizon + 18 * d,
                 (x.artColor & 0x00FFFFFF) | 0x88000000, x.artColor & 0x00FFFFFF, Shader.TileMode.CLAMP));
         c.drawRect(0, horizon - 4 * d, w, horizon + 18 * d, p);
         p.setShader(null);
     }
 
-    /** one flame tongue standing on (x, base), pointing up (or down when h < 0) */
+    /** one flame tongue standing on (x, base), pointing up */
     private static void flame(Canvas c, Paint p, float fx, float base, float fw, float fh, int color, float lean) {
         Path f = new Path();
         f.moveTo(fx - fw / 2, base);
         f.cubicTo(fx - fw * 0.55f, base - fh * 0.45f, fx + lean - fw * 0.15f, base - fh * 0.6f, fx + lean, base - fh);
         f.cubicTo(fx + lean + fw * 0.05f, base - fh * 0.55f, fx + fw * 0.6f, base - fh * 0.4f, fx + fw / 2, base);
         f.close();
-        p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+        p.setColor(Color.BLACK);
         p.setShader(new LinearGradient(0, base, 0, base - fh, new int[]{color, (color & 0x00FFFFFF) | 0x99000000,
                 color & 0x00FFFFFF}, new float[]{0f, 0.5f, 1f}, Shader.TileMode.CLAMP));
         c.drawPath(f, p);
@@ -266,7 +282,7 @@ final class ProPainter {
         for (int i = 0; i < n; i++) {
             float sx = rnd.nextFloat() * w, sy = rnd.nextFloat() * h;
             float s = (4 + rnd.nextFloat() * rnd.nextFloat() * 16) * d;
-            p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+            p.setColor(Color.BLACK);
             p.setShader(new RadialGradient(sx, sy, s * 1.4f, (x.artColor & 0x00FFFFFF) | 0x88000000,
                     x.artColor & 0x00FFFFFF, Shader.TileMode.CLAMP));
             c.drawCircle(sx, sy, s * 1.4f, p);
@@ -316,7 +332,7 @@ final class ProPainter {
             wave.lineTo(0, h);
             wave.close();
             int col = k % 2 == 0 ? x.artColor : (x.artColor2 != 0 ? x.artColor2 : x.artColor);
-            p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+            p.setColor(Color.BLACK);
             p.setShader(new LinearGradient(0, base - amp, 0, h, (col & 0x00FFFFFF) | 0x40000000,
                     col & 0x00FFFFFF, Shader.TileMode.CLAMP));
             c.drawPath(wave, p);
@@ -324,31 +340,142 @@ final class ProPainter {
         p.setShader(null);
     }
 
-    // ------------------------------------------------------------------ keys
+    /** carbon fibre: a fine woven pattern of short diagonal strokes */
+    private static void carbon(Canvas c, Paint p, KeyboardTheme.Pro x, float w, float h, float d) {
+        float s = 4 * d;
+        p.setStyle(Paint.Style.STROKE);
+        p.setStrokeWidth(1.4f * d);
+        int row = 0;
+        for (float y = 0; y < h + s; y += s, row++) {
+            for (float px = (row % 2) * s; px < w + s; px += 2 * s) {
+                p.setColor(x.artColor);
+                c.drawLine(px, y, px + s, y + s, p);
+                p.setColor((x.artColor & 0x00FFFFFF) | ((Color.alpha(x.artColor) / 2) << 24));
+                c.drawLine(px + s, y, px + 2 * s, y - s, p);
+            }
+        }
+        p.setStyle(Paint.Style.FILL);
+    }
+
+    // ------------------------------------------------------------------ key outlines
 
     private static final Path sPath = new Path();
-    private static final RectF sR = new RectF();
+    private static final RectF sR = new RectF(), sArc = new RectF();
 
-    /** the outline of a key in the theme's shape */
-    private static Path shape(KeyboardTheme.Pro x, RectF r, float rad) {
-        sPath.reset();
-        if (x.shape == SHAPE_CHAMFER) {
-            float k = Math.min(r.width(), r.height()) * 0.24f;
-            sPath.moveTo(r.left + k, r.top);
-            sPath.lineTo(r.right - k, r.top);
-            sPath.lineTo(r.right, r.top + k);
-            sPath.lineTo(r.right, r.bottom - k);
-            sPath.lineTo(r.right - k, r.bottom);
-            sPath.lineTo(r.left + k, r.bottom);
-            sPath.lineTo(r.left, r.bottom - k);
-            sPath.lineTo(r.left, r.top + k);
-            sPath.close();
-        } else {
-            float rr = x.shape == SHAPE_BUBBLE ? Math.min(r.width(), r.height()) * 0.42f : rad;
-            sPath.addRoundRect(r, rr, rr, Path.Direction.CW);
-        }
-        return sPath;
+    private static void poly(Path out, float... xy) {
+        out.moveTo(xy[0], xy[1]);
+        for (int i = 2; i < xy.length; i += 2) out.lineTo(xy[i], xy[i + 1]);
+        out.close();
     }
+
+    /**
+     * The outline of a key (or a popup bubble) in the theme's shape, written into {@code out}.
+     * Not a plain rectangle and not an oval: hexagon, cut corners, leaf, ticket, slanted,
+     * notched or drop. {@code x} null or SHAPE_ROUND: a rounded rectangle.
+     */
+    static Path shapePath(KeyboardTheme.Pro x, RectF r, float rad, float d, Path out) {
+        out.reset();
+        float w = r.width(), h = r.height(), m = Math.min(w, h);
+        int shape = x == null ? SHAPE_ROUND : x.shape;
+        float cut = x != null ? x.cut : 0;
+        switch (shape) {
+            case SHAPE_CHAMFER: {
+                float k = m * (cut > 0 ? cut : 0.24f);
+                poly(out, r.left + k, r.top, r.right - k, r.top, r.right, r.top + k, r.right, r.bottom - k,
+                        r.right - k, r.bottom, r.left + k, r.bottom, r.left, r.bottom - k, r.left, r.top + k);
+                break;
+            }
+            case SHAPE_HEX: {
+                float k = m * (cut > 0 ? cut : 0.3f), cy = r.centerY();
+                poly(out, r.left + k, r.top, r.right - k, r.top, r.right, cy, r.right - k, r.bottom,
+                        r.left + k, r.bottom, r.left, cy);
+                break;
+            }
+            case SHAPE_TECH: { // top-left and bottom-right corners cut, the others slightly round
+                float k = m * (cut > 0 ? cut : 0.32f), s = Math.min(2.5f * d, m * 0.1f);
+                out.moveTo(r.left + k, r.top);
+                out.lineTo(r.right - s, r.top);
+                out.quadTo(r.right, r.top, r.right, r.top + s);
+                out.lineTo(r.right, r.bottom - k);
+                out.lineTo(r.right - k, r.bottom);
+                out.lineTo(r.left + s, r.bottom);
+                out.quadTo(r.left, r.bottom, r.left, r.bottom - s);
+                out.lineTo(r.left, r.top + k);
+                out.close();
+                break;
+            }
+            case SHAPE_LEAF: { // two opposite corners round, the other two sharp
+                float big = m * (cut > 0 ? cut : 0.5f), s = Math.min(2.5f * d, m * 0.1f);
+                out.addRoundRect(r, new float[]{big, big, s, s, big, big, s, s}, Path.Direction.CW);
+                break;
+            }
+            case SHAPE_TICKET: { // corners cut inwards in a quarter circle
+                float q = m * (cut > 0 ? cut : 0.2f);
+                out.moveTo(r.left + q, r.top);
+                out.lineTo(r.right - q, r.top);
+                sArc.set(r.right - q, r.top - q, r.right + q, r.top + q);
+                out.arcTo(sArc, 180, -90, false);
+                out.lineTo(r.right, r.bottom - q);
+                sArc.set(r.right - q, r.bottom - q, r.right + q, r.bottom + q);
+                out.arcTo(sArc, 270, -90, false);
+                out.lineTo(r.left + q, r.bottom);
+                sArc.set(r.left - q, r.bottom - q, r.left + q, r.bottom + q);
+                out.arcTo(sArc, 0, -90, false);
+                out.lineTo(r.left, r.top + q);
+                sArc.set(r.left - q, r.top - q, r.left + q, r.top + q);
+                out.arcTo(sArc, 90, -90, false);
+                out.close();
+                break;
+            }
+            case SHAPE_SLANT: { // a parallelogram, leaning forward
+                float s = Math.min(h * 0.16f, w * 0.2f);
+                poly(out, r.left + s, r.top, r.right, r.top, r.right - s, r.bottom, r.left, r.bottom);
+                break;
+            }
+            case SHAPE_NOTCH: { // a chip: small round corners and a notch in the middle of the top edge
+                float rr = Math.min(3 * d, m * 0.12f), nw = Math.min(w * 0.36f, 16 * d),
+                        nd = Math.min(h * 0.09f, 3.2f * d), cx = r.centerX();
+                out.moveTo(r.left + rr, r.top);
+                out.lineTo(cx - nw / 2 - nd, r.top);
+                out.lineTo(cx - nw / 2, r.top + nd);
+                out.lineTo(cx + nw / 2, r.top + nd);
+                out.lineTo(cx + nw / 2 + nd, r.top);
+                out.lineTo(r.right - rr, r.top);
+                out.quadTo(r.right, r.top, r.right, r.top + rr);
+                out.lineTo(r.right, r.bottom - rr);
+                out.quadTo(r.right, r.bottom, r.right - rr, r.bottom);
+                out.lineTo(r.left + rr, r.bottom);
+                out.quadTo(r.left, r.bottom, r.left, r.bottom - rr);
+                out.lineTo(r.left, r.top + rr);
+                out.quadTo(r.left, r.top, r.left + rr, r.top);
+                out.close();
+                break;
+            }
+            case SHAPE_DROP: { // a water drop, pointed at the top
+                float cx = r.centerX(), t = r.top, b = r.bottom, l = r.left, rt = r.right;
+                float sw = Math.min(w, h * 1.15f); // curvature of a drop of normal width; wide keys stay flat
+                float sh = t + h * 0.6f;
+                out.moveTo(cx, t);
+                out.cubicTo(cx + sw * 0.10f, t + h * 0.10f, rt, t + h * 0.26f, rt, sh);
+                out.cubicTo(rt, t + h * 0.88f, rt - sw * 0.20f, b, rt - sw * 0.5f, b);
+                out.lineTo(l + sw * 0.5f, b);
+                out.cubicTo(l + sw * 0.20f, b, l, t + h * 0.88f, l, sh);
+                out.cubicTo(l, t + h * 0.26f, cx - sw * 0.10f, t + h * 0.10f, cx, t);
+                out.close();
+                break;
+            }
+            case SHAPE_BUBBLE: {
+                float rr = m * 0.42f;
+                out.addRoundRect(r, rr, rr, Path.Direction.CW);
+                break;
+            }
+            default:
+                out.addRoundRect(r, rad, rad, Path.Direction.CW);
+        }
+        return out;
+    }
+
+    // ------------------------------------------------------------------ keys
 
     /**
      * Draws one key. {@code r} is the key's rectangle; it is restored before returning.
@@ -357,11 +484,11 @@ final class ProPainter {
     static void key(Canvas c, Paint p, RectF r, float rad, KeyboardTheme t, int kind, boolean pressed,
                     int tint, float d, int alpha) {
         KeyboardTheme.Pro x = t.pro;
-        if (x.shape == SHAPE_KEYCAP) {
+        if (x.keycap) {
             keycap(c, p, r, rad, t, kind, pressed, tint, d, alpha);
             return;
         }
-        int line = x.rainbow ? tint : x.line;
+        int line = x.rainbow ? tint : (kind == ENTER && x.line != 0 ? enterLine(t) : x.line);
         int glow = x.rainbow && x.glow != 0 ? tint : x.glow;
         float lift = x.edge != 0 ? 3f * d : 0;
         float sink = pressed ? lift * 0.7f : 0; // a pressed 3D key goes down
@@ -374,12 +501,12 @@ final class ProPainter {
             p.setColor(withAlpha(edge, alpha));
             if (glow != 0) p.setShadowLayer(x.glowDp * d, 0, 0, glow);
             r.offset(0, lift);
-            c.drawPath(shape(x, r, rad), p);
+            c.drawPath(shapePath(x, r, rad, d, sPath), p);
             r.offset(0, -lift);
             p.clearShadowLayer();
         }
         r.offset(0, sink);
-        Path s = shape(x, r, rad);
+        Path s = shapePath(x, r, rad, d, sPath);
 
         // glow behind the key (a neon key without a 3D edge)
         if (glow != 0 && x.edge == 0 && line != 0) {
@@ -392,20 +519,16 @@ final class ProPainter {
             p.setStyle(Paint.Style.FILL);
         }
 
-        // the key face
-        int top, bottom;
-        if (kind == ENTER) {
-            top = lighten(t.accent);
-            bottom = t.accent;
-        } else if (kind == FUNCTION) {
-            top = x.fnTop;
-            bottom = x.fnBottom;
-        } else {
-            top = x.keyTop;
-            bottom = x.keyBottom;
+        // backing plate: the artwork stays behind see-through keys
+        if (x.plate != 0) {
+            p.setColor(withAlpha(x.plate, alpha));
+            c.drawPath(s, p);
         }
+
+        // the key face
+        int top = faceTop(t, kind), bottom = faceBottom(t, kind);
         if (top != bottom) {
-            p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+            p.setColor(Color.BLACK); // opaque: a shader takes the paint's alpha
             p.setShader(new LinearGradient(0, r.top, 0, r.bottom, withAlpha(top, alpha), withAlpha(bottom, alpha),
                     Shader.TileMode.CLAMP));
         } else {
@@ -414,11 +537,11 @@ final class ProPainter {
         c.drawPath(s, p);
         p.setShader(null);
 
-        if (kind != ENTER) effects(c, p, r, s, t, x, line != 0 ? line : x.fxColor, d);
+        effects(c, p, r, s, x, line != 0 ? line : x.fxColor, d);
 
         // light reflection on the upper half
-        if (x.sheen != 0 && kind != ENTER) {
-            p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+        if (x.sheen != 0) {
+            p.setColor(Color.BLACK);
             p.setShader(new LinearGradient(0, r.top, 0, r.centerY(), x.sheen, x.sheen & 0x00FFFFFF,
                     Shader.TileMode.CLAMP));
             c.drawPath(s, p);
@@ -426,12 +549,12 @@ final class ProPainter {
         }
 
         if (pressed) {
-            p.setColor(kind == ENTER ? 0x33000000 : (x.dark ? 0x33FFFFFF : 0x1A000000));
+            p.setColor(x.dark ? 0x33FFFFFF : 0x1A000000);
             c.drawPath(s, p);
         }
 
         // crisp outline on top
-        if (line != 0 && kind != ENTER) {
+        if (line != 0) {
             p.setStyle(Paint.Style.STROKE);
             p.setStrokeWidth(Math.max(0.8f, x.lineDp) * d);
             p.setColor(withAlpha(line, alpha));
@@ -442,17 +565,35 @@ final class ProPainter {
         r.offset(0, -sink);
     }
 
-    /** key effects inside the key face: flames, gloss, inner glow, glass bubble */
-    private static void effects(Canvas c, Paint p, RectF r, Path s, KeyboardTheme t, KeyboardTheme.Pro x,
-                                int color, float d) {
-        if (x.fx == FX_NONE && x.shape != SHAPE_BUBBLE) return;
+    /** face colors: letters as set; function keys and Enter only a little different (2.6) */
+    static int faceTop(KeyboardTheme t, int kind) {
+        KeyboardTheme.Pro x = t.pro;
+        return kind == ENTER ? over(x.keyTop, enterTint(t)) : kind == FUNCTION ? x.fnTop : x.keyTop;
+    }
+
+    static int faceBottom(KeyboardTheme t, int kind) {
+        KeyboardTheme.Pro x = t.pro;
+        return kind == ENTER ? over(x.keyBottom, enterTint(t)) : kind == FUNCTION ? x.fnBottom : x.keyBottom;
+    }
+
+    private static int enterTint(KeyboardTheme t) {
+        return (t.accent & 0x00FFFFFF) | ((t.pro.dark ? 0x30 : 0x26) << 24);
+    }
+
+    private static int enterLine(KeyboardTheme t) {
+        return mix(t.pro.line, t.accent | 0xFF000000, 0.6f);
+    }
+
+    /** key effects inside the key face: flames, gloss, inner glow, glass */
+    private static void effects(Canvas c, Paint p, RectF r, Path s, KeyboardTheme.Pro x, int color, float d) {
+        if (x.fx == FX_NONE && !x.glass) return;
         c.save();
         c.clipPath(s);
         switch (x.fx) {
             case FX_FLAME: {
                 Random rnd = new Random((long) (r.left * 31 + r.top * 17));
                 int n = Math.max(3, (int) (r.width() / (6 * d)));
-                p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+                p.setColor(Color.BLACK);
                 p.setShader(new LinearGradient(0, r.bottom, 0, r.top, (x.fxColor & 0x00FFFFFF) | 0x66000000,
                         x.fxColor & 0x00FFFFFF, Shader.TileMode.CLAMP));
                 c.drawRect(r, p);
@@ -467,7 +608,7 @@ final class ProPainter {
             }
             case FX_GLOSS: {
                 float band = r.height() * 0.24f;
-                p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+                p.setColor(Color.BLACK);
                 p.setShader(new LinearGradient(0, r.bottom - band, 0, r.bottom, darken(x.fxColor), x.fxColor,
                         Shader.TileMode.CLAMP));
                 c.drawRect(r.left, r.bottom - band, r.right, r.bottom, p);
@@ -475,7 +616,7 @@ final class ProPainter {
                 p.setColor(withAlpha(lighten(x.fxColor), 200));
                 c.drawRect(r.left, r.bottom - band, r.right, r.bottom - band + 1.2f * d, p);
                 sR.set(r.left + 3 * d, r.top + 2 * d, r.right - 3 * d, r.top + r.height() * 0.42f);
-                p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+                p.setColor(Color.BLACK);
                 p.setShader(new LinearGradient(0, sR.top, 0, sR.bottom, 0x55FFFFFF, 0x00FFFFFF,
                         Shader.TileMode.CLAMP));
                 c.drawRoundRect(sR, 6 * d, 6 * d, p);
@@ -483,7 +624,7 @@ final class ProPainter {
                 break;
             }
             case FX_INNER_GLOW: {
-                p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+                p.setColor(Color.BLACK);
                 p.setShader(new LinearGradient(0, r.top, 0, r.bottom, color & 0x00FFFFFF,
                         (color & 0x00FFFFFF) | 0x59000000, Shader.TileMode.CLAMP));
                 c.drawRect(r, p);
@@ -492,21 +633,24 @@ final class ProPainter {
             }
             default: break;
         }
-        if (x.shape == SHAPE_BUBBLE) {
-            // a glass drop: dark rim at the bottom, a bright highlight at the top
-            p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+        if (x.glass) {
+            // glass: darker towards the rim, a bright highlight at the top, a small reflection
+            p.setColor(Color.BLACK);
             p.setShader(new RadialGradient(r.centerX(), r.top + r.height() * 0.15f, r.width() * 0.9f,
-                    0x00000000, x.dark ? 0x55000000 : 0x26000000, Shader.TileMode.CLAMP));
+                    0x00000000, x.dark ? 0x40000000 : 0x26000000, Shader.TileMode.CLAMP));
             c.drawRect(r, p);
             p.setShader(null);
-            sR.set(r.left + r.width() * 0.18f, r.top + r.height() * 0.08f, r.right - r.width() * 0.18f,
-                    r.top + r.height() * 0.42f);
-            p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
-            p.setShader(new LinearGradient(0, sR.top, 0, sR.bottom, 0xCCFFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP));
+            // a soft band of light across the top, above the letter (never over it)
+            sR.set(r.left + r.width() * 0.16f, r.top + r.height() * 0.06f, r.right - r.width() * 0.16f,
+                    r.top + r.height() * 0.30f);
+            p.setColor(Color.BLACK);
+            p.setShader(new LinearGradient(0, sR.top, 0, sR.bottom, x.dark ? 0x4DFFFFFF : 0x99FFFFFF, 0x00FFFFFF,
+                    Shader.TileMode.CLAMP));
             c.drawOval(sR, p);
             p.setShader(null);
-            p.setColor(0x99FFFFFF);
-            c.drawCircle(r.right - r.width() * 0.26f, r.bottom - r.height() * 0.22f, Math.min(r.width(), r.height()) * 0.06f, p);
+            p.setColor(x.dark ? 0x55FFFFFF : 0x88FFFFFF);
+            c.drawCircle(r.right - r.width() * 0.26f, r.bottom - r.height() * 0.2f,
+                    Math.min(r.width(), r.height()) * 0.04f, p);
         }
         c.restore();
     }
@@ -526,27 +670,29 @@ final class ProPainter {
         c.drawRect(r.left + k * 1.3f, r.bottom - 1.6f * d, r.left + k * 2.3f, r.bottom, p);
     }
 
-    /** a mechanical keycap: a darker body with a lighter top face, seen slightly from above */
+    private static final Path sFace = new Path();
+    private static final RectF sFaceR = new RectF();
+
+    /** a mechanical keycap in the theme's outline: a darker body with a lighter top face */
     private static void keycap(Canvas c, Paint p, RectF r, float rad, KeyboardTheme t, int kind, boolean pressed,
                                int tint, float d, int alpha) {
         KeyboardTheme.Pro x = t.pro;
-        int top, bottom;
-        if (kind == ENTER) { top = lighten(t.accent); bottom = t.accent; }
-        else if (kind == FUNCTION) { top = x.fnTop; bottom = x.fnBottom; }
-        else { top = x.keyTop; bottom = x.keyBottom; }
+        int top = faceTop(t, kind), bottom = faceBottom(t, kind);
         float press = pressed ? 1.5f * d : 0;
         p.setShader(null);
         p.setStyle(Paint.Style.FILL);
         // shadow under the cap
         p.setColor(x.dark ? 0x99000000 : 0x33000000);
         sR.set(r.left, r.top + 2 * d, r.right, r.bottom + 2 * d);
-        c.drawRoundRect(sR, rad, rad, p);
+        c.drawPath(shapePath(x, sR, rad, d, sPath), p);
         // body (the sides)
-        int side = x.edge != 0 ? (kind == LETTER ? x.edge : darken(bottom)) : darken(bottom);
-        p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
+        int side = x.edge != 0 ? x.edge : darken(bottom);
+        if (kind == ENTER) side = over(side, enterTint(t));
+        Path body = shapePath(x, r, rad, d, sPath);
+        p.setColor(Color.BLACK);
         p.setShader(new LinearGradient(r.left, 0, r.right, 0, new int[]{darken(side), side, darken(side)},
                 null, Shader.TileMode.CLAMP));
-        c.drawRoundRect(r, rad, rad, p);
+        c.drawPath(body, p);
         p.setShader(null);
         if (x.glow != 0 || x.line != 0) {
             int rim = x.rainbow ? tint : (x.line != 0 ? x.line : x.glow);
@@ -554,40 +700,42 @@ final class ProPainter {
             p.setStrokeWidth(Math.max(0.8f, x.lineDp) * d);
             p.setColor(withAlpha(rim, alpha));
             if (x.glow != 0) p.setShadowLayer(x.glowDp * d, 0, 0, x.rainbow ? tint : x.glow);
-            c.drawRoundRect(r, rad, rad, p);
+            c.drawPath(body, p);
             p.clearShadowLayer();
             p.setStyle(Paint.Style.FILL);
         }
         // top face, set in from the sides: more of the front side shows
         float inX = Math.min(r.width() * 0.09f, 4.5f * d);
-        sR.set(r.left + inX, r.top + 1.5f * d + press, r.right - inX, r.bottom - 6 * d + press);
-        float fr = Math.max(2 * d, rad * 0.75f);
-        p.setColor(Color.BLACK); // opaque: a shader takes the paint\'s alpha
-        p.setShader(new LinearGradient(0, sR.top, 0, sR.bottom, withAlpha(top, alpha), withAlpha(bottom, alpha),
-                Shader.TileMode.CLAMP));
-        c.drawRoundRect(sR, fr, fr, p);
+        sFaceR.set(r.left + inX, r.top + 1.5f * d + press, r.right - inX, r.bottom - 6 * d + press);
+        Path face = shapePath(x, sFaceR, Math.max(2 * d, rad * 0.75f), d, sFace);
+        p.setColor(Color.BLACK);
+        p.setShader(new LinearGradient(0, sFaceR.top, 0, sFaceR.bottom, withAlpha(top, alpha),
+                withAlpha(bottom, alpha), Shader.TileMode.CLAMP));
+        c.drawPath(face, p);
         p.setShader(null);
-        // a thin light edge along the top of the face
+        // a thin light edge around the face
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(0.8f * d);
         p.setColor(x.dark ? 0x40FFFFFF : 0x99FFFFFF);
-        c.drawRoundRect(sR, fr, fr, p);
+        c.drawPath(face, p);
         p.setStyle(Paint.Style.FILL);
         if (pressed) {
             p.setColor(x.dark ? 0x26FFFFFF : 0x14000000);
-            c.drawRoundRect(sR, fr, fr, p);
+            c.drawPath(face, p);
         }
     }
 
-    /** how far a key's label moves (pressed 3D keys sink, keycap labels sit on the top face) */
-    static float labelShift(KeyboardTheme t, boolean pressed, float d) {
+    /**
+     * How far a key's label moves down: pressed 3D keys sink, keycap labels sit on the top
+     * face, drop keys have their middle lower.
+     */
+    static float labelShift(KeyboardTheme t, boolean pressed, float d, float keyH) {
         if (t.pro == null) return 0;
-        if (t.pro.shape == SHAPE_KEYCAP) return (pressed ? 1.5f * d : 0) - 2.25f * d;
-        return pressed && t.pro.edge != 0 ? 3f * d * 0.7f : 0;
-    }
-
-    static float sink(KeyboardTheme t, boolean pressed, float d) {
-        return labelShift(t, pressed, d);
+        float s = 0;
+        if (t.pro.keycap) s += (pressed ? 1.5f * d : 0) - 2.25f * d;
+        else if (pressed && t.pro.edge != 0) s += 3f * d * 0.7f;
+        if (t.pro.shape == SHAPE_DROP) s += keyH * 0.07f;
+        return s;
     }
 
     static int withAlpha(int color, int alpha255) {
