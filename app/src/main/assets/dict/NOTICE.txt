@@ -1,0 +1,18 @@
+Word-prediction / swipe dictionaries (en.dict, fa.dict, ckb.dict)
+=================================================================
+Converted by tools/build_dicts.py from the word lists of the kafe_keyboard /
+CleverKeys project (https://github.com/tribixbite/cleverkeys). Every list was
+modified: filtered, truncated and its frequencies re-quantised to 1..255.
+
+en.dict  - CleverKeys English list: wordfreq (CC BY-SA 4.0) with AOSP LatinIME
+           and spell-checker inclusion oracles.
+fa.dict  - CleverKeys Persian list: Leipzig Corpora Collection counts
+           (CC BY 4.0) blended with wordfreq (CC BY-SA 4.0); Lilak inclusion
+           oracle (Apache-2.0); LDNOOBW-reviewed profanity blocklist.
+ckb.dict - Central Kurdish (Sorani): kww Kurdish Wikipedia word list by
+           Dolan Heris (MIT), counted from Kurdish Wikipedia (CC BY-SA 4.0);
+           KurdishHunspell ckb-Arab inclusion oracle by Sina Ahmadi
+           (CC BY-SA 4.0).
+
+These data files are distributed under CC BY-SA 4.0
+(https://creativecommons.org/licenses/by-sa/4.0/).
