@@ -121,6 +121,14 @@ public class KKeyboardView extends KeyboardView {
     @Override
     protected boolean onLongPress(Key key) {
         mSwipeLongPressed = true; // a popup is opening: this touch is not a swipe
+        // number pad / symbol pages: long press = hold-and-slide options (the copy/paste
+        // shortcuts on 7-0 belong to the number row above the letters)
+        if (!keyboardHasLetters() && (key.popupCharacters != null || key.popupResId != 0)
+                && openSlidePopup(key)) {
+            mSlideDownX = mLastTouchX;
+            mSlideDownY = mLastTouchY;
+            return true;
+        }
 
 
 
@@ -1263,6 +1271,13 @@ public class KKeyboardView extends KeyboardView {
                 }
             }
 
+            if (key.label != null && !letters && key.popupCharacters != null && key.popupCharacters.length() > 0) {
+                // number pad / symbols: the first long-press option as a corner hint
+                String pc = key.popupCharacters.toString();
+                String first = new String(Character.toChars(pc.codePointAt(0)));
+                canvas.drawText(first, mKeyRect.right - 9 * d, mKeyRect.top + mSmallHintPaint.getTextSize() + 2 * d,
+                        mSmallHintPaint);
+            }
             if (key.label != null) {
                 String keyLabel = key.label.toString();
                 if (isShifted()) keyLabel = keyLabel.toUpperCase();
