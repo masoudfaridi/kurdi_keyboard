@@ -36,11 +36,6 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.Settings;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.os.ResultReceiver;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.ActionBarOverlayLayout;
 import android.text.InputType;
 import android.text.Selection;
 import android.text.method.MetaKeyKeyListener;
@@ -100,12 +95,6 @@ import android.widget.ArrayAdapter;
 
 import android.widget.ListView;
 import android.widget.PopupWindow.OnDismissListener;
-
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.ActionBarOverlayLayout;
 import java.util.Calendar;
 import android.view.ViewGroup;
 import com.kurdikeyboard.predict.PredictionEngine;
