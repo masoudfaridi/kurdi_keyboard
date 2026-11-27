@@ -192,6 +192,8 @@ public class ReadySentencesActivity extends Activity {
                         if (ReadySentenceStore.save(ReadySentencesActivity.this, t, val, item != null ? item.file : null)) {
                             dialog.dismiss();
                             reload();
+                        } else {
+                            Toast.makeText(ReadySentencesActivity.this, R.string.ready_save_failed, Toast.LENGTH_LONG).show();
                         }
                     }
                 });

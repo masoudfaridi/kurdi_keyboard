@@ -923,6 +923,12 @@ public class KKeyboardView extends KeyboardView {
     }
 
     private boolean onTouchEventInner(android.view.MotionEvent me) {
+        if (mSlideActive && me.getActionMasked() == android.view.MotionEvent.ACTION_POINTER_UP
+                && me.getActionIndex() == 0) {
+            // the finger that opened the popup was lifted while another one is down: close it
+            closeSlidePopup();
+            return true;
+        }
         if (mSlideActive) {
             int a = me.getActionMasked();
             boolean r = handleSlideTouch(me);
@@ -953,6 +959,18 @@ public class KKeyboardView extends KeyboardView {
                 }
                 return super.onTouchEvent(me);
             }
+            case android.view.MotionEvent.ACTION_POINTER_UP:
+                if (mSwiping && me.getActionIndex() == 0) {
+                    // the swiping finger was lifted first: finish the word with the path so far
+                    float[] xs = java.util.Arrays.copyOf(mSwipeX, mSwipeCount);
+                    float[] ys = java.util.Arrays.copyOf(mSwipeY, mSwipeCount);
+                    int n = mSwipeCount;
+                    endSwipe();
+                    mSwipeListener.onSwipe(xs, ys, n);
+                    return true;
+                }
+                if (mSwiping) return true;
+                return super.onTouchEvent(me);
             case android.view.MotionEvent.ACTION_POINTER_DOWN:
                 if (mSwiping) return true;     // ignore a second finger during a swipe
                 mSwipeTracking = false;        // two-finger typing: never a swipe
@@ -1138,7 +1156,7 @@ public class KKeyboardView extends KeyboardView {
 
         float d = getResources().getDisplayMetrics().density;
         float sp = getResources().getDisplayMetrics().scaledDensity;
-        int font = prefs.getInt(mContext.getString(R.string.prefseekbarfont), 100) / 5; // 2017 setting
+        int font = prefs.getInt(mContext.getString(R.string.prefseekbarfont), 116) / 5; // 2017 setting
         mLabelPaint.setTextAlign(Paint.Align.CENTER);
         mLabelPaint.setTextSize(font * d);
         mLabelPaint.setColor(t.text);
@@ -1735,7 +1753,16 @@ public class KKeyboardView extends KeyboardView {
     /** @return true if the event was consumed by a space gesture */
     private boolean handleSpaceGesture(android.view.MotionEvent me) {
         float d = getResources().getDisplayMetrics().density;
-        switch (me.getActionMasked()) {
+        int am = me.getActionMasked();
+        if (am == android.view.MotionEvent.ACTION_POINTER_DOWN
+                || am == android.view.MotionEvent.ACTION_POINTER_UP) {
+            // fast two-thumb typing: a second finger ends any space gesture, so the other
+            // finger's key is typed normally (it used to start moving the cursor)
+            boolean was = mSpaceCursor || mSpaceLangOpen;
+            resetSpace();
+            return was;
+        }
+        switch (am) {
             case android.view.MotionEvent.ACTION_DOWN: {
                 resetSpace();
                 Key k = keyAt(me.getX(), me.getY());
@@ -1962,5 +1989,25 @@ public class KKeyboardView extends KeyboardView {
             }
             c.drawText(text, getWidth() / 2f, r.height() * 0.5f + size / 3f, p);
         }
+    }
+
+    /** keyboard hidden or reset: nothing of ours may stay on screen or half-done */
+    @Override
+    public void closing() {
+        super.closing();
+        cleanUpGestures();
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        cleanUpGestures();
+        super.onDetachedFromWindow();
+    }
+
+    void cleanUpGestures() {
+        closeSlidePopup();
+        resetSpace();
+        hideKeyPreview();
+        endSwipe();
     }
 }

@@ -126,9 +126,11 @@ public final class PredictionEngine {
     public void saveAsync() {
         bg.execute(new Runnable() {
             @Override public void run() {
+                java.util.List<UserHistory> copy;
                 synchronized (PredictionEngine.this) {
-                    for (UserHistory h : histories.values()) h.save();
+                    copy = new java.util.ArrayList<>(histories.values());
                 }
+                for (UserHistory h : copy) h.save(); // UserHistory locks itself; typing is not blocked
             }
         });
     }

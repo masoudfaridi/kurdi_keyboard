@@ -46,7 +46,7 @@ public class ContactPickerActivity extends Activity {
         super.onResume();
         PendingText.screenShown();
         // permission given in the app settings meanwhile
-        if (all.isEmpty() && hasPermission()) load();
+        if (!loadStarted && hasPermission()) load();
     }
 
     @Override protected void onPause() { super.onPause(); PendingText.screenHidden(); }
@@ -156,7 +156,11 @@ public class ContactPickerActivity extends Activity {
     }
 
     /** reads contacts with their numbers and e-mails, off the main thread */
+    private boolean loadStarted;
+
     private void load() {
+        if (loadStarted) return;
+        loadStarted = true;
         empty.setText(R.string.contacts_loading);
         final ContentResolver resolver = getContentResolver();
         new Thread(new Runnable() {

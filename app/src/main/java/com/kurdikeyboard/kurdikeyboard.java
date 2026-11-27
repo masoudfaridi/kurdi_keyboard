@@ -723,7 +723,9 @@ public class kurdikeyboard extends InputMethodService
             }
         });
         mInputView.setOnKeyboardActionListener(this);
-        if (mCurKeyboard != null && mCurKeyboard == mSymbolsnumbers) {
+        if (mCurKeyboard != null && (mCurKeyboard == mSymbolsnumbers || mCurKeyboard == mSymbolsKeyboard)) {
+            setKKeyboard(mCurKeyboard); // number / date field: keep that page
+        } else if (mCurKeyboard != null && mCurKeyboard == mSymbolsnumbers) {
             setKKeyboard(mSymbolsnumbers); // number / phone field: keep the number pad
         } else if(mCurKeyboard!=null){
             //setKKeyboard(mCurKeyboard);
@@ -1172,6 +1174,9 @@ public class kurdikeyboard extends InputMethodService
     public void onFinishInputView(boolean finishingInput) {
         super.onFinishInputView(finishingInput);
         closeOpenPopup();
+        if (mPreviewPopup != null && mPreviewPopup.isShowing()) {
+            try { mPreviewPopup.dismiss(); } catch (RuntimeException ignored) {}
+        }
     }
 
     @Override public void onFinishInput() {
@@ -1179,6 +1184,10 @@ public class kurdikeyboard extends InputMethodService
        // Toast.makeText(getBaseContext(),"onFinishInput",Toast.LENGTH_LONG).show();
 
         super.onFinishInput();
+        if (mPendingCommit != null) {
+            mSuggestHandler.removeCallbacks(mPendingCommit);
+            mPendingCommit = null;
+        }
         mKeepSwipeAlternatives = false;
         mSuggestHandler.removeCallbacks(mUpdateSuggestionsRunnable);
         if (mPredict != null) mPredict.saveAsync();
@@ -1222,22 +1231,29 @@ public class kurdikeyboard extends InputMethodService
 
         super.onStartInputView(attribute, restarting);
         if (attribute != null && !PendingText.screenShowing()) {
-            final String contactText = PendingText.take();
+            final String contactText = PendingText.take(attribute.packageName);
             if (contactText != null) {
-                // after the field is ready
-                mSuggestHandler.postDelayed(new Runnable() {
+                final InputConnection target = getCurrentInputConnection();
+                // after the field is ready; dropped if the field changes meanwhile
+                mPendingCommit = new Runnable() {
                     @Override public void run() {
-                        getCurrentInputConnection().commitText(contactText, 1);
+                        mPendingCommit = null;
+                        target.commitText(contactText, 1);
                     }
-                }, 150);
+                };
+                mSuggestHandler.postDelayed(mPendingCommit, 150);
             }
         }
         if (mQwertyKeyboard != null && !layoutPrefsSignature().equals(mLastLayoutPrefs)) {
             // double-tap / extended-Kurdish settings changed: rebuild the keyboards now
             onInitializeInterface();
-            if ("fa".equals(prelanguage)) mCurKeyboard = mfarsiKeyboard;
-            else if ("kr".equals(prelanguage)) mCurKeyboard = mkurdishKeyboard;
-            else mCurKeyboard = mQwertyKeyboard;
+            if (!isNumberField(attribute)) {
+                if ("fa".equals(prelanguage)) mCurKeyboard = mfarsiKeyboard;
+                else if ("kr".equals(prelanguage)) mCurKeyboard = mkurdishKeyboard;
+                else mCurKeyboard = mQwertyKeyboard;
+            } else {
+                mCurKeyboard = mSymbolsnumbers;
+            }
             setInputView(onCreateInputView());
         }
         if (preferenceKeyboard != null
@@ -1245,10 +1261,11 @@ public class kurdikeyboard extends InputMethodService
                 || ("fa".equals(prelanguage) && !preferenceKeyboard.getBoolean(getString(R.string.preflanguage_farsi), true)))) {
             prelanguage = "en";
             language = "en";
-            mCurKeyboard = mQwertyKeyboard;
+            if (!isNumberField(attribute)) mCurKeyboard = mQwertyKeyboard;
         }
         readPredictionPrefs();
         mFieldAllowsPrediction = fieldAllowsPrediction(attribute);
+        mFieldNoLearning = attribute != null && (attribute.imeOptions & 0x1000000) != 0; // IME_FLAG_NO_PERSONALIZED_LEARNING
         mKeepSwipeAlternatives = false;
         mJustAutoSpaced = false;
         mLastInserted = null;
@@ -1313,6 +1330,15 @@ public class kurdikeyboard extends InputMethodService
 
         super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd,
                 candidatesStart, candidatesEnd);
+        // the user moved the cursor (not our own typing): forget swipe alternatives / auto-space
+        if (mLastInserted != null && newSelStart == newSelEnd
+                && newSelStart != oldSelStart + mLastInserted.length() && newSelStart != oldSelStart) {
+            if (Math.abs(newSelStart - oldSelStart) > 1) {
+                mKeepSwipeAlternatives = false;
+                mJustAutoSpaced = false;
+                mLastInserted = null;
+            }
+        }
         scheduleSuggestionUpdate();
 
         // If the current selection in the text view changes, we should
@@ -1840,7 +1866,10 @@ public class kurdikeyboard extends InputMethodService
             try{
             ic.beginBatchEdit();
             strCopytemp=ic.getSelectedText(0).toString();
-            ic.setSelection(et.selectionEnd,et.selectionEnd);
+            if (etReal) {
+                int end = et.startOffset + et.selectionEnd;
+                ic.setSelection(end, end); // deselect, cursor after the copied text
+            }
             ic.endBatchEdit();
             }catch (Exception ei){
 
@@ -3048,9 +3077,7 @@ private void setCurrentLanguage(){
 
 
     public void swipeRight() {
-
-        handleLanguageSwitch();
-
+        // 2.x: languages are switched by holding the space bar (a flick used to switch by accident)
     }
 
     public void swipeLeft() {
@@ -3060,8 +3087,7 @@ private void setCurrentLanguage(){
     }
 
     public void swipeDown() {
-        handleClose();
-
+        // 2.x: a downward flick no longer closes the keyboard by accident
     }
 
     public void swipeUp() {
@@ -3695,6 +3721,15 @@ private void setCurrentLanguage(){
         mAutoSpace = preferenceKeyboard.getBoolean(getString(R.string.prefautospace), true);
     }
 
+    /** private / incognito fields: suggestions yes, but nothing is learned */
+    private boolean mFieldNoLearning;
+
+    private static boolean isNumberField(EditorInfo a) {
+        if (a == null) return false;
+        int c = a.inputType & InputType.TYPE_MASK_CLASS;
+        return c == InputType.TYPE_CLASS_NUMBER || c == InputType.TYPE_CLASS_PHONE;
+    }
+
     private static boolean fieldAllowsPrediction(EditorInfo attribute) {
         if (attribute == null) return false;
         int type = attribute.inputType;
@@ -3883,7 +3918,7 @@ private void setCurrentLanguage(){
         String insert = word + (mAutoSpace && !spaceFollows ? " " : "");
         ic.commitText(insert, 1);
         ic.endBatchEdit();
-        mPredict.learn(lang, prev, word);
+        if (!mFieldNoLearning) mPredict.learn(lang, prev, word);
         mLastInserted = insert;
         mLastInsertedLang = lang;
         mJustAutoSpaced = insert.endsWith(" ");
@@ -3902,7 +3937,7 @@ private void setCurrentLanguage(){
         if (curLen == 0) return;
         String word = before.subSequence(before.length() - curLen, before.length()).toString();
         String lang = PredictionEngine.languageFor(keyboardLang(), word);
-        mPredict.learn(lang, previousWord(before, curLen), word);
+        if (!mFieldNoLearning) mPredict.learn(lang, previousWord(before, curLen), word);
     }
 
     /** "word ." → "word." when the space was added automatically */
@@ -3986,7 +4021,7 @@ private void setCurrentLanguage(){
         String insert = word + (mAutoSpace ? " " : "");
         ic.commitText(insert, 1);
         ic.endBatchEdit();
-        mPredict.learn(lang, prev, words.get(0));
+        if (!mFieldNoLearning) mPredict.learn(lang, prev, words.get(0));
         mLastInserted = insert;
         mLastInsertedLang = lang;
         mJustAutoSpaced = mAutoSpace;
@@ -4138,6 +4173,8 @@ private void setCurrentLanguage(){
 
     /** theme + photo-background settings the current input view was built with */
     private String mBuiltThemeSignature = "";
+    /** typing of a picked contact / ready sentence, cancelled if the field changes */
+    private Runnable mPendingCommit;
 
     private String themeSignature() {
         if (preferenceKeyboard == null) {
@@ -4223,6 +4260,8 @@ private void setCurrentLanguage(){
     /** opens one of the keyboard's own screens (contacts, ready sentences) */
     private void openKeyboardScreen(Class<?> screen) {
         closeOpenPopup();
+        EditorInfo ei = getCurrentInputEditorInfo();
+        PendingText.openedFrom(ei != null ? ei.packageName : null);
         Intent i = new Intent(getApplicationContext(), screen);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
         try {

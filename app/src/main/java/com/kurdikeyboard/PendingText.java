@@ -8,6 +8,8 @@ final class PendingText {
 
     private static String sText;
     private static long sTime;
+    /** app the screen was opened from; the text is only typed there */
+    private static String sTargetPackage;
     /** number of keyboard screens currently in front (their own fields must not get the text) */
     private static int sScreensShowing;
 
@@ -18,11 +20,18 @@ final class PendingText {
         sTime = System.currentTimeMillis();
     }
 
-    /** the text to type, once; null if none or older than 2 minutes */
-    static synchronized String take() {
-        String t = sText;
+    static synchronized void openedFrom(String packageName) {
+        sTargetPackage = packageName;
         sText = null;
-        if (t != null && System.currentTimeMillis() - sTime > 120000) return null;
+    }
+
+    /** the text to type, once, if this is the app it was meant for and it is recent */
+    static synchronized String take(String packageName) {
+        String t = sText;
+        if (t == null) return null;
+        sText = null; // used or dropped: never typed into a later, different field
+        if (System.currentTimeMillis() - sTime > 60000) return null;
+        if (sTargetPackage != null && !sTargetPackage.equals(packageName)) return null;
         return t;
     }
 
