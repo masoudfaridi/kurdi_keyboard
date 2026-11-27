@@ -1,0 +1,43 @@
+<Keyboard
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="14%p"
+    android:keyHeight="@dimen/key_height_popup_en_e"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    >
+
+
+    <Row>
+        <Key android:keyOutputText="1-0" android:keyLabel="1-0"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:keyOutputText="0-1" android:keyLabel="0-1"/>
+
+        <Key android:keyOutputText="½–½ " android:keyLabel="½–½"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:keyOutputText="+/−" android:keyLabel="+/−"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:keyOutputText="+/=" android:keyLabel="+/="/>
+
+        <Key android:keyOutputText="=/+" android:keyLabel="=/+"/>
+        <Key android:keyOutputText="−/+" android:keyLabel="−/+"
+            android:keyEdgeFlags="right"/>
+    </Row>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</Keyboard>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:id="@+id/popupkeyboardid"
+      >
+
+    <android.inputmethodservice.KeyboardView
+        android:id="@android:id/keyboardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/theme_color_samsung_keyboard_background"
+        android:keyPreviewLayout="@null"
+
+        android:keyTextSize="23sp"
+
+        android:popupLayout="@layout/popup_en"
+        android:keyTextColor="@color/theme_color_defaul_keboard_background"
+        android:keyBackground="@color/theme_color_samsung_keyboard_background"
+
+
+            />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/closepopup"
+        android:src="@drawable/ic_menu_close_clear_cancel"
+
+        android:onClick="onclickclosepopup"
+        />
+
+
+</LinearLayout>
+
+
+
+

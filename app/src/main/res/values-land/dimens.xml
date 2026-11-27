@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/* 
+**
+** Copyright 2008, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+**
+**     http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License.
+*/
+-->
+
+<resources>
+
+    <dimen name="key_height_firstrow">35dp</dimen>
+    <dimen name="key_width_firstrow">45dp</dimen>
+    <dimen name="margin_firsteow">133dp</dimen>
+
+
+    <dimen name="key_height_popup_en_e_multilanguage">30dip</dimen>
+
+
+    <fraction name="samsung_key_width">8.9%p</fraction>
+    <fraction name="samsung_key_width_numberspage">20%p</fraction>
+
+    <fraction name="samsung_key_width_double">15.4%p</fraction>
+    <fraction name="samsung_key_width_three">24.3%p</fraction>
+    <fraction name="samsung_key_width_shift">13.35%p</fraction>
+    <fraction name="samsung_key_width_space">35.6%p</fraction>
+    <fraction name="samsung_key_height_letters">10%p</fraction>
+    <fraction name="samsung_key_height_numbers">7.7%p</fraction>
+    <fraction name="samsung_key_horizontalGap">2.4%p</fraction>
+    <fraction name="samsung_key_horizontalGap_left">5.5%p</fraction>
+    <fraction name="samsung_key_horizontalGap_left_numberspage">10%p</fraction>
+
+<fraction name="samsung_key_horizontalGap_left_row3">11.1%p</fraction>
+    <fraction name="samsung_key_verticalGap">1.5%p</fraction>
+
+    <dimen name="key_height_porpop">38dip</dimen>
+    <dimen name="key_height_popup_en_e">34dip</dimen>
+
+    <dimen name="candidate_font_height">16sp</dimen>
+    <dimen name="input_last_layout">3dp</dimen>
+    <dimen name="hiegh_for_emoji">10dp</dimen>
+    <dimen name="hiegh_for_emoji_whatsup">13dp</dimen>
+
+
+
+    <dimen name="longclickyadd">0dp</dimen>
+    <dimen name="fullscreenadd">0dp</dimen>
+
+    <dimen name="width_layout_option_Imageview">120dp</dimen>
+    <dimen name="height_layout_option_Imageview">82dp</dimen>
+    <dimen name="widthlineseperator">2dp</dimen>
+    <dimen name="marginleft_layout_setting">125dp</dimen>
+    <dimen name="isportraitdevice">0dp</dimen>
+
+</resources>

@@ -1,0 +1,47 @@
+<Keyboard
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="10%p"
+    android:keyHeight="@dimen/key_height_popup_en_e"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    >
+
+
+    <Row>
+        <Key android:codes="0x00F1" android:keyLabel="\u00F1"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x0144" android:keyLabel="\u0144"/>
+        <Key android:codes="0x0146" android:keyLabel="\u0146"/>
+
+        <Key android:codes="0x0148" android:keyLabel="\u0148"/>
+
+
+        <Key android:codes="0x0149" android:keyLabel="\u0149"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="0x019E" android:keyLabel="\u019E"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x01F9" android:keyLabel="\u01F9"/>
+
+        <Key android:codes="0x0272" android:keyLabel="\u0272"/>
+        <Key android:codes="0x0273" android:keyLabel="\u0273"/>
+
+
+        <Key android:codes="0x1E47" android:keyLabel="\u1E47"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="0x1E49" android:keyLabel="\u1E49"
+            android:keyEdgeFlags="left"/>
+        <Key android:codes="0x1E45" android:keyLabel="\u1E45"/>
+
+
+
+        <Key android:codes="0x1E4B" android:keyLabel="\u1E4B"
+            android:keyEdgeFlags="right"/>
+    </Row>
+
+</Keyboard>

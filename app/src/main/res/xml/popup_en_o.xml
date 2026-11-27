@@ -1,0 +1,69 @@
+<Keyboard
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="10%p"
+    android:keyHeight="@dimen/key_height_popup_en_e"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    >
+
+
+    <Row>
+        <Key android:codes="0x00F2" android:keyLabel="\u00F2"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x00F3" android:keyLabel="\u00F3"/>
+        <Key android:codes="0x00F4" android:keyLabel="\u00F4"/>
+
+        <Key android:codes="0x00F5" android:keyLabel="\u00F5"/>
+
+
+
+        <Key android:codes="0x00F6" android:keyLabel="\u00F6"
+            />
+        <Key android:codes="0x0039" android:keyLabel="\u0039"/>
+        <Key android:codes="0x0669" android:keyLabel="\u0669"
+
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="0x00F8" android:keyLabel="\u00F8"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x014D" android:keyLabel="\u014D"/>
+
+        <Key android:codes="0x014F" android:keyLabel="\u014F"/>
+        <Key android:codes="0x0151" android:keyLabel="\u0151"/>
+
+        <Key android:codes="0x0153" android:keyLabel="\u0153"/>
+
+        <Key android:codes="0x01A1" android:keyLabel="\u01A1"
+
+             android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="0x01D2" android:keyLabel="\u01D2"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x01EB" android:keyLabel="\u01EB"/>
+
+        <Key android:codes="0x020D" android:keyLabel="\u020D"/>
+        <Key android:codes="0x020F" android:keyLabel="\u020F"/>
+
+        <Key android:codes="0x022F" android:keyLabel="\u022F"/>
+
+        <Key android:codes="0x04E7" android:keyLabel="\u04E7"
+            android:keyEdgeFlags="right"/>
+    </Row>
+
+
+
+
+
+
+
+
+
+
+
+
+</Keyboard>

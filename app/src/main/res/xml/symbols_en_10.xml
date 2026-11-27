@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+**
+** Copyright 2008, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="@fraction/samsung_key_width"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    android:keyHeight="@fraction/samsung_key_height_letters"
+    >
+
+    <Row
+
+        android:keyHeight="@fraction/samsung_key_height_numbers">
+        <Key android:codes="0x2170" android:keyLabel="\u2170"
+            android:verticalGap="@fraction/samsung_key_verticalGap"
+            android:horizontalGap="@fraction/samsung_key_horizontalGap_left"
+            android:popupKeyboard="@xml/popup_symbols_en_1_1_1" android:keyEdgeFlags="left"/>
+        <Key android:codes="0x2171" android:keyLabel="\u2171"
+            android:popupKeyboard="@xml/popup_symbols_en_1_1_2"/>
+        <Key android:codes="0x2172" android:keyLabel="\u2172"
+            android:popupKeyboard="@xml/popup_symbols_en_1_1_3"/>
+        <Key android:codes="0x2173" android:keyLabel="\u2173"
+            android:popupKeyboard="@xml/popup_symbols_en_1_1_4"/>
+        <Key android:codes="0x2174" android:keyLabel="\u2174"
+            android:popupKeyboard="@xml/popup_symbols_en_1_1_5"/>
+        <Key android:codes="0x2175" android:keyLabel="\u2175"
+            android:popupKeyboard="@xml/popup_symbols_en_1_1_6"/>
+        <Key android:codes="0x2176" android:keyLabel="\u2176"
+            android:popupKeyboard="@xml/popup_symbols_en_1_1_7"/>
+        <Key android:codes="0x2177" android:keyLabel="\u2177"
+            android:popupKeyboard="@xml/popup_symbols_en_1_1_8"/>
+        <Key android:codes="0x2178" android:keyLabel="\u2178"
+            android:popupKeyboard="@xml/popup_symbols_en_1_1_9"/>
+        <Key android:codes="0x2179" android:keyLabel="\u2179"
+            android:popupKeyboard="@xml/popup_symbols_en_10_1_0" android:keyEdgeFlags="right"/>
+    </Row>
+
+
+
+
+    <Row>
+        <Key android:codes="0x03B1" android:keyLabel="\u03B1"
+            android:horizontalGap="@fraction/samsung_key_horizontalGap_left"
+
+            android:keyEdgeFlags="left"/>
+
+
+        <Key android:codes="0x03B2" android:keyLabel="\u03B2"/>
+        <Key android:codes="0x03B3" android:keyLabel="\u03B3"/>
+        <Key android:codes="0x03B4" android:keyLabel="\u03B4"/>
+        <Key android:codes="0x03B5" android:keyLabel="\u03B5"/>
+        <Key android:codes="0x03B6" android:keyLabel="\u03B6"/>
+        <Key android:codes="0x03B7" android:keyLabel="\u03B7"/>
+        <Key android:codes="0x03B8" android:keyLabel="\u03B8"/>
+        <Key android:codes="0x03B9" android:keyLabel="\u03B9"/>
+
+        <Key android:codes="0x03BA" android:keyLabel="\u03BA" android:keyEdgeFlags="right"/>
+
+    </Row>
+    <Row>
+        <Key android:codes="0x03BB" android:keyLabel="\u03BB"
+            android:horizontalGap="@fraction/samsung_key_horizontalGap_left"
+
+            android:keyEdgeFlags="left"/>
+
+
+        <Key android:codes="0x03BC" android:keyLabel="\u03BC"/>
+        <Key android:codes="0x03BD" android:keyLabel="\u03BD"/>
+        <Key android:codes="0x03BE" android:keyLabel="\u03BE"/>
+        <Key android:codes="0x03BF" android:keyLabel="\u03BF"/>
+        <Key android:codes="0x03C0" android:keyLabel="\u03C0"/>
+        <Key android:codes="0x03C1" android:keyLabel="\u03C1"/>
+        <Key android:codes="0x03C2" android:keyLabel="\u03C2"/>
+        <Key android:codes="0x03C3" android:keyLabel="\u03C3"/>
+
+        <Key android:codes="0x03C4" android:keyLabel="\u03C4" android:keyEdgeFlags="right"/>
+
+    </Row>
+    <Row>
+        <Key android:codes="-117" android:keyLabel="10/13"
+            android:popupKeyboard="@xml/popup_en_select_page_symbols"
+            android:horizontalGap="@fraction/samsung_key_horizontalGap_left"
+
+            android:keyWidth="@fraction/samsung_key_width_shift"
+            android:keyEdgeFlags="left"/>
+        <Key android:codes="-1"
+            android:keyIcon="@drawable/shift_black"
+            android:keyWidth="@fraction/samsung_key_width_shift"/>
+
+
+        <Key android:codes="0x03C5" android:keyLabel="\u03C5"/>
+
+        <Key android:codes="0x03C6" android:keyLabel="\u03C6"/>
+        <Key android:codes="0x03C7" android:keyLabel="\u03C7"/>
+        <Key android:codes="0x03C8" android:keyLabel="\u03C8"/>
+        <Key android:codes="0x03C9" android:keyLabel="\u03C9"/>
+
+        <Key android:codes="-5" android:keyIcon="@drawable/delete_black"
+            android:keyWidth="@fraction/samsung_key_width_double" android:keyEdgeFlags="right"
+            android:isRepeatable="true"/>
+
+    </Row>
+
+
+
+    <Row android:rowEdgeFlags="bottom">
+        <Key android:codes="-3"
+            android:horizontalGap="@fraction/samsung_key_horizontalGap_left"
+            android:keyIcon="@drawable/close_keyboard_black"
+            android:keyWidth="@fraction/samsung_key_width_shift" android:keyEdgeFlags="left"/>
+        <Key android:codes="-2" android:keyIcon="@drawable/abc_black"
+            android:keyWidth="@fraction/samsung_key_width_shift"/>
+        <!--
+            android:codes: -101 is not a framework-defined key code but a key code that is
+            privately defined in com.example.android.softkeyboard.LatinKeyboardView.
+        -->
+
+        <Key android:codes="32" android:keyIcon="@drawable/spacebar"
+
+            android:keyWidth="@fraction/samsung_key_width_space" />
+        <Key android:codes="46,44" android:keyIcon="@drawable/dot_black"
+            android:popupKeyboard="@xml/popup_en_4_4"
+
+            android:keyWidth="@fraction/samsung_key_width_shift"/>
+        <Key android:codes="10" android:keyIcon="@drawable/enter_enter_black"
+            android:popupKeyboard="@xml/popup_en_4_5"
+            android:keyWidth="@fraction/samsung_key_width_shift" android:keyEdgeFlags="right"/>
+    </Row>
+    <Row android:horizontalGap="0%p" android:keyHeight="0%p">
+        <Key android:codes="32"
+            android:keyWidth="100%p"
+            />
+    </Row>
+</Keyboard>

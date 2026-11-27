@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+/*
+**
+** Copyright 2008, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="app_name">
+        کیبورد هوشمند چندزبانه ماپریس
+    </string>
+<string name="versionName">
+    1.5.6
+</string>
+
+
+
+    <!-- Title for Latin keyboard  -->
+
+    <!-- Symbols that are commonly considered word separators in this language -->
+    <string name="word_separators">\u0020.,;:!?\n()[]*&amp;@{}/&lt;&gt;_+=|&quot;</string>
+    <string name="word_separators2">\u0020;:!?\n()[]*&amp;@{}/&lt;&gt;_+=|&quot;</string>
+    <string name="mWordmultichoiceprimaries">!?\u061F.\u060C+-,@|()\u003C\u003E[]/\\\u0022\u0027\u061F\u060C\u060B\u0027</string>
+    <string name="mWordmultichoiceprimariesfarsi">!?.,()[]</string>
+
+    <string name="word_twofunction">\u0627\u0635\u0637\u0639.,
+    \u0641\u0643\u06AF\u0644\u062F\u0631\u0632\u0649\u06A9\u0648</string>
+
+    <string name="word_twofunction2">\u0636\u06A4\u063A\u06B5\u0622\u0638
+    \u0698\u0695\u0630\u0624\u0626\u0621</string>
+
+    <!-- Labels on soft keys -->
+
+
+    <!-- Labels for subtype -->
+    <string name="label_subtype_generic">%s</string>
+
+    <!-- Titles for ImePreference -->
+    <string name="settings_name">تنضیمات کیبورد</string>
+    <string name="prefvibreh">prefvibreh</string>
+    <string name="settingvibrate">settingvibrate</string>
+    <string name="titlevibre">ویبره</string>
+    <string name="summaryvibre">ویبره در هنگام تایپ</string>
+    <string name="settings_name_title_sound_vibrate">تنظیمات صدا و ویبره</string>
+    <string name="settingvibratesoudsummary">تنظیم صدا و ویبره در هنگام کلیک</string>
+    <string name="titlevibrate"> تنظیم ویبره </string>
+    <string name="prefseekbarvibrate">prefseekbarvibrate</string>
+    <string name="settings_name_title_seekbar_vibrate">شدت ویبره</string>
+
+    <string name="titlesound"> صدا </string>
+
+    <string name="prefsound">prefsound</string>
+    <string name="titlesoundboxp">صدای کلیک</string>
+    <string name="summarysoundboxp">پخش صدا هنگام نوشتن</string>
+    <string name="prefseekbarsound">prefseekbarsound</string>
+    <string name="settings_name_title_seekbar_sound">شدت صوت در هنگام نوشتن</string>
+    <string name="settings_name_title_theme_screen">
+        تنظیمات تم و نوار ابزار
+    </string>
+    <string name="settingthemepage">settingthemepage</string>
+    <string name="settingthemesummary_screen">تنظیمات ظاهری بکگراند کیبورد و کلید</string>
+    <string name="titletheme_category">تنظیم تم</string>
+    <string name="pref_list_theme_selector">pref_list_theme_selector</string>
+    <string name="title_list_theme_selector">انتخاب تم کیبورد</string>
+    <string name="summary_list_theme_selector">تم کیبورد پیش زمینه کلیدها و پیش زمینه کیبورد را تغییر می دهد</string>
+    <string name="titletheme_category_font">تنظیم فونت</string>
+    <string name="prefseekbarfont">prefseekbarfont</string>
+    <string name="settings_name_title_seekbar_font">تغییر اندازه فونت روی کلید</string>
+    <string name="prefseekbarsizeH">prefseekbarsizeH</string>
+    <string name="activatedtextmessage">فعال سازی</string>
+    <string name="btnstringselect">انتخاب شماره از لیست مخاطبین</string>
+    <string name="namephone">نام</string>
+    <string name="numberphone">شماره موبایل</string>
+    <string name="btnstringsend">فرستادن شماره به حافظه موقت</string>
+    <string name="descripttocopyphonenumber">ابتدا با استفاده از دکمه  انتخاب شماره از لیست مخاطبین به لیست مخاطبین گوشی رفته و روی شماره مورد نظر
+        کلیک کنید. بطور اتوماتیک این شماره انتخاب شده و به همین صفحه باز خواهید گشت.
+        سپس از یکی از دو دکمه فرستادن شماره و نام به حافظه موقت یا فرستادن شماره به حافظه موقت استفاده کنید تا شماره مورد نظر در حافظه قرار گیرد.
+        پس از کپی به حافظه موقت با استفاده از دکمه چسپاندن(واقع در نوار ابزار ) می توانید شماره را به هر جایی انتقال دهید. قبل از ارسال می توانید شماره و نام را ویرایش نمایید. </string>
+    <string name="btnstringsendall">فرستادن شماره و نام به حافظه موقت</string>
+    <string name="prefKeyResetQuests">resetQuests</string>
+    <string name="titlereadyS">عنوان و برچسپ متن</string>
+    <string name="textoutputRS">متن خروجی</string>
+    <string name="canceltext">لغو</string>
+    <string name="savetext">ذخیره</string>
+    <string name="clearall_text">حذف همه موارد(پاک کردن کامل )</string>
+    <string name="clearall_text2">پاک کردن همه</string>
+    <string name="add_text">ایجاد</string>
+    <string name="exit_text">خروج</string>
+    <string name="fontsetting">اندازه فونت</string>
+    <string name="fontsettingall">fontsettingall</string>
+    <string name="fontsettingsummary">اندازه فونت کلیپ بورد، جملات آماده و مخاطبین</string>
+    <string name="titleclipboardfont">تنظیمات فونت بخش کلیپ بورد</string>
+    <string name="prefactivefontclipbooard">prefactivefontclipbooard</string>
+    <string name="titleactivefontclipbooard">فعال سازی تغییر فونت کلیپبورد</string>
+    <string name="summaryactivefontclipbooard">با تیک خوردن تغییرات فونت کلیپبورد فعال می شود</string>
+    <string name="prefseekbarfontclipbooard">prefseekbarfontclipbooard</string>
+    <string name="titlereadysentencesfont">تنظیمات فونت بخش جملات آماده</string>
+    <string name="prefactivefontreadysentences">prefactivefontreadysentences</string>
+    <string name="settings_name_title_seekbar_clipboard">اندازه فونت</string>
+    <string name="titleactivefontreadysentences">فعال سازی تغییر فونت بخش جملات آماده</string>
+    <string name="summaryactivefontreadysentences">با تیک خوردن تغییرات فونت بخش جملات آماده فعال می شود</string>
+    <string name="prefseekbarfontreadysentences">prefseekbarfontreadysentences</string>
+    <string name="settings_name_title_seekbar_readysentences">اندازه فونت</string>
+    <string name="titlecontactsfont">تنظیمات فونت بخش مخاطبین</string>
+    <string name="prefactivefontcontacts">prefactivefontcontacts</string>
+    <string name="titleactivefontcontacts">فعال سازی تغییر فونت مخاطبین</string>
+    <string name="summaryactivefontcontacts">با تیک خوردن تغییرات فونت بخش مخاطبین فعال می شود</string>
+    <string name="prefseekbarfontcontacts">prefseekbarfontcontacts</string>
+    <string name="settings_name_title_seekbar_contacts">اندازه فونت</string>
+    <string name="titleedittexttest">امتحان کنید</string>
+    <string name="titleaboutus">تماس با ما</string>
+    <string name="summaryaboutus">معرفی گروه سازنده و نحوه تماس</string>
+    <string name="settings_name_title_language">تنظیمات زبان های ورودی</string>
+    <string name="settinglanguagesummary">
+        در این بخش می توانید زبان های ورودی را تعیین کنید، عملگر دو کلیک هر زبان را فعال یا غیر فعال نمایید یا مشکل  گسستگی حروف کوردی را در گوشی های با اندروید پایین حل نمایید.
+    </string>
+    <string name="titlelanguavekurdi">زبان کوردی</string>
+    <string name="preflanguage_kurdi">preflanguage_kurdi</string>
+    <string name="titlelanguagekurdi">زبان کوردی</string>
+    <string name="summarykurdi">با تیک خوردن این بخش زبان کوردی فعال است.</string>
+    <string name="titlelanguavefarsi">زبان فارسی</string>
+    <string name="preflanguage_farsi">preflanguage_farsi</string>
+    <string name="titlelanguage">زبان فارسی</string>
+    <string name="summaryfarsi">با تیک خوردن این بخش زبان فارسی فعال است.</string>
+
+    <string name="page1">PAGE1</string>
+    <string name="page2">PAGE2</string>
+    <string name="page3">PAGE3</string>
+    <string name="page4">PAGE4</string>
+    <string name="page5">PAGE5</string>
+    <string name="page6">PAGE6</string>
+    <string name="page7">PAGE7</string>
+    <string name="page8">PAGE8</string>
+    <string name="page9">PAGE9</string>
+    <string name="page10">PAGE10</string>
+    <string name="page11">PAGE11</string>
+    <string name="pageend">PAGEend</string>
+
+    <string name="guid">راهنمای استفاده</string>
+
+    <string name="pagestartDescriptive_page1_wv2">
+        برای آشنایی با امکانات و نحوه استفاده صحیح از کیبورد لطفا این راهنما را با دقت مطالعه نمایید. این کیبورد در حال حاظر قابلیت تایپ 3 زبان انگلیسی، فارسی و کوردی را دارد. در آپدیت های بعد در صورت تقاضا ، می توان زبان های دیگر را افزود. برای هر گونه پیشنهاد،  انتقاد و نظر پیرامون این نرم افزار لطفا از  طریق بخش تنظیمات کیبورد و از قسمت "تماس با ما"  اقدام نمایید.
+    </string>
+
+    <string name="pagestartDescriptive_page1_wv1">سلام به راهنمای کیبورد خوش آمدید.</string>
+    <string name="SwipeRightToNextView">صفحه بعد: به سمت چپ بکشید</string>
+    <string name="SwipeLefttToPrView"> صفحه قبل:به سمت راست بکشید </string>
+    <string name="viewpagernextpreviospage">برای جابجایی در صفحات به سمت چب یا راست بکشید.</string>
+    <string name="pagestartDescriptive_page2_wv1">کلیدهای دو وضعیتی</string>
+    <string name="pagestartDescriptive_page2_wv2">کلیدهایی هستند که علاوه بر حرف اصلی قابلیت تایپ حروف دیگر را دارند. کلید \"ا\" یکی از آن هاست. برای تایپ حرف \"آ\" می توان دوبار پشت سر هم روی این کلید زد یا اینکه کلید را کمی نگه دارید یعنی دابل کلیک یا کلیک طولانی.</string>
+    <string name="pagestartDescriptive_page3_wv1">کاراکتر نیم فاصله و کارکتر کشیده</string>
+    <string name="pagestartDescriptive_page3_wv2">
+        کلیدی که در تصویر با رنگ زرد مشخص شده است دارای 3 عملکرد است. با یک کلیک نیم فاصله، با دو کلیک  کاراکتر کشیده و با کلیک و نگه داشتن، فاصله با اندازه دلخواه را ایجاد می کند. نیم فاصله کارکتری است که بدون ایجاد فاصله، دو حرف چشبیده به هم را جدا می کند. کاراکتر کشیده نیز در تصویر زیر مشخص شده است.
+    </string>
+    <string name="pagestartDescriptive_page4_wv1">پنجره پاپ آپ</string>
+     <string name="gonexttext">صفحه بعد</string>
+    <string name="gobacktext">صفحه قبل</string>
+    <string name="pagestartDescriptive_page4_wv2">پنجره پاپ آپ، پنجره ای است که پس از فشردن برخی از کلیدها نمایان می شود. از پاپ اپ برای فراهم آوردن امکان بهتر، بهبود سرعت تایپ، و تایپ کاراکترهای خاص استفاده می شود. کلیدهایی مانند Enter زبان فارسی و @ در بخش علامت ها، نیم فاصله و اعداد ، حرف w و ... دارای پاپ آپ هستند که  توانایی تایپ شما را بهبود می بخشند.</string>
+    <string name="pagestartDescriptive_page5_wv1">نشانه ها</string>
+    <string name="pagestartDescriptive_page5_wv2">
+        این کیبورد دارای انواع نشانه ها و اعداد شامل نشانه های پولی، حروف یونانی،  نشانه های ریاضی و ... است که در مجموع در 13 برگ گردآوری شده است. شکل زیر نحوه رفتن، خروج و جابجایی در صفحات را نشان می دهد.برای جابجایی سریع بین صفحات(مثلا از صفحه 2 به 10) کافیست روی کلید جابجایی کلیک کرده و نگه دارید. در این صورت پاپ آپی بالا خواهد آمد که این امکان را فراهم می آورد.
+    </string>
+    <string name="pagestartDescriptive_page6_wv1">قابلیت ثبت حرکات شطرنج</string>
+    <string name="pagestartDescriptive_page6_wv2">
+    نشانه هایی که در صفحه قبل به آن اشاره نمودیم امکانات تایپ خوبی را فراهم می اورد. یکی از این امکانات قابلیت ثبت حرکات شطرنج است که در هر محیطی می توان ذخیره نمود. این امکان در صفحه 13 نشانه ها است.
+نمونه ای از کلیدها:
+کلید O رفتن به قلعه بزرگ،
+کلید o رفتن به قلعه کوچک،
+جداکننده حرکات: -،
+میزان مناسبت حرکات: ?!،
+این کلید یک کلید دو وضعیتی است که با دوبار کلیک کردن پشت سر هم وضعیت دوم تایپ می شود.
+
+
+
+    </string>
+    <string name="pagestartDescriptive_page7_wv1">
+کلیپبورد
+   </string>
+    <string name="pagestartDescriptive_page7_wv2">در این کیبورد یک کلیپبورد پیشرفته قرار داده شده است. وظیفه کلیپبورد نگه داری و بایگانی لیست مطالبی است که شما کپی نموده اید و تا زمانی که آنرا حذف نکنید در بایگانی باقی می مانند. علاوه بر آن در کنار هر متن زمان و روز دقیق کپی انجام شده قرار می گیرد. برای تنظیم فونت بخش کلیپبورد به تنظیمات مراجعه کنید تا به اندازه دلخواه شما در آید.</string>
+    <string name="pagestartDescriptive_page8_wv1">امکان ارسال مخاطبین به دو روش</string>
+    <string name="pagestartDescriptive_page8_wv2">برای ارسال مخاطبین دو ابزار پیشرفته تهیه شده است که براحتی امکان ارسال مخاطبین را فراهم می نماید. ارسال مخاطبین به طور مستقیم  امکانی است که در آن پاپ آپی برای شما باز می شود که در آن لیست شماره های داخل گوشی شما قرار دارد و تنها با کلیک روی هر شماره، آن شماره ارسال می گردد. ارسال مخاطبین بطور غیر مستقیم امکانی است که شماره را به مخاطبین گوشی هدایت نموده و سپس تنها با کلیک روی هر مخاطب، آن مخاطب در حافظه کلیپبورد کپی می شود. کافیست تنها آن را paste کنید. این امکان برای زمانی است که تعداد مخاطبین بسیار زیاد است و یافتن شماره بدون جستجو آسان نیست.</string>
+    <string name="pagestartDescriptive_page9_wv1">یادداشت ها و جملات آماده</string>
+    <string name="pagestartDescriptive_page9_wv2">
+        این امکان به شما اجازه می دهد تا کلمات، جملات، شماره حساب، آدرس، ایمیل، شعر و...را ذخیره نمایید. محدودیتی در مورد تعداد این یادداشت ها وجود ندارد. به عنوان مثال شما کافیست شماره  حساب بانک های مختلف یا ایمیل های مختلف را ذخیره نمایید و سپس تنها با یک کلیک می توانید آن را ارسال نمایید.اگر مطالبی را فراموش می کنید(شماره های کارت ، تاریخ تولدو ...) می توانید آنرا در اینجا ذخیره کنید. این امکان علاوه بر اینکه توانایی یادداشت دارد تنها با یک کلیک متن مورد نظر ارسال می شود.
+    </string>
+    <string name="pagestartDescriptive_page10_wv1">
+        تنظیمات ظاهری(تم)
+    </string>
+    <string name="pagestartDescriptive_page10_wv2">برای ورود به تنظیمات از نوار ابزار، دکمه تنظیمات را زده و به بخش تنظیمات وارد شوید (این بخش پایین بخش جملات آماده است) . سپس وارد تنظیمات تم شوید. در بخش انتخاب تم می توانید از میان تم های بسیار زیبای قرار داده شده مناسب سلیقه خود یکی را انتخاب نمایید. در این بخش تم های بسیار زیبایی وجود دارد. همچنین شما در بخش تماس با ما می توانید  به ما در طراحی تم های زیبا برای آپدیت های بعدی کمک نمایید  تا تم با نام شما در این محل قرار گیرد.</string>
+
+    <string name="pagestartDescriptive_page11_wv1">
+نوشتن تشدید، همزه، فتحه، تنوین و....
+    </string>
+    <string name="pagestartDescriptive_page11_wv2">
+برای نوشتن کلماتی شامل تشدید، همزه، فتحه و .... در صفحه کلید فارسی، روی دکمه اینتر(گوشه سمت راست و پایین) کلید نموده و آن را رها نکنید(کلیک طولانی) صفحه ای ظاهر می شود که این امکان را برای شما فراهم می کند.
+    </string>
+
+    <string name="textviewpager_page_End">
+        پایان/بازگشت به صفحه قبل
+
+    </string>
+    <string name="pagestartDescriptive_pageend_wv1">صفحه آخر</string>
+    <string name="pagestartDescriptive_pageend_wv2">
+
+        این نرم افزار حاصل تلاش مجموعه ای از افراد با هدف کسب رضایت شما بوده و لذا با خرید نسخه اصلی آن از طریق بازار از ما حمایت نمایید. ما به نظرات و پیشنهادات تخصصی شما ارج می نهیم و  نظرات  صحیح را در  آپدیت های بعد لحاظ خواهیم نمود. جهت حمایت از ما از طریق تماس با ما اقدام نمایید. با سپاس از حسن انتخاب شما..
+
+    </string>
+    <string name="versiontextfarsi">نسخه نرم افزار</string>
+    <string name="activationtext">فعال سازی</string>
+    <string name="textbuttonguid">راهنمای استفاده از کیبورد</string>
+    <string name="guidetext">
+    راهنمای استفاده از کیبورد و معرفی امکانات
+    </string>
+    <string name="guidesummary">
+        این کیبورد داری امکاناتی پیشرفته است. لطفا برای استفاده درست و آگاهی از امکانات آن کلیک کنید.
+    </string>
+    <string name="textUpdate">
+        وضعیت آپدیت و ثبت نظرات شما
+    </string>
+    <string name="textYesNoforceupdate">YesNoForce</string>
+    <string name="Yes">Yes</string>
+    <string name="pref_forceupdate">pref_forceupdate</string>
+    <string name="unknown">نامعلوم</string>
+    <string name="updateAvailable">
+        خبر خوب! آپدیت جدید رسید!
+    </string>
+    <string name="isupdate">
+        برای بررسی آپدیت جدید کلیک نمایید. همچنین می توانید نظر خود را در صفحه نظرات بیان نمایید.
+    </string>
+    <string name="updatetextbutton">
+        آپدیت برنامه در بازار
+    </string>
+    <string name="plzinstalbazaar">برای آپدیت برنامه لطفا نرم افزار کافه بازار را نصب نمایید و سپس اقدام به آپدیت نمایید.</string>
+    <string name="nazarat">
+        رفتن به صفحه نظرات و لایک نرم افزار
+    </string>
+    <string name="NoStoredClipboard">حافظه خالی است</string>
+    <string name="titlelanguavekurdivabouve">حل مشکل نچسبیدن حروف کوردی</string>
+    <string name="preflanguage_kurdi_vabouve">preflanguage_kurdi_vabouve</string>
+    <string name="titlelanguagekurdi_vabouve">
+        مشکل تصحیح پیوستگی حروف کوردی
+    </string>
+    <string name="summarykurdi_vabouve">
+        تنها در صورتی تیک بزنید که حروف کوردی ڵ یا ێ  نمی چسبند. این مشکل یک باگ خود اندروید برای برخی از گوشی ها است و ربطی به برنامه کیبورد ندارد هر چند ما آنرا بر طرف نمودیم. ابتدا این تیک را فعال نمایید.  تنها توجه فرمایید حرف  ڵ  قواعد خاصی دارد. اگر  می خواهید بنویسید سڵام عادی تایپ کنید. اما اگر کلمه ای با ڵ تمام شود(لام آخر)  باید بعد تایپ ڵ یک بار کلید حذف را بزنید تا به ڵ آخر تبدیل شود.
+
+    </string>
+    <string name="matneqabli">مشاهده متن های قبلی</string>
+    <string name="titlelanguavekurdidoublecick">
+        عملگر دو کلیک در زبان کوردی
+    </string>
+    <string name="preflanguage_kurdi_doublecick">preflanguage_kurdi_doublecick</string>
+    <string name="titlelanguagekurdi_doublecick">برای غیرفعال کردن تیک را وردارید.</string>
+    <string name="summarykurdi_doublecick">
+        در صورت غیرفعال بودن عملگر دو کلیک  مربوط به کلیدهای دو وضعیتی در بخش زبان کوردی غیرفعال می شود. تنها نیاز دارید یک بار تمامی برنامه های فعال را ببندید.
+</string>
+    <string name="preflanguage_farsi_doublecick">preflanguage_farsi_doublecick</string>
+    <string name="summaryfarsi_doublecick">
+        در صورت غیرفعال بودن عملگر دو کلیک  مربوط به کلیدهای دو وضعیتی در بخش زبان فارسی غیرفعال می شود. تنها نیاز دارید یک بار تمامی برنامه های فعال را ببندید.
+</string>
+    <string name="titlelanguavefarsidoublecick">عملگر دو کلیک در زبان فارسی</string>
+    <string name="settings_name_title_language_kurdi">تنظیمات زبان کوردی</string>
+    <string name="settings_name_title_language_farsi">تنظیمات زبان فارسی</string>
+    <string name="pref_version">pref_version</string>
+    <string name="titletimewordtwofuction">مدت زمان عملکرد دو ضربه در کلیدهای دو وضعیتی</string>
+    <string name="prefseekbartimewordtwofuction">prefseekbartimewordtwofuction</string>
+    <string name="settings_name_title_seekbar_timewordtwofuction">زمان بر حسب میلی ثانیه</string>
+    <string name="summarywordtwofuction">این زمان فقط برای محیط هایی است که عملکرد کلیدهای دو وضعیتی را پشتیبانی نمی کنند. زمان بهینه بسته به سرعت تایپ شما دارد. یک زمان خوب از 250 تا 320 است.</string>
+    <string name="settings_name_title_wordtwofuction">
+تنظیم مدت زمان کامپوسینگ
+    </string>
+    <string name="settings_name_summary_wordtwofuction">لطفا از دست کاری این قسمت پرهیز کنید مگر با مشاوره با تیم سازنده و از طریق تلگرام گروه که در بخش تماس با ما قرار دارد.</string>
+    <string name="prefchangethemboolean">prefchangethemboolean</string>
+    <string name="titleprefchangethemboolean">
+    قبل از تغییر تیک را بزنید.
+    </string>
+    <string name="summaryprefchangethemboolean">قبل تغییر تم تیک را فعال نمایید و پس از انتخاب تم لطفا تیک را ور دارید در غیر اینصورت ممکن است سرعت کیبورد شما پایین آید.</string>
+    <string name="textbuttontelegram">عضویت در گروه تلگرام</string>
+    <string name="doubleclicknotwork">در این محیط دو کلیک عمل نمی کند</string>
+    <string name="textbuttontelegramtrain">آموزش زبان کوردی</string>
+
+     <string name="areyousure">
+         آیا مطمئن هستید برای حذف کردن؟
+     </string>
+    <string name="yes">
+       بله!
+        </string>
+
+     <string name="no">
+        خیر
+        </string>
+
+     <string name="warrning">
+     اخطار
+     </string>
+    <string name="titletoolbars_category">تغییر نوار ابزار</string>
+    <string name="preftoolbarsivkeyboard">preftoolbarsivkeyboard</string>
+    <string name="titlepreftoolbarsivkeyboard">حذف دکمه ایموجی نوار ابزار</string>
+    <string name="summarypreftoolbars">تیک خوردن این گزینه دکمه ایموجی از نوار ابزار را حذف میکند</string>
+    <string name="summarypreftoolbarssetting">با تیک خوردن این بخش دکمه تنظیمات از نوار ابزار حذف می شود</string>
+    <string name="titlepreftoolbarsivkeyboardsetting">حذف دکمه تنظیمات از نوار ابزار</string>
+    <string name="preftoolbarsivkeyboardsetting">preftoolbarsivkeyboardsetting</string>
+    <string name="settings_backgroundimagetitle">تنظیم پیش زمینه دلخواه برای کیبورد</string>
+    <string name="settings_backgroundimagesummary">می توانید پیش زمینه کیبورد(بکگراند) را تغییر دهید</string>
+    <string name="titletheme_category_backgroundimage">انتخاب عکس پیش زمینه</string>
+    <string name="backgroundimageaddress">آدرس فایل</string>
+    <string name="titleebackgroundimageaddress">آدرس عکس انتخاب شده</string>
+    <string name="keybackgroundaddress">keybackgroundaddress</string>
+    <string name="titleenobackgroundimageaddress">عکسی انتخاب نشده</string>
+    <string name="select_picture">انتخاب عکس</string>
+    <string name="prefimagepicker">prefimagepicker</string>
+    <string name="doubleweh">وو</string>
+    <string name="preflanguage_kurdi_extend">preflanguage_kurdi_extend</string>
+    <string name="titlelanguagekurdi_extend">کیبورد کوردی تمام حروف</string>
+    <string name="summarykurdi_extend">
+      تیک خوردن این بخش کیبورد کردی شامل تمامی حروف کوردی در کلید مجزا نشان داده می شوند. لطفا پس از تغییر کلیه برنامه ها را ببندید.
+
+    </string>
+    <string name="pref_lmagepickerlunch">pref_lmagepickerlunch</string>
+    <string name="unknownimage">unknowimage</string>
+    <string name="prefkeypathimage">prefkeypathimage</string>
+    <string name="addresspath">مسیر و آدرس فایل</string>
+    <string name="prefimagefrbackground">prefimagefrbackground</string>
+    <string name="titleimagefrbackground">عکس را برای پیش زمینه فعال کن</string>
+    <string name="summaryprefimagefrbackground">تصویر پیش زمینه پیش فرض کنار رفته و تصویر دلخواه جایگزین می شود.</string>
+    <string name="prefseekbaropacitykey">prefseekbaropacitykey</string>
+    <string name="settings_name_title_seekbar_opacitykey">میزان وضوح کلید در مقابل عکس</string>
+    <string name="prefnotshowpreview">prefnotshowpreview</string>
+    <string name="titleprefnotshowpreview">نمایش کلید در هنگام تایپ(بازخورد کلید)</string>
+    <string name="summaryprefnotshowpreview">در صورت فعال بودن بازخورد کلید بصورت پاپ آپ نمایش داده می شود</string>
+    <string name="result_not_ok">عکسی انتخاب نشد</string>
+    <string name="summarybg">
+        لطفا از عکس با حجم کم و مربعی شکل استفاده کنید. همچنین بتم های شما تم های حرفه ای  یا شماره های 33 و 34 باشد بهتر است.
+    </string>
+
+
+</resources>
+

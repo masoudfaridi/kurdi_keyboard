@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/idselect_picture"
+        android:text="@string/select_picture"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/titleenobackgroundimageaddress"
+        android:id="@+id/idaddressimage"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_image"
+        android:id="@+id/ivimage"
+        android:contentDescription="@string/titleenobackgroundimageaddress"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnsavepic"
+        android:text="@string/savetext"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btncancelpic"
+        android:text="@string/canceltext"/>
+</LinearLayout>

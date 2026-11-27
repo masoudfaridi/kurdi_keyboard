@@ -1,0 +1,33 @@
+<Keyboard
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="@fraction/samsung_key_width_three"
+    android:keyHeight="@dimen/key_height_popup_en_e"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    >
+
+
+    <Row>
+        <Key android:keyOutputText="\@yahoo.com" android:keyLabel="\@yahoo.com"
+            android:keyEdgeFlags="left"/>
+
+
+
+        <Key android:keyOutputText="\@gmail.com" android:keyLabel="\@gmail.com"
+            android:keyEdgeFlags="right"/>
+    </Row>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</Keyboard>

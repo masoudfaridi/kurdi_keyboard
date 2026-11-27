@@ -1,0 +1,53 @@
+<Keyboard
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="15%p"
+    android:keyHeight="@dimen/key_height_popup_en_e"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    >
+
+
+
+    <Row>
+        <Key  android:keyLabel=".in"
+            android:keyOutputText=".in"
+            android:keyEdgeFlags="left"/>
+        <Key  android:keyLabel=".net"
+            android:keyOutputText=".net"
+            />
+        <Key  android:keyLabel=".edu"
+            android:keyOutputText=".edu"
+            />
+
+        <Key android:keyLabel=".ir"
+            android:keyOutputText=".ir"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key  android:keyLabel=".iq"
+            android:keyOutputText=".iq"
+            android:keyEdgeFlags="left"/>
+        <Key  android:keyLabel=".org"
+            android:keyOutputText=".org"
+            />
+        <Key  android:keyLabel=".com"
+            android:keyOutputText=".com"
+            />
+
+        <Key android:keyLabel="www."
+            android:keyOutputText="www."
+            android:keyEdgeFlags="right"/>
+    </Row>
+
+
+
+
+
+
+
+
+
+
+
+
+</Keyboard>

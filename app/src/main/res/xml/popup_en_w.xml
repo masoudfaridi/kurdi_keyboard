@@ -1,0 +1,45 @@
+<Keyboard
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="20%p"
+    android:keyHeight="@dimen/key_height_popup_en_e"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    >
+
+
+    <Row>
+        <Key android:codes="0x0032" android:keyLabel="\u0032"
+            android:keyEdgeFlags="left"/>
+
+
+        <Key android:codes="0x0662" android:keyLabel="\u0662"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:keyOutputText="www." android:keyLabel="www."
+            android:keyWidth="20%p"
+            android:keyEdgeFlags="left"/>
+
+
+
+    </Row>
+    <Row>
+        <Key android:codes="-123" android:keyLabel="www...com"
+            android:keyWidth="30%p"
+            android:keyEdgeFlags="left"/>
+
+
+
+    </Row>
+
+
+
+
+
+
+
+
+
+
+
+</Keyboard>

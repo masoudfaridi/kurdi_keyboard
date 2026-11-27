@@ -1,0 +1,87 @@
+<Keyboard
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="10%p"
+    android:keyHeight="@dimen/key_height_popup_en_e"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    >
+
+
+    <Row>
+        <Key android:codes="0x066D" android:keyLabel="\u066D"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x06DE" android:keyLabel="\u06DE"/>
+
+        <Key android:codes="0x0086" android:keyLabel="\u0086"/>
+        <Key android:codes="0x0087" android:keyLabel="\u0087"/>
+        <Key android:codes="0x2732" android:keyLabel="\u2732"/>
+
+        <Key android:codes="0x2606" android:keyLabel="\u2606"/>
+
+        <Key android:codes="0x2605" android:keyLabel="\u2605"
+            android:keyEdgeFlags="right"/>
+    </Row>
+
+
+    <Row>
+        <Key android:codes="0x2721" android:keyLabel="\u2721"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x2727" android:keyLabel="\u2727"/>
+        <Key android:codes="0x2729" android:keyLabel="\u2729"/>
+
+        <Key android:codes="0x2728" android:keyLabel="\u2728"/>
+        <Key android:codes="0x272A" android:keyLabel="\u272A"/>
+
+        <Key android:codes="0x272B" android:keyLabel="\u272B"/>
+
+
+        <Key android:codes="0x272C" android:keyLabel="\u272C"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="0x272E" android:keyLabel="\u272E"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x272F" android:keyLabel="\u272F"/>
+        <Key android:codes="0x2730" android:keyLabel="\u2730"/>
+
+        <Key android:codes="0x2734" android:keyLabel="\u2734"/>
+        <Key android:codes="0x2735" android:keyLabel="\u2735"/>
+
+        <Key android:codes="0x2736" android:keyLabel="\u2736"/>
+
+
+        <Key android:codes="0x2737" android:keyLabel="\u2737"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="0x2738" android:keyLabel="\u2738"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x2739" android:keyLabel="\u2739"/>
+        <Key android:codes="0x273A" android:keyLabel="\u273A"/>
+
+        <Key android:codes="0x2742" android:keyLabel="\u2742"/>
+        <Key android:codes="0x272D" android:keyLabel="\u272D"/>
+
+        <Key android:codes="0x2731" android:keyLabel="\u2731"/>
+
+
+        <Key android:codes="0x2726" android:keyLabel="\u2726"
+            android:keyEdgeFlags="right"/>
+    </Row>
+
+
+
+
+
+
+
+
+
+
+
+
+</Keyboard>

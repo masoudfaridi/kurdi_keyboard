@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+/* 
+**
+** Copyright 2008, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License"); 
+** you may not use this file except in compliance with the License. 
+** You may obtain a copy of the License at 
+**
+**     http://www.apache.org/licenses/LICENSE-2.0 
+**
+** Unless required by applicable law or agreed to in writing, software 
+** distributed under the License is distributed on an "AS IS" BASIS, 
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+** See the License for the specific language governing permissions and 
+** limitations under the License.
+*/
+-->
+
+<resources>
+
+    <dimen name="key_height_firstrow">45dp</dimen>
+    <dimen name="key_width_firstrow">44dp</dimen>
+
+    <dimen name="margin_firsteow">0dp</dimen>
+
+    <dimen name="padding_firstrow">7dp</dimen>
+
+
+    <fraction name="samsung_key_width">10%p</fraction>
+    <fraction name="samsung_key_width_numberspage">25%p</fraction>
+
+
+    <fraction name="samsung_key_width_double">20%p</fraction>
+    <fraction name="samsung_key_width_three">26.7776%p</fraction>
+    <fraction name="samsung_key_width_shift">15%p</fraction>
+    <fraction name="samsung_key_width_space">40%p</fraction>
+    <fraction name="samsung_key_height_letters">8.2%p</fraction>
+    <fraction name="samsung_key_height_numbers">5.1%p</fraction>
+
+    <fraction name="samsung_key_horizontalGap">0%p</fraction>
+    <fraction name="samsung_key_horizontalGap_left">0%p</fraction>
+    <fraction name="samsung_key_horizontalGap_left_numberspage">0%p</fraction>
+
+
+
+    <fraction name="samsung_key_horizontalGap_left_row3">5%p</fraction>
+    <fraction name="samsung_key_verticalGap">0%p</fraction>
+    <dimen name="samsung_key_height_popup">100dip</dimen>
+    <dimen name="samsung_key_width_popup">70dip</dimen>
+    <dimen name="simplethemepaddingaroundkey">4dp</dimen>
+
+    <!--
+/*
+**  longclickyadd is about long press preview when tools bar is
+**  visible or gone
+**  fullscreenadd is about long press preview when full screen happen
+*/
+-->
+    <dimen name="longclickyadd">0dp</dimen>
+    <dimen name="fullscreenadd">0dp</dimen>
+
+
+    <dimen name="key_height_porpop">38dip</dimen>
+    <dimen name="key_height_popup_en_e">38dip</dimen>
+    <dimen name="key_height_popup_en_e_multilanguage">44dip</dimen>
+
+    <dimen name="candidate_font_height">16sp</dimen>
+    <dimen name="candidate_vertical_padding_2">30sp</dimen>
+    <dimen name="input_last_layout">5dp</dimen>
+    <dimen name="hiegh_for_emoji">0dp</dimen>
+    <dimen name="hiegh_for_emoji_whatsup">0dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="width_layout_option_Imageview">117dp</dimen>
+    <dimen name="height_layout_option_Imageview">117dp</dimen>
+    <dimen name="widthlineseperator">2dp</dimen>
+    <dimen name="marginleft_layout_setting">0dp</dimen>
+    <dimen name="isportraitdevice">1dp</dimen>
+
+    <dimen name="height_image">200dp</dimen>
+
+    <!-- theme 1 defaul values     -->
+
+
+</resources>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+            <item
+                android:left="@dimen/simplethemepaddingaroundkey"
+                android:right="@dimen/simplethemepaddingaroundkey"
+                android:top="@dimen/simplethemepaddingaroundkey"
+                android:bottom="@dimen/simplethemepaddingaroundkey"
+                >
+                <shape android:shape="rectangle">
+
+                    <gradient
+                        android:startColor="@color/theme_color_samsung_keyboard_background"
+                        android:endColor="@color/theme_color_samsung_keyboard_background"
+                        android:centerColor="@color/theme_color_samsung_keyboard_background"
+                        android:angle="180"
+                        />
+
+
+
+                    <corners android:radius="3dp"/>
+
+
+                </shape>
+
+            </item>
+
+        </layer-list>
+    </item>
+    <item >
+        <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+            <item
+                android:left="@dimen/simplethemepaddingaroundkey"
+                android:right="@dimen/simplethemepaddingaroundkey"
+                android:top="@dimen/simplethemepaddingaroundkey"
+                android:bottom="@dimen/simplethemepaddingaroundkey"
+               >
+                <shape android:shape="rectangle">
+
+                    <corners android:radius="4dp"/>
+                    <solid android:color="@color/theme_color_samsung_keyboard_letters"/>
+                    <stroke android:width=".5dp" android:color="#000000"/>
+
+
+
+
+                </shape>
+            </item>
+
+
+
+
+
+
+
+
+
+
+
+
+        </layer-list>
+    </item>
+</selector>

@@ -1,0 +1,33 @@
+<Keyboard
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="10%p"
+    android:keyHeight="@dimen/key_height_popup_en_e"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    >
+
+
+    <Row>
+        <Key android:codes="0x0037" android:keyLabel="\u0037"
+            android:keyEdgeFlags="left"/>
+
+
+        <Key android:codes="0x06F7" android:keyLabel="\u06F7"
+
+            android:keyEdgeFlags="right"/>
+    </Row>
+
+    <Row>
+        <Key android:codes="0x0682" android:keyLabel="\u0682"
+            android:keyEdgeFlags="left"/>
+
+
+
+        <Key android:codes="0x0757" android:keyLabel="\u0757"
+            android:keyEdgeFlags="right"/>
+    </Row>
+
+
+
+
+</Keyboard>

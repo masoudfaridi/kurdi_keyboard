@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <string-array name="listentries_list_theme_selector">
+        <item> تم سامسونگ سایز کوچک </item>
+        <item> تم سامسونگ سایز متوسط </item>
+        <item> تم سامسونگ سایز بزرگ </item>
+        <item> تم شیشه ای سایز کوچک </item>
+        <item> تم شیشه ای سایز متوسط </item>
+        <item> تم شیشه ای سایز بزرگ </item>
+        <item> تم صورتی سایز کوچک </item>
+        <item> تم صورتی سایز متوسط </item>
+        <item> تم صورتی سایز بزرگ </item>
+        <item> تم  گوشی اندروید زیر 4 </item>
+        <item> تم سبز-آبی سایز کوچک </item>
+        <item> تم سبز-آبی سایز متوسط </item>
+        <item> تم سبز-آبی سایز بزرگ </item>
+        <item> تم یخی سایز کوچک </item>
+        <item> تم یخی سایز متوسط </item>
+        <item> تم یخی سایز بزرگ </item>
+        <item> تم چوبی سایز کوچک </item>
+        <item> تم چوبی سایز متوسط </item>
+        <item> تم چوبی سایز بزرگ </item>
+        <item> تم  یخی -آبی سایز کوچک </item>
+        <item> تم یخی-آبی سایز متوسط </item>
+        <item> تم یخی-آبی سایز بزرگ </item>
+
+        <item> تم سبز-آبی پلاستیکی سایز متوسط </item>
+        <item> تم سبز-آبی سایز بزرگ </item>
+        <item> تم شکلاتی با سایز کوچک </item>
+        <item> تم شکلاتی سایز متوسط </item>
+        <item> تم شکلاتی سایز بزرگ </item>
+        <item> تم شیشه ای -سفید سایز کوچک </item>
+        <item> تم شیشهای-سفید سایز متوسط </item>
+        <item> تم شیشه ای متوسط سایز بزرگ </item>
+
+        <item> تم صورتی سایز متوسط </item>
+        <item> تم صورتی لایت سایز بزرگ </item>
+        <item>  تم پلاستیکی صورتی  </item>
+        <item> تم پلاستیکی صورتی سایز بزرگ </item>
+
+        <item> تم پلاستیکی ارغوانی </item>
+        <item> تم الماس سایز متوسط </item>
+        <item> تم الماس   </item>
+        <item>
+ تم سفید-خاکستری
+        </item>
+        <item>
+            تم مشکی-بنفش
+        </item>
+        <item>خاکستری</item>
+        <item>
+            تم صورتی فانتزی
+        </item>
+        <item>
+            تم ساده و سریع سامسونگ(تبلت و گوشی)
+        </item>
+        <item>
+            تم ساده 2(تبلت و گوشی)
+        </item>
+        <item>
+            تم ساده 3(تبلت و گوشی)
+        </item>
+        <item>
+            تم ساده 4(تبلت و گوشی)
+        </item>
+        <item>
+            تم ساده 5(تبلت و گوشی)
+        </item>
+        <item>
+            تم ساده 6
+        </item>
+        <item>
+            تم حرفه ای 1
+        </item>
+        <item>
+            تم حرفه ای 2
+        </item>
+        <item>
+            تم حرفه ای 3
+        </item>
+        <item>
+            تم حرفه ای 4
+        </item>
+        <item>33</item>
+        <item>34</item>
+    </string-array>
+    <string-array name="listvalues_list_theme_selector">
+        <item>1</item>
+        <item>1x</item>
+        <item>1xx</item>
+        <item>2</item>
+        <item>2x</item>
+        <item>2xx</item>
+        <item>3</item>
+        <item>3x</item>
+        <item>3xx</item>
+        <item>4</item>
+        <item>5</item>
+        <item>5x</item>
+        <item>5xx</item>
+        <item>6</item>
+        <item>6x</item>
+        <item>6xx</item>
+        <item>7</item>
+        <item>7x</item>
+        <item>7xx</item>
+        <item>8</item>
+        <item>8x</item>
+        <item>8xx</item>
+
+        <item>9x</item>
+        <item>9xx</item>
+
+        <item>10</item>
+        <item>10x</item>
+        <item>10xx</item>
+        <item>11</item>
+        <item>11x</item>
+        <item>11xx</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
+        <item>33</item>
+        <item>34</item>
+    </string-array>
+
+</resources>

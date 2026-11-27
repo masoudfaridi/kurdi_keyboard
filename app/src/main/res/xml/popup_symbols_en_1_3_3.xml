@@ -1,0 +1,77 @@
+<Keyboard
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="10%p"
+    android:keyHeight="@dimen/key_height_popup_en_e"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    >
+
+
+    <Row>
+        <Key android:codes="0x20A0" android:keyLabel="\u20A0"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x20AC" android:keyLabel="\u20AC"/>
+
+        <Key android:codes="0x20A1" android:keyLabel="\u20A1"/>
+        <Key android:codes="0x20A2" android:keyLabel="\u20A2"/>
+
+        <Key android:codes="0x20A3" android:keyLabel="\u20A3"/>
+
+        <Key android:codes="0x20A4" android:keyLabel="\u20A4"
+            android:keyEdgeFlags="right"/>
+    </Row>
+
+
+    <Row>
+        <Key android:codes="0x20A5" android:keyLabel="\u20A5"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x20A6" android:keyLabel="\u20A6"/>
+        <Key android:codes="0x20A7" android:keyLabel="\u20A7"/>
+
+        <Key android:codes="0x20A8" android:keyLabel="\u20A8"/>
+
+        <Key android:codes="0x20A9" android:keyLabel="\u20A9"/>
+
+
+        <Key android:codes="0x20AA" android:keyLabel="\u20AA"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="0x20AB" android:keyLabel="\u20AB"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x20AD" android:keyLabel="\u20AD"/>
+        <Key android:codes="0x20AE" android:keyLabel="\u20AE"/>
+
+        <Key android:codes="0x20AF" android:keyLabel="\u20AF"/>
+
+        <Key android:codes="0x00A1" android:keyLabel="\u00A1"/>
+
+
+        <Key android:codes="0x00A2" android:keyLabel="\u00A2"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="0x00A3" android:keyLabel="\u00A3"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x00A4" android:keyLabel="\u00A4"/>
+
+
+
+        <Key android:codes="0x00A5" android:keyLabel="\u00A5"
+            android:keyEdgeFlags="right"/>
+    </Row>
+
+
+
+
+
+
+
+
+
+
+</Keyboard>

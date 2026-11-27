@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="backgroundqwertkeyboardfirstrow">#FF000000</color>
+
+    <color name="candidate_normal">#FF000000</color>
+    <color name="candidate_recommended">#FFE35900</color>
+    <color name="candidate_other">#ff808080</color>
+    <color name="candidate_background">#bbffffff</color>
+
+    <color name="theme_color_samsung_keyboard_background">#dadbdd</color>
+    <color name="theme_color_samsung_keyboard_numbers">#d9dadc</color>
+    <color name="theme_color_popup">#5f8df7</color>
+    <color name="theme_color_samsung_popup_text_color">#ff2d5a8c</color>
+    <color name="theme_color_samsung_preview_text_color">#ff2d5a8c</color>
+    <color name="theme_color_samsung_keyboard_letters">#fafafa</color>
+    <color name="theme_color_samsung_keyboard_text_color">#000000</color>
+    <color name="theme_color_samsung_candidatesview">#727272</color>
+
+
+
+    <color name="gr_color_start">#8c8c8c</color>
+    <color name="gr_color_end">#cbcbcb</color>
+    <color name="gr_color_center_redlight">#7b1967</color>
+
+    <color name="theme_color_defaul_keboard_background">#000000</color>
+    <color name="theme_color_defaul_key_background">#000000</color>
+    <color name="theme_color_defaul_font_color">#ffffff</color>
+
+    <color name="theme_1_keboard_background">#000000</color>
+    <color name="theme_1_key_background">#000000</color>
+    <color name="theme_1_font_color">#ffffff</color>
+
+
+
+
+</resources>

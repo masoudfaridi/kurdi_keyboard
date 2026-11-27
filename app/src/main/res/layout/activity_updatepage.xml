@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="com.kurdikeyboard.MainActivity"
+        android:orientation="vertical">
+
+
+
+
+    <TextView
+        android:layout_margin="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/plzinstalbazaar"
+        />
+
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:onClick="onClick"
+            android:text="@string/updatetextbutton"
+            android:textColor="#000000"
+            android:id="@+id/buttonupdate"
+            android:gravity="center"
+
+            android:layout_gravity="center"
+            android:background="@drawable/a_18_mf_theme_18_background_key_selector" />
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:onClick="onClick"
+        android:text="@string/nazarat"
+        android:textColor="#000000"
+        android:id="@+id/buttonnazarat"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:background="@drawable/a_18_mf_theme_18_background_key_selector" />
+
+    </LinearLayout>
+
+</ScrollView>

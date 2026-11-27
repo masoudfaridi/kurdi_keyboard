@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="backgroundqwertkeyboardfirstrow">#FF000000</color>
+
+    <color name="candidate_normal">#FF000000</color>
+    <color name="candidate_recommended">#FFE35900</color>
+    <color name="candidate_other">#ff808080</color>
+    <color name="candidate_background">#bbffffff</color>
+    <color name="theme_color_popup">#5f8df7</color>
+
+
+    <color name="theme_color_samsung_keyboard_background">#babbbf</color>
+    <color name="theme_color_samsung_keyboard_numbers">#d9dadc</color>
+    <color name="theme_color_samsung_popup_text_color">#0be2f6</color>
+
+    <color name="theme_color_samsung_preview_text_color">#0bbbf6</color>
+    <color name="theme_color_samsung_keyboard_letters">#fafafa</color>
+    <color name="theme_color_samsung_keyboard_text_color">#000000</color>
+    <color name="theme_color_samsung_candidatesview">#727272</color>
+
+
+    <color name="gr_color_start">#8c8c8c</color>
+    <color name="gr_color_end">#cbcbcb</color>
+    <color name="gr_color_center_redlight">#7b1967</color>
+
+    <color name="theme_color_defaul_keboard_background">#000000</color>
+    <color name="theme_color_defaul_key_background">#000000</color>
+    <color name="theme_color_defaul_font_color">#ffffff</color>
+
+    <color name="theme_1_keboard_background">#000000</color>
+    <color name="theme_1_key_background">#000000</color>
+    <color name="theme_1_font_color">#ffffff</color>
+
+
+
+    <color name="a_1_mf_theme_1_color_letters">#000000</color>
+    <color name="a_1_mf_theme_1_color_letters_littleword">#6b6b6b</color>
+
+
+
+    <color name="a_2_mf_theme_2_color_letters">#000000</color>
+    <color name="a_2_mf_theme_2_color_letters_littleword">#6b6b6b</color>
+    <!--   color for theme 5 default   -->
+
+
+
+    <color name="a_3_mf_theme_3_color_letters">#333333</color>
+    <color name="a_3_mf_theme_3_color_letters_littleword">#4e4e4e</color>
+
+
+    <color name="a_4_mf_theme_4_color_letters">#000000</color>
+    <color name="a_4_mf_theme_4_color_letters_littleword">#6b6b6b</color>
+
+    <color name="a_5_theme_5_textcolor">#000000</color>
+
+    <color name="a_5_mf_theme_5_color_letters">#000000</color>
+    <color name="a_5_mf_theme_5_color_letters_littleword">#2e3164</color>
+
+
+    <color name="a_6_mf_theme_6_color">#fff4d8</color>
+
+    <color name="a_6_mf_theme_6_color_letters">#000000</color>
+    <color name="a_6_mf_theme_6_color_letters_littleword">#5e5e5e</color>
+
+    <color name="a_7_mf_theme_7_color_letters">#f7e5b9</color>
+    <color name="a_7_mf_theme_7_color_letters_littleword">#e7b740</color>
+
+    <color name="a_8_mf_theme_8_color_letters">#1f083d</color>
+    <color name="a_8_mf_theme_8_color_letters_littleword">#360e69</color>
+
+    <color name="a_9_mf_theme_9_color_letters">#18206b</color>
+    <color name="a_9_mf_theme_9_color_letters_littleword">#2733af</color>
+
+
+
+    <color name="a_10_mf_theme_10_color_letters">#ffffff</color>
+    <color name="a_10_mf_theme_10_color_letters_littleword">#f7e8c3</color>
+
+    <color name="a_11_mf_theme_11_color_letters">#000000</color>
+    <color name="a_11_mf_theme_11_color_letters_littleword">#484848</color>
+
+
+    <color name="a_12_mf_theme_12_color_letters">#000000</color>
+    <color name="a_12_mf_theme_12_color_letters_littleword">#484848</color>
+
+    <color name="a_13_mf_theme_13_color_letters">#000000</color>
+    <color name="a_13_mf_theme_13_color_letters_littleword">#ffffff</color>
+
+    <color name="a_14_mf_theme_14_color_letters">#000000</color>
+    <color name="a_14_mf_theme_14_color_letters_littleword">#000000</color>
+
+    <color name="a_15_mf_theme_15_color_letters">#000000</color>
+    <color name="a_15_mf_theme_15_color_letters_littleword">#181818</color>
+
+    <color name="a_16_mf_theme_16_color_letters">#f3ff6d</color>
+    <color name="a_16_mf_theme_16_color_letters_littleword">#ffffff</color>
+
+    <color name="a_17_mf_theme_17_color_letters">#000000</color>
+    <color name="a_17_mf_theme_17_color_letters_littleword">#1f2679</color>
+
+    <color name="a_18_mf_theme_18_color_letters">#ca167d</color>
+    <color name="a_18_mf_theme_18_color_letters_littleword">#be0f84</color>
+    <color name="mycolor_Transparent">#00ffffff</color>
+
+    <color name="a_19_mf_theme_19_color_letters">#000000</color>
+    <color name="a_19_mf_theme_19_color_letters_littleword">#2b2b2b</color>
+
+    <color name="a_20_mf_theme_20_color_letters">#ffffff</color>
+    <color name="a_20_mf_theme_20_color_letters_littleword">#d6d6d6</color>
+    <color name="a_21_mf_theme_21_color_letters">#86fffd</color>
+    <color name="a_21_mf_theme_21_color_letters_littleword">#f7ff58</color>
+    <color name="a_22_mf_theme_22_color_letters">#000000</color>
+    <color name="a_22_mf_theme_22_color_letters_littleword">#000000</color>
+    <color name="a_23_mf_theme_23_color_letters">#000000</color>
+    <color name="a_23_mf_theme_23_color_letters_littleword">#000000</color>
+    <color name="a_24_mf_theme_24_color_letters">#000000</color>
+    <color name="a_24_mf_theme_24_color_letters_littleword">#000000</color>
+    <color name="a_25_mf_theme_25_color_letters">#c20069</color>
+    <color name="a_25_mf_theme_25_color_letters_littleword">#000000</color>
+    <color name="a_26_mf_theme_26_color_letters">#ff2bd1</color>
+    <color name="a_26_mf_theme_26_color_letters_littleword">#ff2bfb</color>
+    <color name="a_27_mf_theme_27_color_letters">#ffe2e2</color>
+    <color name="a_27_mf_theme_27_color_letters_littleword">#ffe9eb</color>
+    <color name="a_28_mf_theme_28_color_letters">#ffffff</color>
+    <color name="a_28_mf_theme_28_color_letters_littleword">#dedede</color>
+    <color name="a_29_mf_theme_29_color_letters">#450c3b</color>
+    <color name="a_29_mf_theme_29_color_letters_littleword">#59114d</color>
+    <color name="a_30_mf_theme_30_color_letters">#ddff00</color>
+    <color name="a_30_mf_theme_30_color_letters_littleword">#00ffff</color>
+    <color name="nocolor">#00000000</color>
+    <color name="a_31_mf_theme_31_color_letters">#00ffff</color>
+    <color name="a_31_mf_theme_31_color_letters_littleword">#00ffff</color>
+    <color name="a_32_mf_theme_32_color_letters">#1f2a5a</color>
+    <color name="a_32_mf_theme_32_color_letters_littleword">#1f2a5a</color>
+    <color name="a_33_mf_theme_33_color_letters">#1f2a5a</color>
+    <color name="a_33_mf_theme_33_color_letters_littleword">#1f2a5a</color>
+    <color name="a_34_mf_theme_34_color_letters">#ffffff</color>
+    <color name="a_34_mf_theme_34_color_letters_littleword">#fffdd2</color>
+    <color name="a_34_mf_theme_34_color_numersinup">#000000</color>
+    <color name="a_0_mf_theme_0_color_letters_littleword">#00ffff</color>
+    <color name="a_0_mf_theme_0_color_letters">#00ffff</color>
+
+
+
+
+
+
+
+
+
+
+</resources>

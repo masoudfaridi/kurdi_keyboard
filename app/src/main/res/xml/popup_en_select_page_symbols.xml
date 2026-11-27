@@ -1,0 +1,59 @@
+<Keyboard
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="10%p"
+    android:keyHeight="@dimen/key_height_popup_en_e"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    >
+
+
+    <Row>
+        <Key android:codes="-124" android:keyLabel="P1"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="-125" android:keyLabel="P2"/>
+
+        <Key android:codes="-126" android:keyLabel="P3"/>
+        <Key android:codes="-127" android:keyLabel="P4"/>
+
+        <Key android:codes="-128" android:keyLabel="P5"
+
+
+            android:keyEdgeFlags="right"/>
+    </Row>
+
+
+    <Row>
+        <Key android:codes="-129" android:keyLabel="P6"
+            android:keyEdgeFlags="left"/>
+        <Key android:codes="-130" android:keyLabel="P7"/>
+
+
+        <Key android:codes="-131" android:keyLabel="P8"/>
+        <Key android:codes="-132" android:keyLabel="P9"/>
+
+        <Key android:codes="-133" android:keyLabel="P10"
+
+
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="-134" android:keyLabel="P11"
+            android:keyEdgeFlags="left"/>
+         <Key android:codes="-135" android:keyLabel="P12"/>
+        <Key android:codes="-136" android:keyLabel="P13"
+        android:keyEdgeFlags="right"/>
+    </Row>
+
+
+
+
+
+
+
+
+
+
+
+
+</Keyboard>

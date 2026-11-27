@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+**
+** Copyright 2008, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="@fraction/samsung_key_width"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    android:keyHeight="@fraction/samsung_key_height_letters"
+    >
+
+
+    <Row
+
+        android:keyHeight="@fraction/samsung_key_height_numbers">
+        <Key android:codes="0x00B6" android:keyLabel="\u00B6"
+            android:verticalGap="@fraction/samsung_key_verticalGap"
+            android:horizontalGap="@fraction/samsung_key_horizontalGap_left"
+            android:keyEdgeFlags="left"/>
+        <Key android:codes="0x00A9" android:keyLabel="\u00A9"
+            />
+        <Key android:codes="0x00AE" android:keyLabel="\u00AE"
+            />
+        <Key android:codes="0x00A7" android:keyLabel="\u00A7"
+            />
+        <Key android:codes="0x00BA" android:keyLabel="\u00BA"
+            />
+        <Key android:codes="0x00AA" android:keyLabel="\u00AA"
+            />
+        <Key android:codes="0x00B1" android:keyLabel="\u00B1"
+            />
+        <Key android:codes="0x01C1" android:keyLabel="\u01C1"
+            />
+        <Key android:codes="0x01C2" android:keyLabel="\u01C2"
+            />
+        <Key android:codes="0x00B5" android:keyLabel="\u00B5"
+            android:keyEdgeFlags="right"/>
+    </Row>
+
+    <Row >
+        <Key
+            android:horizontalGap="@fraction/samsung_key_horizontalGap_left"
+            android:codes="0x0023" android:keyLabel="\u0023"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x2116" android:keyLabel="\u2116"/>
+        <Key android:codes="0x2122" android:keyLabel="\u2122"/>
+        <Key android:codes="0x21AF" android:keyLabel="\u21AF"/>
+        <Key android:codes="0x221E" android:keyLabel="\u221E"/>
+        <Key android:codes="0x231B" android:keyLabel="\u231B"/>
+        <Key android:codes="0x2588" android:keyLabel="\u2588"/>
+        <Key android:codes="0x2591" android:keyLabel="\u2591"/>
+        <Key android:codes="0x2592" android:keyLabel="\u2592"/>
+
+        <Key android:codes="0x2593" android:keyLabel="\u2593"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row >
+        <Key
+            android:horizontalGap="@fraction/samsung_key_horizontalGap_left"
+            android:codes="0x2709" android:keyLabel="\u2709"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x2756" android:keyLabel="\u2756"/>
+        <Key android:codes="0x275A" android:keyLabel="\u275A"/>
+        <Key android:codes="0x2702" android:keyLabel="\u2702"/>
+        <Key android:codes="0x2704" android:keyLabel="\u2704"/>
+        <Key android:codes="0x2706" android:keyLabel="\u2706"/>
+        <Key android:codes="0x2707" android:keyLabel="\u2707"/>
+        <Key android:codes="0x2708" android:keyLabel="\u2708"/>
+        <Key android:codes="0x270C" android:keyLabel="\u270C"/>
+
+        <Key android:codes="0x270D" android:keyLabel="\u270D"
+            android:keyEdgeFlags="right"/>
+    </Row>
+
+    <Row>
+        <Key
+            android:horizontalGap="@fraction/samsung_key_horizontalGap_left"
+            android:codes="-117" android:keyLabel="3/13"
+            android:keyWidth="@fraction/samsung_key_width_shift" android:isModifier="true"
+            android:popupKeyboard="@xml/popup_en_select_page_symbols"
+            android:keyEdgeFlags="left"/>
+
+        <Key android:codes="0x270E" android:keyLabel="\u270E"/>
+        <Key android:codes="0x2713" android:keyLabel="\u2713"/>
+        <Key android:codes="0x2714" android:keyLabel="\u2714"/>
+        <Key android:codes="0x2715" android:keyLabel="\u2715"/>
+        <Key android:codes="0x2716" android:keyLabel="\u2716" />
+        <Key android:codes="0x2717" android:keyLabel="\u2717" />
+        <Key android:codes="0x2718" android:keyLabel="\u2718"/>
+        <Key android:codes="-5" android:keyIcon="@drawable/delete_black"
+            android:keyWidth="@fraction/samsung_key_width_shift" android:isModifier="true"
+            android:keyEdgeFlags="right"
+            android:isRepeatable="true"/>
+    </Row>
+    <Row android:rowEdgeFlags="bottom">
+        <Key android:codes="-3"
+            android:horizontalGap="@fraction/samsung_key_horizontalGap_left"
+            android:keyIcon="@drawable/close_keyboard_black"
+            android:keyWidth="@fraction/samsung_key_width_shift" android:keyEdgeFlags="left"/>
+        <Key android:codes="-2" android:keyIcon="@drawable/abc_black"
+            android:keyWidth="@fraction/samsung_key_width_shift"/>
+        <!--
+            android:codes: -101 is not a framework-defined key code but a key code that is
+            privately defined in com.example.android.softkeyboard.LatinKeyboardView.
+        -->
+
+        <Key android:codes="32" android:keyIcon="@drawable/spacebar"
+
+            android:keyWidth="@fraction/samsung_key_width_space" />
+        <Key android:codes="46,44" android:keyIcon="@drawable/dot_black"
+            android:popupKeyboard="@xml/popup_en_4_4"
+
+            android:keyWidth="@fraction/samsung_key_width_shift"/>
+        <Key android:codes="10" android:keyIcon="@drawable/enter_enter_black"
+            android:popupKeyboard="@xml/popup_en_4_5"
+            android:keyWidth="@fraction/samsung_key_width_shift" android:keyEdgeFlags="right"/>
+    </Row>
+    <Row android:horizontalGap="0%p" android:keyHeight="0%p">
+        <Key android:codes="32"
+            android:keyWidth="100%p"
+            />
+    </Row>
+</Keyboard>

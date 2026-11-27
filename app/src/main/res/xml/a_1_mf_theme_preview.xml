@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:width="@dimen/samsung_key_width_popup"
+
+    android:gravity="center"
+
+
+
+
+
+    android:textColor="@color/theme_color_samsung_preview_text_color"
+    android:textSize="40sp"
+    android:textStyle="bold"
+
+    android:background="@drawable/a_1_mf_theme_1_key_png_letters"
+
+
+
+    >
+
+</TextView>

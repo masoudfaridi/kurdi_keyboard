@@ -1,0 +1,70 @@
+<Keyboard
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="10%p"
+    android:horizontalGap="@fraction/samsung_key_horizontalGap"
+    android:verticalGap="@fraction/samsung_key_verticalGap"
+    android:keyHeight="@dimen/key_height_porpop"
+
+    android:keyBackground="@color/theme_color_samsung_keyboard_letters"
+    android:background="@color/theme_color_samsung_keyboard_letters"
+
+
+    >
+
+    <Row android:horizontalGap="0%p" android:keyHeight="0%p"
+        android:verticalGap="3dp">
+        <Key android:codes="32"
+            android:keyWidth="70%p"
+            />
+    </Row>
+
+    <Row>
+        <Key android:codes="0x06D6" android:keyIcon="@drawable/arab_06d6" android:keyEdgeFlags="left"/>
+        <Key android:codes="0x06D7" android:keyIcon="@drawable/arab_06d7"/>
+        <Key android:codes="0x06D9" android:keyIcon="@drawable/arab_06d9"/>
+        <Key android:codes="0x06E8" android:keyIcon="@drawable/arab_06e8"/>
+
+        <Key android:codes="0x064F" android:keyIcon="@drawable/arab_zameh_3"/>
+        <Key android:codes="0x0650" android:keyIcon="@drawable/arab_kasreh_2"/>
+        <Key android:codes="0x064E" android:keyIcon="@drawable/arab_fatheh_1" android:keyEdgeFlags="right"/>
+    </Row>
+
+    <Row>
+        <Key android:codes="0x" android:keyLabel="\u" android:keyEdgeFlags="left"/>
+        <Key android:codes="0x06E7" android:keyIcon="@drawable/arab_06e7"/>
+        <Key android:codes="0x06D3" android:keyIcon="@drawable/arab_06d3"/>
+        <Key android:codes="0x06E3" android:keyIcon="@drawable/arab_06e3"/>
+
+        <Key android:codes="0x064C" android:keyIcon="@drawable/arab_tanwin_zameh_6"/>
+        <Key android:codes="0x064D" android:keyIcon="@drawable/arab_tanwin_kasreh_5"/>
+        <Key android:codes="0x064B"
+            android:keyIcon="@drawable/arab_tanwin_f_4"
+            android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="0x06DA" android:keyIcon="@drawable/arab_06da" android:keyEdgeFlags="left"/>
+        <Key android:codes="0x06E5" android:keyIcon="@drawable/arab_06e5"/>
+        <Key android:codes="0x0670" android:keyIcon="@drawable/arab_0670"/>
+        <Key android:codes="0x06E4" android:keyIcon="@drawable/arab_06e4"/>
+        <Key android:codes="0x0653" android:keyIcon="@drawable/arab_0653"/>
+        <Key android:codes="0x0652" android:keyIcon="@drawable/arab_0652"/>
+        <Key android:codes="0x0651" android:keyIcon="@drawable/arab_tashdid" android:keyEdgeFlags="right"/>
+    </Row>
+    <Row>
+        <Key android:codes="0x06E1" android:keyIcon="@drawable/arab_06e1" android:keyEdgeFlags="left"/>
+        <Key android:codes="0x06D8" android:keyIcon="@drawable/arab_06d8"/>
+        <Key android:codes="0x06E2" android:keyIcon="@drawable/arab_06e2"/>
+        <Key android:codes="0x06ED" android:keyIcon="@drawable/arab_06ed"/>
+        <Key android:codes="0x0674" android:keyIcon="@drawable/arab_0674"/>
+        <Key android:codes="0x0655" android:keyIcon="@drawable/arab_0655"/>
+
+        <Key android:codes="0x0654" android:keyIcon="@drawable/arab_0654"    android:keyEdgeFlags="right"/>
+    </Row>
+    <Row android:horizontalGap="0%p" android:keyHeight="0%p">
+    <Key android:codes="32"
+        android:keyWidth="70%p"
+        />
+    </Row>
+
+
+</Keyboard>
