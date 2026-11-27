@@ -39,9 +39,22 @@ public class ThemePickerActivity extends Activity {
         setContentView(R.layout.activity_theme_picker);
         setTitle(R.string.theme_picker_title);
         prefs = getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE);
-        themes = KeyboardTheme.all();
-        selected = KeyboardTheme.forId(prefs.getString(getString(R.string.pref_list_theme_selector),
-                KeyboardTheme.DEFAULT_ID)).id;
+        KeyboardTheme current = KeyboardTheme.forId(prefs.getString(getString(R.string.pref_list_theme_selector),
+                KeyboardTheme.DEFAULT_ID));
+        selected = current.id;
+        // two sections, light and dark; open on the one that holds the current theme
+        themes = new java.util.ArrayList<>(KeyboardTheme.section(current.isDark()));
+        tabLight = (TextView) findViewById(R.id.tabLight);
+        tabDark = (TextView) findViewById(R.id.tabDark);
+        tabLight.setText(getString(R.string.theme_tab_light, faDigits(KeyboardTheme.section(false).size())));
+        tabDark.setText(getString(R.string.theme_tab_dark, faDigits(KeyboardTheme.section(true).size())));
+        tabLight.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { showSection(false); }
+        });
+        tabDark.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { showSection(true); }
+        });
+        markTabs(current.isDark());
 
         final GridView grid = (GridView) findViewById(R.id.themeGrid);
         final BaseAdapter adapter = new BaseAdapter() {
@@ -72,6 +85,33 @@ public class ThemePickerActivity extends Activity {
         };
         grid.setAdapter(adapter);
         mAdapter = adapter;
+        mGrid = grid;
+    }
+
+    private static String faDigits(int n) {
+        StringBuilder b = new StringBuilder();
+        for (char ch : String.valueOf(n).toCharArray()) b.append((char) (0x06F0 + ch - '0'));
+        return b.toString();
+    }
+
+    private TextView tabLight, tabDark;
+    private GridView mGrid;
+
+    private void showSection(boolean dark) {
+        themes.clear();
+        themes.addAll(KeyboardTheme.section(dark));
+        markTabs(dark);
+        if (mAdapter != null) mAdapter.notifyDataSetChanged();
+        if (mGrid != null) mGrid.setSelection(0);
+    }
+
+    private void markTabs(boolean dark) {
+        tabLight.setSelected(!dark);
+        tabDark.setSelected(dark);
+        tabLight.setTextColor(getColor(dark ? R.color.kk_text_secondary : R.color.kk_primary));
+        tabDark.setTextColor(getColor(dark ? R.color.kk_primary : R.color.kk_text_secondary));
+        tabLight.setTypeface(null, dark ? android.graphics.Typeface.NORMAL : android.graphics.Typeface.BOLD);
+        tabDark.setTypeface(null, dark ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
     }
 
     /** A small keyboard drawn with a theme's palette. */
