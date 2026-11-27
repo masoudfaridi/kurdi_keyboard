@@ -1421,7 +1421,16 @@ public class KKeyboardView extends KeyboardView {
     }
 
     private android.widget.PopupWindow mSlideWindow;
-    private SlidePopupView mSlideView;
+    private PressEffectView mSlideView;
+    /** top of the menu window, in this view's coordinates (the window starts above the view) */
+    private float mSlideWinTop;
+    private final Runnable mHideSlide = new Runnable() {
+        @Override public void run() {
+            if (mSlideWindow != null && mSlideWindow.isShowing()) {
+                try { mSlideWindow.dismiss(); } catch (RuntimeException ignored) {}
+            }
+        }
+    };
     private final List<List<SlideItem>> mSlideRows = new java.util.ArrayList<>();
     private int mSlideSelected = -1;
     private boolean mSlideActive, mSlideMoved;
@@ -1499,25 +1508,8 @@ public class KKeyboardView extends KeyboardView {
         y = Math.max(y, -win[1]); // stay inside the keyboard window: over the tools row if needed
         mSlideOrigin[0] = x;
         mSlideOrigin[1] = y;
-
-        if (mSlideView == null) {
-            mSlideView = new SlidePopupView(getContext());
-            mSlideWindow = new android.widget.PopupWindow(mSlideView);
-            mSlideWindow.setTouchable(false);
-            mSlideWindow.setClippingEnabled(false);
-            mSlideWindow.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(0));
-        }
-        mSlideView.theme = currentTheme();
-        mSlideWindow.setWidth(popW);
-        mSlideWindow.setHeight(popH);
         mSlideSelected = -1;
-        int[] loc = new int[2];
-        getLocationInWindow(loc);
-        try {
-            mSlideWindow.showAtLocation(this, android.view.Gravity.NO_GRAVITY, loc[0] + x, loc[1] + y);
-        } catch (RuntimeException e) {
-            return false;
-        }
+        if (!showMenuWindow(x, y, popW, popH, key.x + key.width / 2f, key.y + key.height * 0.38f, -1)) return false;
         mSlideActive = true;
         mSlideMoved = false;
         hideKeyPreview();
@@ -1557,7 +1549,98 @@ public class KKeyboardView extends KeyboardView {
 
     private void closeSlidePopup() {
         mSlideActive = false;
-        if (mSlideWindow != null && mSlideWindow.isShowing()) {
+        closeMenuWindow(false);
+    }
+
+    /**
+     * Shows a popup with several options (the long-press menu of a key, the language list) in
+     * the chosen popup style: the same renderer and view as the key popup, so every popup of
+     * the keyboard looks alike. Panel position in this view's coordinates; the options are
+     * mSlideRows (relative to the panel). One fixed window covers the keyboard and the room
+     * above it, so the light can reach from the finger to the chosen option.
+     */
+    private boolean showMenuWindow(float px, float py, float pw, float ph, float tipX, float tipY, int selected) {
+        mSpaceHandler.removeCallbacks(mHideSlide);
+        if (mSlideView == null) {
+            mSlideView = new PressEffectView(getContext());
+            mSlideWindow = new android.widget.PopupWindow(mSlideView);
+            mSlideWindow.setTouchable(false);
+            mSlideWindow.setClippingEnabled(false);
+            mSlideWindow.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(0));
+            mSlideWindow.setAnimationStyle(0);
+        }
+        KeyboardTheme theme = currentTheme();
+        int[] loc = new int[2];
+        getLocationInWindow(loc);
+        float top = -loc[1]; // the window starts at the top of the keyboard window
+        int w = getWidth(), h = (int) Math.ceil(getHeight() - top);
+        if (w <= 0 || h <= 0) return false;
+        PressEffectView v = mSlideView;
+        v.menu = true;
+        v.theme = theme;
+        v.style = popupStyle(theme);
+        v.color = PressEffect.color(theme, tipX / Math.max(1, getWidth()), tipY / Math.max(1, getHeight()));
+        v.panel.set(px, py - top, px + pw, py + ph - top);
+        v.items.clear();
+        for (List<SlideItem> row : mSlideRows) {
+            for (SlideItem it : row) {
+                PressEffect.Item pi = new PressEffect.Item(it.text, menuIcon(it));
+                pi.r.set(px + it.x, py + it.y - top, px + it.x + it.w, py + it.y + it.h - top);
+                v.items.add(pi);
+            }
+        }
+        v.tipX = tipX;
+        v.tipY = tipY - top;
+        v.bounds.set(0, 0, w, h);
+        mSlideWinTop = top;
+        v.begin();
+        v.preselect(selected);
+        int sx = loc[0], sy = loc[1] + (int) top;
+        try {
+            if (mSlideWindow.isShowing()) {
+                mSlideWindow.update(sx, sy, w, h);
+            } else {
+                mSlideWindow.setWidth(w);
+                mSlideWindow.setHeight(h);
+                mSlideWindow.showAtLocation(this, android.view.Gravity.NO_GRAVITY, sx, sy);
+            }
+        } catch (RuntimeException e) {
+            return false;
+        }
+        return true;
+    }
+
+    /** the popup style chosen in the settings, for a theme */
+    private String popupStyle(KeyboardTheme theme) {
+        return PressEffect.resolve(getContext().getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE)
+                .getString(getContext().getString(R.string.prefpopupstyle), PressEffect.AUTO), theme);
+    }
+
+    /** the icon of a menu option (copy, paste, clipboard ...), or null for a text option */
+    private Drawable menuIcon(SlideItem it) {
+        int vec = it.code == -112 ? R.drawable.ic_kk_copy : it.code == -116 ? R.drawable.ic_kk_paste
+                : it.code == -150 ? R.drawable.ic_kk_clipboard : it.code == -152 ? R.drawable.ic_kk_notes
+                : it.code == -157 ? R.drawable.ic_kk_emoji : it.code == -151 ? R.drawable.ic_kk_person
+                : it.code == -111 ? R.drawable.ic_kk_select_all : it.code == -115 ? R.drawable.ic_kk_cut : 0;
+        if (vec != 0) {
+            Drawable ic = getContext().getDrawable(vec);
+            return ic != null ? ic.mutate() : null;
+        }
+        if (it.icon != null && (it.text == null || it.text.isEmpty())) {
+            return it.icon.getConstantState() != null
+                    ? it.icon.getConstantState().newDrawable(getResources()).mutate() : it.icon;
+        }
+        return null;
+    }
+
+    /** the popup with several options goes away: light effects fade out, the plain one at once */
+    private void closeMenuWindow(boolean now) {
+        mSpaceHandler.removeCallbacks(mHideSlide);
+        if (mSlideWindow == null || !mSlideWindow.isShowing()) return;
+        if (!now && mSlideView != null && PressEffect.fancy(mSlideView.style)) {
+            mSlideView.release();
+            mSpaceHandler.postDelayed(mHideSlide, PressEffectView.FADE + 30);
+        } else {
             try { mSlideWindow.dismiss(); } catch (RuntimeException ignored) {}
         }
     }
@@ -1573,9 +1656,12 @@ public class KKeyboardView extends KeyboardView {
                     int sel = slideItemAt(me.getX(), me.getY());
                     if (sel != mSlideSelected) {
                         mSlideSelected = sel;
-                        if (mSlideView != null) mSlideView.invalidate();
+                        if (mSlideView != null) mSlideView.choose(sel);
                         performHapticFeedback(android.view.HapticFeedbackConstants.CLOCK_TICK);
                     }
+                }
+                if (mSlideView != null) {
+                    mSlideView.moveTip(Math.max(0, Math.min(getWidth(), me.getX())), me.getY() - mSlideWinTop);
                 }
                 return true;
             }
@@ -1598,72 +1684,6 @@ public class KKeyboardView extends KeyboardView {
                 return true;
             default:
                 return true;
-        }
-    }
-
-    /** the popup's drawing, in the keyboard theme's colors */
-    private final class SlidePopupView extends View {
-        KeyboardTheme theme;
-        private final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final android.graphics.RectF r = new android.graphics.RectF();
-
-        SlidePopupView(Context c) { super(c); }
-
-        @Override
-        protected void onDraw(Canvas c) {
-            if (theme == null) return;
-            float d = getResources().getDisplayMetrics().density;
-            r.set(0, 0, getWidth(), getHeight());
-            p.setStyle(Paint.Style.FILL);
-            p.setColor(0x33000000);
-            r.offset(0, 2 * d);
-            c.drawRoundRect(r, 14 * d, 14 * d, p);
-            r.offset(0, -2 * d);
-            r.inset(0, 1 * d);
-            p.setColor(theme.isDark() ? theme.keyPressed : 0xFFFFFFFF);
-            c.drawRoundRect(r, 14 * d, 14 * d, p);
-            int index = 0;
-            p.setTextAlign(Paint.Align.CENTER);
-            for (List<SlideItem> row : mSlideRows) {
-                for (SlideItem it : row) {
-                    boolean sel = index == mSlideSelected;
-                    if (sel) {
-                        r.set(it.x + 2 * d, it.y + 2 * d, it.x + it.w - 2 * d, it.y + it.h - 2 * d);
-                        p.setColor(theme.accent);
-                        c.drawRoundRect(r, 9 * d, 9 * d, p);
-                    }
-                    int color = sel ? theme.onAccent : theme.text;
-                    float cx = it.x + it.w / 2, cy = it.y + it.h / 2;
-                    int vec = it.code == -112 ? R.drawable.ic_kk_copy : it.code == -116 ? R.drawable.ic_kk_paste
-                            : it.code == -150 ? R.drawable.ic_kk_clipboard : it.code == -152 ? R.drawable.ic_kk_notes
-                            : it.code == -157 ? R.drawable.ic_kk_emoji : it.code == -151 ? R.drawable.ic_kk_person
-                            : it.code == -111 ? R.drawable.ic_kk_select_all : it.code == -115 ? R.drawable.ic_kk_cut : 0;
-                    if (vec != 0) {
-                        Drawable ic = cachedDrawable(vec);
-                        ic.setTint(color);
-                        int s = (int) (Math.min(it.w, it.h) * 0.48f);
-                        ic.setBounds((int) (cx - s / 2f), (int) (cy - s / 2f), (int) (cx + s / 2f), (int) (cy + s / 2f));
-                        ic.draw(c);
-                    } else if (it.icon != null && (it.text == null || it.text.isEmpty())) {
-                        Drawable ic = it.icon.getConstantState() != null
-                                ? it.icon.getConstantState().newDrawable(getResources()).mutate() : it.icon;
-                        ic.setColorFilter(new android.graphics.PorterDuffColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN));
-                        int s = (int) (Math.min(it.w, it.h) * 0.5f);
-                        ic.setBounds((int) (cx - s / 2f), (int) (cy - s / 2f), (int) (cx + s / 2f), (int) (cy + s / 2f));
-                        ic.draw(c);
-                    } else if (it.text != null) {
-                        p.setColor(color);
-                        float size = it.h * 0.42f;
-                        p.setTextSize(size);
-                        while (p.measureText(it.text) > it.w - 6 * d && size > 8 * d) {
-                            size -= d;
-                            p.setTextSize(size);
-                        }
-                        c.drawText(it.text, cx, cy + size / 3, p);
-                    }
-                    index++;
-                }
-            }
         }
     }
 
@@ -1740,18 +1760,12 @@ public class KKeyboardView extends KeyboardView {
         }
         int x = (int) (mSpaceKey.x + mSpaceKey.width / 2f - popW / 2f);
         x = Math.max(0, Math.min(getWidth() - popW, x));
-        int y = (int) (mSpaceKey.y - popH - 4 * d);
+        // light effects get a little room between the finger and the list
+        boolean fancy = PressEffect.fancy(popupStyle(currentTheme()));
+        int y = (int) (mSpaceKey.y - popH - (fancy ? 12 : 4) * d);
         mSlideOrigin[0] = x;
         mSlideOrigin[1] = y;
         mLangPopupBottom = y + popH;
-        if (mSlideView == null) {
-            mSlideView = new SlidePopupView(getContext());
-            mSlideWindow = new android.widget.PopupWindow(mSlideView);
-            mSlideWindow.setTouchable(false);
-            mSlideWindow.setClippingEnabled(false);
-            mSlideWindow.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(0));
-        }
-        mSlideView.theme = currentTheme();
         // the current language starts highlighted
         String cur = kurdikeyboard.language;
         mSlideSelected = 0;
@@ -1759,15 +1773,7 @@ public class KKeyboardView extends KeyboardView {
             int c = items.get(i).code;
             if (("fa".equals(cur) && c == KEYCODE_LANG_FA) || ("kr".equals(cur) && c == KEYCODE_LANG_KR)) mSlideSelected = i;
         }
-        mSlideWindow.setWidth(popW);
-        mSlideWindow.setHeight(popH);
-        int[] loc = new int[2];
-        getLocationInWindow(loc);
-        try {
-            mSlideWindow.showAtLocation(this, android.view.Gravity.NO_GRAVITY, loc[0] + x, loc[1] + y);
-        } catch (RuntimeException e) {
-            return;
-        }
+        if (!showMenuWindow(x, y, popW, popH, mSpaceDownX, mSpaceDownY, mSlideSelected)) return;
         mSpaceLangOpen = true;
         cancelSuperTouch(mSpaceDownTime, mSpaceDownX, mSpaceDownY); // the space is not typed
         performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
@@ -1779,9 +1785,7 @@ public class KKeyboardView extends KeyboardView {
         mSpaceCursor = false;
         if (mSpaceLangOpen) {
             mSpaceLangOpen = false;
-            if (mSlideWindow != null && mSlideWindow.isShowing()) {
-                try { mSlideWindow.dismiss(); } catch (RuntimeException ignored) {}
-            }
+            closeMenuWindow(false);
         }
     }
 
@@ -1829,10 +1833,11 @@ public class KKeyboardView extends KeyboardView {
                         int sel = slideItemAt(mSlideOrigin[0] + 10 * d, y);
                         if (sel != mSlideSelected) {
                             mSlideSelected = sel;
-                            if (mSlideView != null) mSlideView.invalidate();
+                            if (mSlideView != null) mSlideView.choose(sel);
                             performHapticFeedback(android.view.HapticFeedbackConstants.CLOCK_TICK);
                         }
                     }
+                    if (mSlideView != null) mSlideView.moveTip(x, y - mSlideWinTop);
                     return true;
                 }
                 if (!mSpaceCursor) {
@@ -1994,6 +1999,7 @@ public class KKeyboardView extends KeyboardView {
         if (w <= 0 || h <= 0) return;
 
         PressEffectView v = mPreviewView;
+        v.menu = false;
         v.theme = theme;
         v.style = style;
         v.text = text;
@@ -2091,7 +2097,8 @@ public class KKeyboardView extends KeyboardView {
     }
 
     void cleanUpGestures() {
-        closeSlidePopup();
+        mSlideActive = false;
+        closeMenuWindow(true);
         resetSpace();
         hideKeyPreview();
         endSwipe();

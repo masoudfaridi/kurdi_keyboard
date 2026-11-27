@@ -90,8 +90,14 @@ public class PopupStyleActivity extends Activity {
         private String style = PressEffect.SIMPLE;
         private final long t0 = SystemClock.uptimeMillis();
         private final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final RectF r = new RectF(), bubble = new RectF(), key = new RectF();
+        private final RectF r = new RectF(), bubble = new RectF(), key = new RectF(), panel = new RectF();
         private final Path clip = new Path();
+        /** every other turn the key is held: its menu opens and the finger slides across it */
+        private static final String[] MENU = {"ض", "ص", "ث", "ق"};
+        private final java.util.List<PressEffect.Item> items = new java.util.ArrayList<>();
+        {
+            for (String m : MENU) items.add(new PressEffect.Item(m, null));
+        }
 
         public StylePreview(Context c) { super(c); }
         public StylePreview(Context c, AttributeSet a) { super(c, a); }
@@ -158,9 +164,29 @@ public class PopupStyleActivity extends Activity {
                 c.drawText(LABELS[i], r.centerX(), r.centerY() + kh * 0.15f + shift, p);
             }
 
-            // the popup over the middle key, fading out after it is let go
             long fadeEnd = HOLD + PressEffectView.FADE;
-            if (ph < fadeEnd) {
+            boolean menuTurn = (age / CYCLE) % 2 == 1;
+            if (menuTurn && ph < fadeEnd) {
+                // the menu of the held key, the finger sliding from option to option
+                float cw = kw * 0.62f, ch = kh * 1.05f, mp = 4 * d;
+                float pw = cw * MENU.length + 2 * mp, phh = ch + 2 * mp;
+                float px = Math.max(4 * d, Math.min(W - pw - 4 * d, key.centerX() - pw / 2));
+                float py = Math.max(4 * d, key.top - phh - 12 * d);
+                panel.set(px, py, px + pw, py + phh);
+                for (int i = 0; i < MENU.length; i++) {
+                    items.get(i).r.set(px + mp + i * cw, py + mp, px + mp + (i + 1) * cw, py + mp + ch);
+                }
+                int sel = ph < 250 ? -1 : (int) Math.min(MENU.length - 1, (ph - 250) / 170);
+                long tSel = sel < 0 ? ph : ph - (250 + sel * 170);
+                float fingerX = sel < 0 ? key.centerX() : items.get(sel).r.centerX();
+                int alpha = ph <= HOLD ? 255 : (int) (255 * (1 - (ph - HOLD) / (float) PressEffectView.FADE));
+                int saved = alpha < 255 ? c.saveLayerAlpha(0, 0, W, H, alpha) : -1;
+                PressEffect.menu(c, p, resolved, theme, panel, items, sel, tSel, fingerX, key.top + kh * 0.45f, ph,
+                        (int) (age / CYCLE) * 7919, d * 0.85f, PressEffect.color(theme, 0.5f, 0.8f));
+                if (saved >= 0) c.restoreToCount(saved);
+            }
+            // the popup over the middle key, fading out after it is let go
+            if (!menuTurn && ph < fadeEnd) {
                 boolean fancy = PressEffect.fancy(resolved);
                 float bw = kw * (fancy ? 1.3f : 1.15f), bh = kh * (fancy ? 1.3f : 1.4f);
                 float lift = fancy ? PressEffect.minGapDp(resolved) * d * 0.55f : 8 * d;
