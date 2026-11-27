@@ -16,6 +16,7 @@ import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.Keyboard.Key;
 import android.inputmethodservice.KeyboardView;
 import android.util.AttributeSet;
+import android.view.View;
 import android.util.TypedValue;
 import android.view.inputmethod.InputMethodSubtype;
 import android.widget.Toast;
@@ -87,6 +88,8 @@ public class KKeyboardView extends KeyboardView {
     static final int KEYCODE_LONG_VEHHADKURDI=-156;
     static final int KEYCODE_LONG_closetobringupemoji=-157;
     static final int KEYCODE_MULTI_CHANGE=-158;
+    /** number pad: back to the letters of the current language */
+    static final int KEYCODE_BACK_TO_LETTERS=-170;
     // KEYCODE_MULTI_CHANGE used in xml file
 
 
@@ -278,8 +281,7 @@ public class KKeyboardView extends KeyboardView {
 
              return true;
         }else if (key.codes[0] == -3) {
-            getOnKeyboardActionListener().onKey(KEYCODE_LONG_closetobringupemoji, null);
-            return true;
+            return true; // the emoji key opens emoji on tap; a long press does nothing
         }
 
 
@@ -287,7 +289,11 @@ public class KKeyboardView extends KeyboardView {
 
 
         else{
-
+            if (openSlidePopup(key)) {
+                mSlideDownX = mLastTouchX;
+                mSlideDownY = mLastTouchY;
+                return true;
+            }
             return super.onLongPress(key);
 
         }
@@ -847,6 +853,7 @@ public class KKeyboardView extends KeyboardView {
     }
 
     private SwipeListener mSwipeListener;
+    private float mLastTouchX, mLastTouchY;
     private boolean mSwipeTracking;   // finger is down on a letter key, may become a swipe
     private boolean mSwiping;         // the touch is a swipe
     private boolean mSwipeLongPressed;
@@ -898,6 +905,21 @@ public class KKeyboardView extends KeyboardView {
 
     @Override
     public boolean onTouchEvent(android.view.MotionEvent me) {
+        mLastTouchX = me.getX();
+        mLastTouchY = me.getY();
+        if (mSlideActive) {
+            int a = me.getActionMasked();
+            boolean r = handleSlideTouch(me);
+            if (a == android.view.MotionEvent.ACTION_UP || a == android.view.MotionEvent.ACTION_CANCEL) {
+                // let KeyboardView release the pressed key without typing it
+                android.view.MotionEvent cancel = android.view.MotionEvent.obtain(me);
+                cancel.setAction(android.view.MotionEvent.ACTION_CANCEL);
+                super.onTouchEvent(cancel);
+                cancel.recycle();
+                endSwipe();
+            }
+            return r;
+        }
         if (mSwipeListener == null) return super.onTouchEvent(me);
         int action = me.getActionMasked();
         switch (action) {
@@ -1127,6 +1149,7 @@ public class KKeyboardView extends KeyboardView {
             int code = key.codes != null && key.codes.length > 0 ? key.codes[0] : 0;
             boolean isEnter = code == 10;
             boolean isFn = code == -1 || code == -5 || code == -2 || code == -3 || code == -117
+                    || code == -170 || code == -153
                     || code == -158 || code == 8204 || code == 46 || (key.label == null && code != 32 && !isEnter);
 
             mKeyRect.set(key.x + insetX, key.y + insetY, key.x + key.width - insetX, key.y + key.height - insetY);
@@ -1181,6 +1204,12 @@ public class KKeyboardView extends KeyboardView {
                     drawIcon(canvas, R.drawable.ic_kk_emoji, cx, cy, icon, t.text);
                     continue;
                 case 32: {
+                    if (!letters) { // number pad / symbols: a plain space bar
+                        mFnTextPaint.setColor(t.hint);
+                        canvas.drawText("␣", cx, cy + mFnTextPaint.getTextSize() / 3, mFnTextPaint);
+                        mFnTextPaint.setColor(t.text);
+                        continue;
+                    }
                     String lang = "fa".equals(kurdikeyboard.language) ? "فارسی"
                             : "kr".equals(kurdikeyboard.language) ? "کوردی" : "English";
                     float base = cy + mFnTextPaint.getTextSize() / 3;
@@ -1192,6 +1221,15 @@ public class KKeyboardView extends KeyboardView {
                     mFnTextPaint.setColor(t.text);
                     continue;
                 }
+                case -170: {
+                    String s = "en".equals(kurdikeyboard.language) ? "ABC"
+                            : "kr".equals(kurdikeyboard.language) ? "ئ ب پ" : "الف";
+                    canvas.drawText(s, cx, cy + mFnTextPaint.getTextSize() / 3, mFnTextPaint);
+                    continue;
+                }
+                case -153:
+                    canvas.drawText("#+=", cx, cy + mFnTextPaint.getTextSize() / 3, mFnTextPaint);
+                    continue;
                 case -2: {
                     String s = letters ? "?123" : ("en".equals(kurdikeyboard.language) ? "ABC" : "الف");
                     canvas.drawText(s, cx, cy + mFnTextPaint.getTextSize() / 3, mFnTextPaint);
@@ -1231,7 +1269,7 @@ public class KKeyboardView extends KeyboardView {
                 if (returnvalue(key)) {
                     printcharactor(key, canvas, mLabelPaint, mHintPaint, keyLabel);
                 } else {
-                    drawNumberHint(canvas, key, keyLabel, t);
+                    if (letters) drawNumberHint(canvas, key, keyLabel, t); // shortcuts only above the letters
                     canvas.drawText(key.label.toString(), cx, key.y + 7 * (key.height / 10), mNumberPaint);
                 }
             } else if (key.icon != null) {
@@ -1300,5 +1338,257 @@ public class KKeyboardView extends KeyboardView {
         Color.colorToHSV(c, hsv);
         hsv[2] *= 0.82f;
         return Color.HSVToColor(Color.alpha(c), hsv);
+    }
+
+    // =====================================================================
+    // Hold-and-slide: a long press opens a strip of alternatives above the key; slide the
+    // finger to one and lift to type it (lift without sliding = nothing). Replaces the 2017
+    // mini keyboard, which needed a second tap.
+    // =====================================================================
+
+    private static final class SlideItem {
+        final int code;
+        final String text;
+        final Drawable icon;
+        float x, y, w, h; // in the popup
+        SlideItem(int code, String text, Drawable icon) { this.code = code; this.text = text; this.icon = icon; }
+    }
+
+    private android.widget.PopupWindow mSlideWindow;
+    private SlidePopupView mSlideView;
+    private final List<List<SlideItem>> mSlideRows = new java.util.ArrayList<>();
+    private int mSlideSelected = -1;
+    private boolean mSlideActive, mSlideMoved;
+    private float mSlideDownX, mSlideDownY;
+    private final int[] mSlideOrigin = new int[2]; // popup position relative to this view
+
+    /** opens the slide popup for a key with alternatives; false if it has none */
+    private boolean openSlidePopup(Key key) {
+        List<SlideItem> items = new java.util.ArrayList<>();
+        if (key.popupCharacters != null && key.popupCharacters.length() > 0) {
+            String chars = key.popupCharacters.toString();
+            for (int i = 0; i < chars.length(); ) {
+                int cp = chars.codePointAt(i);
+                items.add(new SlideItem(cp, new String(Character.toChars(cp)), null));
+                i += Character.charCount(cp);
+            }
+        } else if (key.popupResId != 0) {
+            Keyboard popup;
+            try {
+                popup = new Keyboard(getContext(), key.popupResId);
+            } catch (RuntimeException e) {
+                return false;
+            }
+            for (Key k : popup.getKeys()) {
+                int code = k.codes != null && k.codes.length > 0 ? k.codes[0] : 0;
+                String text = k.label != null ? k.label.toString() : null;
+                if (text == null && k.icon == null && code > 0) text = new String(Character.toChars(code));
+                if (text == null && k.icon == null) continue;
+                SlideItem it = new SlideItem(code, text, k.icon);
+                it.y = k.y; it.x = k.x; // used for grouping into rows
+                items.add(it);
+            }
+        }
+        if (items.isEmpty()) return false;
+
+        // rows as in the popup layout (by y), max 8 per row
+        mSlideRows.clear();
+        java.util.TreeMap<Integer, List<SlideItem>> byY = new java.util.TreeMap<>();
+        for (SlideItem it : items) {
+            int row = Math.round(it.y);
+            if (!byY.containsKey(row)) byY.put(row, new java.util.ArrayList<SlideItem>());
+            byY.get(row).add(it);
+        }
+        for (List<SlideItem> row : byY.values()) {
+            for (int i = 0; i < row.size(); i += 8) mSlideRows.add(new java.util.ArrayList<>(row.subList(i, Math.min(row.size(), i + 8))));
+        }
+        float d = getResources().getDisplayMetrics().density;
+        int maxCols = 1;
+        for (List<SlideItem> r : mSlideRows) maxCols = Math.max(maxCols, r.size());
+        float cellW = Math.min(Math.max(key.width * 0.95f, 40 * d), (getWidth() - 16 * d) / maxCols);
+        float cellH = Math.max(key.height * 0.9f, 44 * d);
+        float pad = 6 * d;
+        int popW = (int) (cellW * maxCols + 2 * pad);
+        int popH = (int) (cellH * mSlideRows.size() + 2 * pad);
+        for (int r = 0; r < mSlideRows.size(); r++) {
+            List<SlideItem> row = mSlideRows.get(r);
+            float rowStart = pad + (popW - 2 * pad - cellW * row.size()) / 2f;
+            for (int c = 0; c < row.size(); c++) {
+                SlideItem it = row.get(c);
+                it.x = rowStart + c * cellW;
+                it.y = pad + r * cellH;
+                it.w = cellW;
+                it.h = cellH;
+            }
+        }
+        // above the key, centred on it, inside the screen width
+        int x = (int) (key.x + key.width / 2f - popW / 2f);
+        x = Math.max(0, Math.min(getWidth() - popW, x));
+        int y = (int) (key.y - popH - 4 * d);
+        mSlideOrigin[0] = x;
+        mSlideOrigin[1] = y;
+
+        if (mSlideView == null) {
+            mSlideView = new SlidePopupView(getContext());
+            mSlideWindow = new android.widget.PopupWindow(mSlideView);
+            mSlideWindow.setTouchable(false);
+            mSlideWindow.setClippingEnabled(false);
+            mSlideWindow.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(0));
+        }
+        mSlideView.theme = currentTheme();
+        mSlideWindow.setWidth(popW);
+        mSlideWindow.setHeight(popH);
+        mSlideSelected = -1;
+        int[] loc = new int[2];
+        getLocationInWindow(loc);
+        try {
+            mSlideWindow.showAtLocation(this, android.view.Gravity.NO_GRAVITY, loc[0] + x, loc[1] + y);
+        } catch (RuntimeException e) {
+            return false;
+        }
+        mSlideActive = true;
+        mSlideMoved = false;
+        return true;
+    }
+
+    /** item under a point of this view (nearest in the row when between cells), or -1 */
+    private int slideItemAt(float vx, float vy) {
+        float px = vx - mSlideOrigin[0], py = vy - mSlideOrigin[1];
+        if (mSlideRows.isEmpty()) return -1;
+        // the row: by height, clamped (the finger is usually below the popup, on the key)
+        int r = 0;
+        float rowH = mSlideRows.get(0).get(0).h;
+        float top = mSlideRows.get(0).get(0).y;
+        r = (int) Math.floor((py - top) / rowH);
+        r = Math.max(0, Math.min(mSlideRows.size() - 1, r));
+        List<SlideItem> row = mSlideRows.get(r);
+        int best = 0;
+        float bestD = Float.MAX_VALUE;
+        for (int i = 0; i < row.size(); i++) {
+            float cx = row.get(i).x + row.get(i).w / 2;
+            float dist = Math.abs(cx - px);
+            if (dist < bestD) { bestD = dist; best = i; }
+        }
+        int index = 0;
+        for (int i = 0; i < r; i++) index += mSlideRows.get(i).size();
+        return index + best;
+    }
+
+    private SlideItem slideItem(int index) {
+        for (List<SlideItem> row : mSlideRows) {
+            if (index < row.size()) return row.get(index);
+            index -= row.size();
+        }
+        return null;
+    }
+
+    private void closeSlidePopup() {
+        mSlideActive = false;
+        if (mSlideWindow != null && mSlideWindow.isShowing()) {
+            try { mSlideWindow.dismiss(); } catch (RuntimeException ignored) {}
+        }
+    }
+
+    /** touch handling while the slide popup is open; true = consumed */
+    private boolean handleSlideTouch(android.view.MotionEvent me) {
+        switch (me.getActionMasked()) {
+            case android.view.MotionEvent.ACTION_MOVE: {
+                float dx = me.getX() - mSlideDownX, dy = me.getY() - mSlideDownY;
+                float slop = 6 * getResources().getDisplayMetrics().density;
+                if (dx * dx + dy * dy > slop * slop) mSlideMoved = true;
+                if (mSlideMoved) {
+                    int sel = slideItemAt(me.getX(), me.getY());
+                    if (sel != mSlideSelected) {
+                        mSlideSelected = sel;
+                        if (mSlideView != null) mSlideView.invalidate();
+                        performHapticFeedback(android.view.HapticFeedbackConstants.CLOCK_TICK);
+                    }
+                }
+                return true;
+            }
+            case android.view.MotionEvent.ACTION_UP: {
+                SlideItem it = mSlideMoved && mSlideSelected >= 0 ? slideItem(mSlideSelected) : null;
+                closeSlidePopup();
+                if (it != null && getOnKeyboardActionListener() != null) {
+                    if (it.code != 0 && (it.text == null || it.text.codePointCount(0, it.text.length()) <= 1)) {
+                        getOnKeyboardActionListener().onKey(it.code, new int[]{it.code});
+                    } else if (it.text != null) {
+                        getOnKeyboardActionListener().onText(it.text);
+                    }
+                }
+                return true;
+            }
+            case android.view.MotionEvent.ACTION_CANCEL:
+                closeSlidePopup();
+                return true;
+            default:
+                return true;
+        }
+    }
+
+    /** the popup's drawing, in the keyboard theme's colors */
+    private final class SlidePopupView extends View {
+        KeyboardTheme theme;
+        private final Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final android.graphics.RectF r = new android.graphics.RectF();
+
+        SlidePopupView(Context c) { super(c); }
+
+        @Override
+        protected void onDraw(Canvas c) {
+            if (theme == null) return;
+            float d = getResources().getDisplayMetrics().density;
+            r.set(0, 0, getWidth(), getHeight());
+            p.setStyle(Paint.Style.FILL);
+            p.setColor(0x33000000);
+            r.offset(0, 2 * d);
+            c.drawRoundRect(r, 14 * d, 14 * d, p);
+            r.offset(0, -2 * d);
+            r.inset(0, 1 * d);
+            p.setColor(theme.isDark() ? theme.keyPressed : 0xFFFFFFFF);
+            c.drawRoundRect(r, 14 * d, 14 * d, p);
+            int index = 0;
+            p.setTextAlign(Paint.Align.CENTER);
+            for (List<SlideItem> row : mSlideRows) {
+                for (SlideItem it : row) {
+                    boolean sel = index == mSlideSelected;
+                    if (sel) {
+                        r.set(it.x + 2 * d, it.y + 2 * d, it.x + it.w - 2 * d, it.y + it.h - 2 * d);
+                        p.setColor(theme.accent);
+                        c.drawRoundRect(r, 9 * d, 9 * d, p);
+                    }
+                    int color = sel ? theme.onAccent : theme.text;
+                    float cx = it.x + it.w / 2, cy = it.y + it.h / 2;
+                    int vec = it.code == -112 ? R.drawable.ic_kk_copy : it.code == -116 ? R.drawable.ic_kk_paste
+                            : it.code == -150 ? R.drawable.ic_kk_clipboard : it.code == -152 ? R.drawable.ic_kk_notes
+                            : it.code == -157 ? R.drawable.ic_kk_emoji : it.code == -151 ? R.drawable.ic_kk_person
+                            : it.code == -111 ? R.drawable.ic_kk_select_all : it.code == -115 ? R.drawable.ic_kk_cut : 0;
+                    if (vec != 0) {
+                        Drawable ic = cachedDrawable(vec);
+                        ic.setTint(color);
+                        int s = (int) (Math.min(it.w, it.h) * 0.48f);
+                        ic.setBounds((int) (cx - s / 2f), (int) (cy - s / 2f), (int) (cx + s / 2f), (int) (cy + s / 2f));
+                        ic.draw(c);
+                    } else if (it.icon != null && (it.text == null || it.text.isEmpty())) {
+                        Drawable ic = it.icon.getConstantState() != null
+                                ? it.icon.getConstantState().newDrawable(getResources()).mutate() : it.icon;
+                        ic.setColorFilter(new android.graphics.PorterDuffColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN));
+                        int s = (int) (Math.min(it.w, it.h) * 0.5f);
+                        ic.setBounds((int) (cx - s / 2f), (int) (cy - s / 2f), (int) (cx + s / 2f), (int) (cy + s / 2f));
+                        ic.draw(c);
+                    } else if (it.text != null) {
+                        p.setColor(color);
+                        float size = it.h * 0.42f;
+                        p.setTextSize(size);
+                        while (p.measureText(it.text) > it.w - 6 * d && size > 8 * d) {
+                            size -= d;
+                            p.setTextSize(size);
+                        }
+                        c.drawText(it.text, cx, cy + size / 3, p);
+                    }
+                    index++;
+                }
+            }
+        }
     }
 }

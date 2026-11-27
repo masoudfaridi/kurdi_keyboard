@@ -596,117 +596,11 @@ public class kurdikeyboard extends InputMethodService
 
         LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-       final EmojiconsPopup popupWindow = new EmojiconsPopup(root,getApplicationContext());
-        // sized from the keyboard itself (was setSizeForSoftKeyboard(): screen-size guesswork)
-        final float popUpheight = getResources().getDimension(
-                R.dimen.keyboard_height);
-        popupWindow.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
         widthkeyboard=WindowManager.LayoutParams.MATCH_PARENT;
         ivKeyboard.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if (popupWindow.isShowing()) {
-
-                    popupWindow.dismiss();
-
-
-                } else {
-
-                    //popupWindow = new EmojiconsPopup(popupView, this);
-                    // popupWindow.setSize(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-
-
-                    int screenHeight = mInputView.getRootView().getHeight();
-                    int bottomHeight = (int) getResources().getDimension(R.dimen.key_height_firstrow);
-                    int equalizer = (int) getResources().getDimension(R.dimen.hiegh_for_emoji);
-                    int defHeight = (screenHeight - 2 * bottomHeight - equalizer);
-
-                    int locationforwhatsup[] = new int[2];
-                    ivKeyboardSelectall.getLocationOnScreen(locationforwhatsup);
-                    int bottomHeight3forwhatsup = locationforwhatsup[1];
-
-                    int height2 = (int) (locationforwhatsup[1] +
-                            ivKeyboardSelectall.getMeasuredHeight());
-
-                    int equalizerforwhatsup = (int) getResources().getDimension(R.dimen.hiegh_for_emoji_whatsup);
-
-                    int defHeight2 = Math.min(defHeight, height2 - equalizerforwhatsup);
-                    if (isPortrait()) {
-                        defHeight2 -= getResources().getDimension(
-                                R.dimen.key_height_firstrow
-                        );
-                    }
-                    widthkeyboard=defHeight2;
-                    popupWindow.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
-                    popupWindow.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
-                mOpenPopup = popupWindow;
-
-
-                    // Bring soft keyboard up : NOT WORKING
-                    // final
-                    InputMethodManager mInputMethodManager = (InputMethodManager) getBaseContext()
-                            .getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                    // mInputMethodManager.showSoftInput(root, 0);
-
-                    mInputMethodManager.showSoftInput(mInputView, 0);
-
-                    popupWindow.setOnSoftKeyboardOpenCloseListener(new OnSoftKeyboardOpenCloseListener() {
-
-                        @Override
-                        public void onKeyboardOpen(int keyBoardHeight) {
-
-                        }
-
-                        @Override
-                        public void onKeyboardClose() {
-                            if (popupWindow.isShowing())
-                                popupWindow.dismiss();
-                        }
-                    });
-
-                    popupWindow.setOnEmojiconClickedListener(new OnEmojiconClickedListener() {
-
-                        @Override
-                        public void onEmojiconClicked(Emojicon emojicon) {
-                            mComposing.append(emojicon.getEmoji());
-                            commitTyped(getCurrentInputConnection());
-
-                            //  customToast("" + emojicon.getEmoji());
-                        }
-                    });
-
-                    popupWindow.setOnEmojiconBackspaceClickedListener(new OnEmojiconBackspaceClickedListener() {
-
-                        @Override
-                        public void onEmojiconBackspaceClicked(View v) {
-                            KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
-                            //customToast(" " + event);
-                            handleBackspace();
-
-                        }
-                    });
-                    popupWindow.setOnEmojiconCloseClickedListener(new OnEmojiconCloseClickedListener() {
-
-                        @Override
-                        public void onEmojiconCloseClicked(View v) {
-
-                            if(popupWindow.isShowing()) {
-
-                                popupWindow.dismiss();
-                            }
-
-
-                        }
-                    });
-
-
-                }
-
-
+            @Override public void onClick(View view) {
+                toggleEmojiPanel();
             }
-
         });
 
 
@@ -925,7 +819,9 @@ public class kurdikeyboard extends InputMethodService
         );
 
         mInputView.setOnKeyboardActionListener(this);
-        if(mCurKeyboard!=null){
+        if (mCurKeyboard != null && mCurKeyboard == mSymbolsnumbers) {
+            setKKeyboard(mSymbolsnumbers); // number / phone field: keep the number pad
+        } else if(mCurKeyboard!=null){
             //setKKeyboard(mCurKeyboard);
             if(prelanguage.equals("en")) {
                 setKKeyboard(mQwertyKeyboard);
@@ -1283,8 +1179,8 @@ public class kurdikeyboard extends InputMethodService
 
                // mCurKeyboard = mQwertyKeyboard;
                 setCurrentLanguage();
-                if(mCurKeyboard==mSymbolsKeyboard||
-                        mCurKeyboard==mSymbolsfarsiKeyboard) {
+                if(mCurKeyboard==null||mCurKeyboard==mSymbolsKeyboard||
+                        mCurKeyboard==mSymbolsfarsiKeyboard||mCurKeyboard==mSymbolsnumbers) {
                     if(prelanguage.equals("en")){
                         mCurKeyboard=mQwertyKeyboard;
                     }else if(prelanguage.equals("kr")){
@@ -1337,8 +1233,8 @@ public class kurdikeyboard extends InputMethodService
                 // keyboard with no special features.
                // mCurKeyboard = mQwertyKeyboard;
                 setCurrentLanguage();
-                if(mCurKeyboard==mSymbolsKeyboard||
-                        mCurKeyboard==mSymbolsfarsiKeyboard) {
+                if(mCurKeyboard==null||mCurKeyboard==mSymbolsKeyboard||
+                        mCurKeyboard==mSymbolsfarsiKeyboard||mCurKeyboard==mSymbolsnumbers) {
                     if(prelanguage.equals("en")){
                         mCurKeyboard=mQwertyKeyboard;
                     }else if(prelanguage.equals("kr")){
@@ -1844,6 +1740,10 @@ public class kurdikeyboard extends InputMethodService
         }
         else if (primaryCode == Keyboard.KEYCODE_CANCEL)
         {
+            onKey(KKeyboardView.KEYCODE_LONG_closetobringupemoji, null);
+        }
+        else if (primaryCode == -999999) // 2017: the emoji key toggled the tools row
+        {
             tempint= (int) getResources().getDimension(R.dimen.longclickyadd);
             tempintfullscreen= (int) getResources().getDimension(R.dimen.fullscreenadd);
 
@@ -1945,6 +1845,12 @@ public class kurdikeyboard extends InputMethodService
             }
 
 
+        }else if(primaryCode==KKeyboardView.KEYCODE_BACK_TO_LETTERS){
+            KKeyboard letters = "fa".equals(prelanguage) ? mfarsiKeyboard
+                    : "kr".equals(prelanguage) ? mkurdishKeyboard : mQwertyKeyboard;
+            language = "fa".equals(prelanguage) ? "fa" : "kr".equals(prelanguage) ? "kr" : "en";
+            mCurKeyboard = letters;
+            setKKeyboard(letters);
         }else if(primaryCode==KKeyboardView.KEYCODE_Numbers_page_goto_symbols){
             setKKeyboard(mSymbolsKeyboard);
 
@@ -2752,124 +2658,7 @@ public class kurdikeyboard extends InputMethodService
         }else if(primaryCode==KKeyboardView.KEYCODE_symbols_Numbers_page){
             setKKeyboard(mSymbolsnumbers);
         }else if(primaryCode==KKeyboardView.KEYCODE_LONG_closetobringupemoji){
-            if (closeOpenPopup()) return; // pressing again closes it (they used to stack up)
-           // Toast.makeText(getApplicationContext(),
-             //       "KEYCODE_LONG_closetobringupemoji",Toast.LENGTH_LONG).show();
-            final EmojiconsPopup popupWindow = new EmojiconsPopup(rootTemp,getApplicationContext());
-            // sized from the keyboard itself (was setSizeForSoftKeyboard(): screen-size guesswork)
-            final float popUpheight = getResources().getDimension(
-                    R.dimen.keyboard_height);
-            popupWindow.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
-
-            if (popupWindow.isShowing()) {
-
-                popupWindow.dismiss();
-
-
-            } else {
-
-                //popupWindow = new EmojiconsPopup(popupView, this);
-                // popupWindow.setSize(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-
-
-                int screenHeight = mInputView.getRootView().getHeight();
-                int bottomHeight = (int) getResources().getDimension(R.dimen.key_height_firstrow);
-                int equalizer = (int) getResources().getDimension(R.dimen.hiegh_for_emoji);
-                int defHeight = (screenHeight - 2 * bottomHeight - equalizer);
-
-                int locationforwhatsup[] = new int[2];
-                ivKeyboardSelectall.getLocationOnScreen(locationforwhatsup);
-                int bottomHeight3forwhatsup = locationforwhatsup[1];
-
-                int height2 = (int) (locationforwhatsup[1] +
-                        ivKeyboardSelectall.getMeasuredHeight());
-
-                int equalizerforwhatsup = (int) getResources().getDimension(R.dimen.hiegh_for_emoji_whatsup);
-
-                int defHeight2 = Math.min(defHeight, height2 - equalizerforwhatsup);
-
-                /*
-                if (!isPortrait()&&(toollayout.getVisibility()==View.GONE)&&
-                        preferenceKeyboard.getBoolean(getString(R.string.preftoolbarsivkeyboard),  false)) {
-
-                    defHeight2 += getResources().getDimension(
-                            R.dimen.key_height_firstrow
-                    );
-
-                    defHeight2 += .5*defHeight2;
-
-                }
-                */
-
-
-                popupWindow.setSize(WindowManager.LayoutParams.MATCH_PARENT, keyboardPopupHeight());
-                popupWindow.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
-                mOpenPopup = popupWindow;
-
-
-                // Bring soft keyboard up : NOT WORKING
-                // final
-                InputMethodManager mInputMethodManager = (InputMethodManager) getBaseContext()
-                        .getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                // mInputMethodManager.showSoftInput(root, 0);
-
-                mInputMethodManager.showSoftInput(mInputView, 0);
-
-                popupWindow.setOnSoftKeyboardOpenCloseListener(new OnSoftKeyboardOpenCloseListener() {
-
-                    @Override
-                    public void onKeyboardOpen(int keyBoardHeight) {
-
-                    }
-
-                    @Override
-                    public void onKeyboardClose() {
-                        if (popupWindow.isShowing())
-                            popupWindow.dismiss();
-                    }
-                });
-
-                popupWindow.setOnEmojiconClickedListener(new OnEmojiconClickedListener() {
-
-                    @Override
-                    public void onEmojiconClicked(Emojicon emojicon) {
-                        mComposing.append(emojicon.getEmoji());
-                        commitTyped(getCurrentInputConnection());
-
-                        //  customToast("" + emojicon.getEmoji());
-                    }
-                });
-
-                popupWindow.setOnEmojiconBackspaceClickedListener(new OnEmojiconBackspaceClickedListener() {
-
-                    @Override
-                    public void onEmojiconBackspaceClicked(View v) {
-                        KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
-                        //customToast(" " + event);
-                        handleBackspace();
-
-                    }
-                });
-                popupWindow.setOnEmojiconCloseClickedListener(new OnEmojiconCloseClickedListener() {
-
-                    @Override
-                    public void onEmojiconCloseClicked(View v) {
-
-                        if(popupWindow.isShowing()) {
-
-                            popupWindow.dismiss();
-                        }
-
-
-                    }
-                });
-
-
-            }
-
-
-
+            toggleEmojiPanel();
         }else if(primaryCode==-158){
             //onja
             /*
@@ -4509,6 +4298,47 @@ private void setCurrentLanguage(){
                 KeyboardTheme.DEFAULT_ID)).id + "|"
                 + preferenceKeyboard.getBoolean(getString(R.string.prefimagefrbackground), false) + "|"
                 + preferenceKeyboard.getString(getString(R.string.prefkeypathimage), "");
+    }
+
+    // ---------------------------------------------------------------- emoji panel (2.0)
+
+    private android.widget.PopupWindow mEmojiWindow;
+
+    /** opens the emoji panel over the keys, or closes it */
+    private void toggleEmojiPanel() {
+        if (mEmojiWindow != null && mEmojiWindow.isShowing()) {
+            mEmojiWindow.dismiss();
+            return;
+        }
+        closeOpenPopup();
+        EmojiPanel panel = new EmojiPanel(this, mInputView.currentTheme(), new EmojiPanel.Listener() {
+            @Override public void onEmoji(String emoji) {
+                getCurrentInputConnection().commitText(emoji, 1);
+                handlehapticfeedback();
+            }
+
+            @Override public void onBackspace() {
+                handleBackspace();
+            }
+
+            @Override public void onSpace() {
+                getCurrentInputConnection().commitText(" ", 1);
+            }
+
+            @Override public void onClose() {
+                if (mEmojiWindow != null) mEmojiWindow.dismiss();
+            }
+        });
+        mEmojiWindow = new android.widget.PopupWindow(panel, WindowManager.LayoutParams.MATCH_PARENT,
+                keyboardPopupHeight());
+        mEmojiWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        mEmojiWindow.setOutsideTouchable(false);
+        try {
+            mEmojiWindow.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
+            mOpenPopup = mEmojiWindow;
+        } catch (RuntimeException e) {
+            mEmojiWindow = null;
+        }
     }
 }
 
