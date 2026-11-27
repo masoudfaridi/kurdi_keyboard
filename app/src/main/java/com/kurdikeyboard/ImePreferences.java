@@ -156,7 +156,7 @@ public class ImePreferences extends PreferenceActivity
                 Preference prefupdateavailable
                         =findPreference(getString(R.string.pref_forceupdate));
 
-                if(vCode==-1){
+                if(vCode==-1 || vCode<=oldversion){ // -1: not on Bazaar; otherwise only newer versions count
                     tempprefisupadat=getString(R.string.isupdate);
                 }else {
                     Toast.makeText(ImePreferences.this,
@@ -167,7 +167,7 @@ public class ImePreferences extends PreferenceActivity
 
 
                 }
-                prefupdateavailable.setSummary(tempprefisupadat);
+                if (prefupdateavailable != null) prefupdateavailable.setSummary(tempprefisupadat);
 
             } catch (Exception e) {
                 e.printStackTrace();

@@ -75,6 +75,8 @@ public class KKeyboard extends Keyboard  {
         } else if (key.codes[0] == KKeyboardView.KEYCODE_LANGUAGE_SWITCH) {
             mLanguageSwitchKey = key;
             mSavedLanguageSwitchKey = new KurdishKey(res, parent, x, y, parser);
+        } else if (key.codes[0] == Keyboard.KEYCODE_SHIFT) {
+            mshift = key; // without this the shift / caps-lock icon never changed
         }
         /*else if(key.codes[0]==8204){
             mhalfspace=key;

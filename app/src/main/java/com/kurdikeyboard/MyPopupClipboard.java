@@ -62,6 +62,10 @@ package com.kurdikeyboard;
 
 
 public class MyPopupClipboard extends PopupWindow {
+    // removed on dismiss: it used to stay registered forever (one leak per opening)
+    private android.view.ViewTreeObserver.OnGlobalLayoutListener mLayoutListener;
+    private android.view.View mLayoutListenerOwner;
+
     private static final float one_DIP = 1.0f;
 
     private kurdikeyboard kk;
@@ -98,7 +102,7 @@ public class MyPopupClipboard extends PopupWindow {
     }
 
     public void setSizeForSoftKeyboard(){
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        mLayoutListener = new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 Rect r = new Rect();
@@ -133,7 +137,10 @@ public class MyPopupClipboard extends PopupWindow {
                         onSoftKeyboardOpenCloseListenerpopupsetting.onKeyboardClose();
                 }
             }
-        });
+        };
+		if (mLayoutListenerOwner != null) mLayoutListenerOwner.getViewTreeObserver().removeOnGlobalLayoutListener(mLayoutListener);
+		mLayoutListenerOwner = rootView;
+		rootView.getViewTreeObserver().addOnGlobalLayoutListener(mLayoutListener);
     }
     private int getUsableScreenHeight() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -423,7 +430,7 @@ public class MyPopupClipboard extends PopupWindow {
     }
     public static class RepeatListener implements View.OnTouchListener {
 
-        private Handler handler = new Handler();
+        private Handler handler = new Handler(android.os.Looper.getMainLooper());
 
         private int initialInterval;
         private final int normalInterval;
@@ -495,6 +502,11 @@ public class MyPopupClipboard extends PopupWindow {
      */
     @Override
     public void dismiss() {
+        if (mLayoutListener != null && mLayoutListenerOwner != null) {
+            mLayoutListenerOwner.getViewTreeObserver().removeOnGlobalLayoutListener(mLayoutListener);
+            mLayoutListener = null;
+            mLayoutListenerOwner = null;
+        }
         super.dismiss();
 
     }

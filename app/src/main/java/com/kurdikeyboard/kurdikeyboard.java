@@ -120,8 +120,9 @@ public class kurdikeyboard extends InputMethodService
      * that are primarily intended to be used for on-screen text entry.
      */
     static final boolean PROCESS_HARD_KEYS = true;
-    static Bitmap bitmap,convertedbitmap;
-    static Drawable dr;
+    // were static: the Drawable's callback kept every old input view alive
+    private Bitmap bitmap,convertedbitmap;
+    private Drawable dr;
     //trialall
     //private boolean trialversionmonth10isend;
 
@@ -337,7 +338,8 @@ public class kurdikeyboard extends InputMethodService
             // so we need to be able to re-build the keyboards if the available
             // space has changed.
             int displayWidth = getMaxWidth();
-            if (displayWidth == mLastDisplayWidth) return;
+            // also rebuild when the layout settings changed (they were ignored until a rotation)
+            if (displayWidth == mLastDisplayWidth && layoutPrefsSignature().equals(mLastLayoutPrefs)) return;
             mLastDisplayWidth = displayWidth;
         }
         if (preferenceKeyboard == null) {
@@ -351,6 +353,7 @@ public class kurdikeyboard extends InputMethodService
                 preferenceKeyboard.getBoolean(getString(R.string.preflanguage_kurdi_doublecick), true);
         extend_on_kurdi=preferenceKeyboard.getBoolean(getString(R.string.preflanguage_kurdi_extend), false);
 
+        mLastLayoutPrefs = layoutPrefsSignature();
         mQwertyKeyboard = new KKeyboard(this,R.xml.qwerty_en_2);
 
 
@@ -966,7 +969,7 @@ public class kurdikeyboard extends InputMethodService
                         switch(event.getAction()) {
                             case MotionEvent.ACTION_DOWN:
                                 if (mHandler != null) return true;
-                                mHandler = new Handler();
+                                mHandler = new Handler(android.os.Looper.getMainLooper());
                                 isdowncursorbacl=true;
                                // mHandler.postDelayed(mAction, 500);
                                 onKey(KKeyboardView.KEYCODE_CURSOR_B,null);
@@ -1402,7 +1405,7 @@ public class kurdikeyboard extends InputMethodService
 
                 try {
 
-                    mInputView.setBackgroundDrawable(dr);
+                    if (convertedbitmap != null) mInputView.setBackground(dr);
 
 
                 } catch (Exception ei) {
@@ -1615,6 +1618,14 @@ public class kurdikeyboard extends InputMethodService
       // Toast.makeText(getBaseContext(),"onStartInputView",Toast.LENGTH_LONG).show();
 
         super.onStartInputView(attribute, restarting);
+        if (mQwertyKeyboard != null && !layoutPrefsSignature().equals(mLastLayoutPrefs)) {
+            // double-tap / extended-Kurdish settings changed: rebuild the keyboards now
+            onInitializeInterface();
+            if ("fa".equals(prelanguage)) mCurKeyboard = mfarsiKeyboard;
+            else if ("kr".equals(prelanguage)) mCurKeyboard = mkurdishKeyboard;
+            else mCurKeyboard = mQwertyKeyboard;
+            setInputView(onCreateInputView());
+        }
         readPredictionPrefs();
         mFieldAllowsPrediction = fieldAllowsPrediction(attribute);
         mKeepSwipeAlternatives = false;
@@ -4208,7 +4219,7 @@ private void setCurrentLanguage(){
     private PredictionEngine mPredict;
     private SuggestionStripView mStrip;
     private FrameLayout mTopRow;
-    private final Handler mSuggestHandler = new Handler();
+    private final Handler mSuggestHandler = new Handler(android.os.Looper.getMainLooper());
     private boolean mPredictionEnabled = true;
     private boolean mSwipeEnabled = true;
     private boolean mAutoSpace = true;
@@ -4594,6 +4605,17 @@ private void setCurrentLanguage(){
     public InputConnection getCurrentInputConnection() {
         InputConnection ic = super.getCurrentInputConnection();
         return ic != null ? ic : NO_OP_INPUT_CONNECTION;
+    }
+
+    private String mLastLayoutPrefs = "";
+
+    private String layoutPrefsSignature() {
+        if (preferenceKeyboard == null) {
+            preferenceKeyboard = getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE);
+        }
+        return preferenceKeyboard.getBoolean(getString(R.string.preflanguage_farsi_doublecick), true) + ","
+                + preferenceKeyboard.getBoolean(getString(R.string.preflanguage_kurdi_doublecick), true) + ","
+                + preferenceKeyboard.getBoolean(getString(R.string.preflanguage_kurdi_extend), false);
     }
 }
 

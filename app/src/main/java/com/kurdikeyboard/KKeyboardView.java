@@ -310,6 +310,7 @@ public class KKeyboardView extends KeyboardView {
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (getKeyboard() == null) return;
 
         Paint paint = new Paint();
         Paint paintpopupsymbole=new Paint();
@@ -463,7 +464,7 @@ public class KKeyboardView extends KeyboardView {
             }
 
         }
-        if(listS.equals("1")){
+        else if(listS.equals("1")){ // "else": with an image background the theme keys hid the image
             List<Key> keys = getKeyboard().getKeys();
             for(Key key: keys) {
                 if(key.icon != null) {

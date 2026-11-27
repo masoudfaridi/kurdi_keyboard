@@ -53,6 +53,10 @@ import android.widget.PopupWindow;
  */
 
 public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChangeListener, EmojiconRecents {
+    // removed on dismiss: it used to stay registered forever (one leak per opening)
+    private android.view.ViewTreeObserver.OnGlobalLayoutListener mLayoutListener;
+    private android.view.View mLayoutListenerOwner;
+
 	private int mEmojiTabLastSelectedIndex = -1;
 	private View[] mEmojiTabs;
 	private PagerAdapter mEmojisAdapter;
@@ -144,6 +148,11 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
 	 */
 	@Override
 	public void dismiss() {
+        if (mLayoutListener != null && mLayoutListenerOwner != null) {
+            mLayoutListenerOwner.getViewTreeObserver().removeOnGlobalLayoutListener(mLayoutListener);
+            mLayoutListener = null;
+            mLayoutListenerOwner = null;
+        }
 		super.dismiss();
 		EmojiconRecentsManager
 		.getInstance(mContext).saveRecents();
@@ -153,7 +162,7 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
 	 * Call this function to resize the emoji popup according to your soft keyboard size
 	 */
 	public void setSizeForSoftKeyboard(){
-		rootView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+		mLayoutListener = new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
 			@Override
 			public void onGlobalLayout() {
 				Rect r = new Rect();
@@ -188,7 +197,10 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
 						onSoftKeyboardOpenCloseListener.onKeyboardClose();
 				}
 			}
-		});
+		};
+		if (mLayoutListenerOwner != null) mLayoutListenerOwner.getViewTreeObserver().removeOnGlobalLayoutListener(mLayoutListener);
+		mLayoutListenerOwner = rootView;
+		rootView.getViewTreeObserver().addOnGlobalLayoutListener(mLayoutListener);
 	}	
 
 	private int getUsableScreenHeight() {	    
@@ -371,7 +383,7 @@ public class EmojiconsPopup extends PopupWindow implements ViewPager.OnPageChang
 	 */
 	public static class RepeatListener implements View.OnTouchListener {
 
-		private Handler handler = new Handler();
+		private Handler handler = new Handler(android.os.Looper.getMainLooper());
 
 		private int initialInterval;
 		private final int normalInterval;

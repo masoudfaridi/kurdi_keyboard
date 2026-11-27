@@ -24,12 +24,20 @@ public class UpdatePage extends Activity {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("bazaar://details?id=" + "com.kurdikeyboard"));
             intent.setPackage("com.farsitel.bazaar");
-            startActivity(intent);
+            try {
+                startActivity(intent);
+            } catch (android.content.ActivityNotFoundException e) {
+                android.widget.Toast.makeText(this, R.string.plzinstalbazaar, android.widget.Toast.LENGTH_LONG).show();
+            }
         }else if(view.getId()==R.id.buttonnazarat){
             Intent intent = new Intent(Intent.ACTION_EDIT);
             intent.setData(Uri.parse("bazaar://details?id=" + "com.kurdikeyboard"));
             intent.setPackage("com.farsitel.bazaar");
-            startActivity(intent);
+            try {
+                startActivity(intent);
+            } catch (android.content.ActivityNotFoundException e) {
+                android.widget.Toast.makeText(this, R.string.plzinstalbazaar, android.widget.Toast.LENGTH_LONG).show();
+            }
         }
 
     }
