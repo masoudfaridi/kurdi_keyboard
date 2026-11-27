@@ -196,4 +196,12 @@ public class ImePreferences extends PreferenceActivity
         }
         return handled;
     }
+
+    /** the whole settings activity, including the windows of nested pages, is right-to-left */
+    @Override
+    protected void attachBaseContext(Context base) {
+        android.content.res.Configuration c = new android.content.res.Configuration(base.getResources().getConfiguration());
+        c.setLayoutDirection(new java.util.Locale("fa"));
+        super.attachBaseContext(base.createConfigurationContext(c));
+    }
 }
