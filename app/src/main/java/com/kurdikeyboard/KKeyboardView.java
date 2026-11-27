@@ -1629,6 +1629,7 @@ public class KKeyboardView extends KeyboardView {
 
     private boolean mSpaceTracking, mSpaceCursor, mSpaceLangOpen;
     private boolean mSpaceCursorOn = true, mSpaceLangOn = true;
+    private int mLangPopupBottom;
     private float mSpaceStepDp = 14.8f;
     private float mSpaceDownX, mSpaceDownY, mSpaceLastStepX;
     private long mSpaceDownTime;
@@ -1667,23 +1668,29 @@ public class KKeyboardView extends KeyboardView {
         if (prefs.getBoolean(getContext().getString(R.string.preflanguage_kurdi), false)) {
             items.add(new SlideItem(KEYCODE_LANG_KR, "کوردی", null));
         }
+        // one language per row, stacked above the space bar: the finger only has to go up
         mSlideRows.clear();
-        mSlideRows.add(items);
+        for (SlideItem it : items) {
+            List<SlideItem> row = new java.util.ArrayList<>();
+            row.add(it);
+            mSlideRows.add(row);
+        }
         float d = getResources().getDisplayMetrics().density;
-        float cellW = Math.max(mSpaceKey.width / (float) items.size(), 78 * d);
-        float cellH = Math.max(mSpaceKey.height * 0.9f, 44 * d);
+        float cellW = Math.max(mSpaceKey.width * 0.6f, 150 * d);
+        float cellH = 50 * d;
         float pad = 6 * d;
-        int popW = (int) (cellW * items.size() + 2 * pad);
-        int popH = (int) (cellH + 2 * pad);
+        int popW = (int) (cellW + 2 * pad);
+        int popH = (int) (cellH * items.size() + 2 * pad);
         for (int i = 0; i < items.size(); i++) {
             SlideItem it = items.get(i);
-            it.x = pad + i * cellW; it.y = pad; it.w = cellW; it.h = cellH;
+            it.x = pad; it.y = pad + i * cellH; it.w = cellW; it.h = cellH;
         }
         int x = (int) (mSpaceKey.x + mSpaceKey.width / 2f - popW / 2f);
         x = Math.max(0, Math.min(getWidth() - popW, x));
         int y = (int) (mSpaceKey.y - popH - 4 * d);
         mSlideOrigin[0] = x;
         mSlideOrigin[1] = y;
+        mLangPopupBottom = y + popH;
         if (mSlideView == null) {
             mSlideView = new SlidePopupView(getContext());
             mSlideWindow = new android.widget.PopupWindow(mSlideView);
@@ -1754,20 +1761,15 @@ public class KKeyboardView extends KeyboardView {
                 if (!mSpaceTracking) return false;
                 float x = me.getX(), y = me.getY();
                 if (mSpaceLangOpen) {
-                    if (y < mSpaceKey.y) { // finger moved up into the language strip
-                        int sel = slideItemAt(x, y);
+                    // the list stays open until the finger is lifted; only the height counts,
+                    // so moving sideways while sliding up does not lose it
+                    if (y < mLangPopupBottom) {
+                        int sel = slideItemAt(mSlideOrigin[0] + 10 * d, y);
                         if (sel != mSlideSelected) {
                             mSlideSelected = sel;
                             if (mSlideView != null) mSlideView.invalidate();
                             performHapticFeedback(android.view.HapticFeedbackConstants.CLOCK_TICK);
                         }
-                        return true;
-                    }
-                    if (mSpaceCursorOn && Math.abs(x - mSpaceDownX) > 14 * d) { // sideways on the space bar: cursor
-                        mSpaceLangOpen = false;
-                        if (mSlideWindow != null) try { mSlideWindow.dismiss(); } catch (RuntimeException ignored) {}
-                        mSpaceCursor = true;
-                        mSpaceLastStepX = x;
                     }
                     return true;
                 }
