@@ -183,4 +183,17 @@ public class ImePreferences extends PreferenceActivity
     }
 
 
+
+    /** nested settings pages open in their own dialog window: make those right-to-left too */
+    @Override
+    public boolean onPreferenceTreeClick(android.preference.PreferenceScreen screen, Preference preference) {
+        boolean handled = super.onPreferenceTreeClick(screen, preference);
+        if (preference instanceof android.preference.PreferenceScreen) {
+            android.app.Dialog d = ((android.preference.PreferenceScreen) preference).getDialog();
+            if (d != null && d.getWindow() != null) {
+                d.getWindow().getDecorView().setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
+            }
+        }
+        return handled;
+    }
 }

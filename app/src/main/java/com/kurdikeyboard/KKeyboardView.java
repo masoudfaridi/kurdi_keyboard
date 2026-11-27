@@ -327,7 +327,7 @@ public class KKeyboardView extends KeyboardView {
                 this.getContext()
         .getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE);
         String listS=
-                preferenceKeyboard.getString(this.getContext().getString(R.string.pref_list_theme_selector), "1");
+                preferenceKeyboard.getString(this.getContext().getString(R.string.pref_list_theme_selector), "35");
 
         int fontsize=preferenceKeyboard.getInt(
                 this.getContext().getString(R.string.prefseekbarfont),100);
@@ -377,6 +377,12 @@ public class KKeyboardView extends KeyboardView {
                 handleicon(key,listS);
             }
         }*/
+        if (isFlatTheme(listS) && !preferenceKeyboard.getBoolean(
+                mContext.getString(R.string.prefimagefrbackground), false)) {
+            drawFlatTheme(canvas, "36".equals(listS), paintforsize, paintforsize2fortwolabelkey,
+                    paintforsizenumbersfixed);
+            return;
+        }
         ///inja
         boolean isactiveimagebg=
                 preferenceKeyboard.getBoolean(mContext.getString(R.string.prefimagefrbackground)
@@ -5699,5 +5705,174 @@ public class KKeyboardView extends KeyboardView {
         }
         d.setAlpha(255); // some branches set an opacity; start from opaque every time
         return d;
+    }
+
+    // =====================================================================
+    // 2.0 "modern" themes (35 = light, 36 = dark): flat rounded keys drawn in code,
+    // vector icons for the function keys, no bitmaps.
+    // =====================================================================
+
+    static boolean isFlatTheme(String listS) {
+        return "35".equals(listS) || "36".equals(listS);
+    }
+
+    private final Paint mFlatPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final android.graphics.RectF mFlatRect = new android.graphics.RectF();
+
+    private static final class FlatColors {
+        int bg, key, keyPressed, fn, fnPressed, shadow, text, hint, accent, accentPressed, onAccent;
+    }
+
+    private static FlatColors flatColors(boolean dark) {
+        FlatColors c = new FlatColors();
+        if (dark) {
+            c.bg = 0xFF15191E; c.key = 0xFF2C333C; c.keyPressed = 0xFF3D4651;
+            c.fn = 0xFF20262D; c.fnPressed = 0xFF323A44; c.shadow = 0xFF0B0E11;
+            c.text = 0xFFF2F4F7; c.hint = 0xFF8E99A8;
+        } else {
+            c.bg = 0xFFE6EAF0; c.key = 0xFFFFFFFF; c.keyPressed = 0xFFD6DEE8;
+            c.fn = 0xFFCED6E0; c.fnPressed = 0xFFB9C3CF; c.shadow = 0xFFB4BDC8;
+            c.text = 0xFF1A2433; c.hint = 0xFF7B8594;
+        }
+        c.accent = 0xFF2F6FED; c.accentPressed = 0xFF1F56C8; c.onAccent = 0xFFFFFFFF;
+        return c;
+    }
+
+    private boolean keyboardHasLetters() {
+        for (Key k : getKeyboard().getKeys()) {
+            if (k.codes != null && k.codes.length > 0 && k.codes[0] > 64 && Character.isLetter(k.codes[0])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void drawFlatTheme(Canvas canvas, boolean dark, Paint labelPaint, Paint hintPaint, Paint numberPaint) {
+        FlatColors c = flatColors(dark);
+        float d = getResources().getDisplayMetrics().density;
+        canvas.drawColor(c.bg); // hides what KeyboardView drew underneath
+
+        labelPaint.setColor(c.text);
+        labelPaint.setFakeBoldText(false);
+        hintPaint.setColor(c.hint);
+        hintPaint.setFakeBoldText(false);
+        numberPaint.setColor(c.text);
+        numberPaint.setFakeBoldText(false);
+        Paint smallHint = new Paint(numberPaint);
+        smallHint.setColor(c.hint);
+        smallHint.setTextSize(numberPaint.getTextSize() * 0.6f);
+        Paint fnText = new Paint(Paint.ANTI_ALIAS_FLAG);
+        fnText.setTextAlign(Paint.Align.CENTER);
+        fnText.setColor(c.text);
+        fnText.setTextSize(15 * getResources().getDisplayMetrics().scaledDensity);
+
+        boolean letters = keyboardHasLetters();
+        KKeyboard kk = getKeyboard() instanceof KKeyboard ? (KKeyboard) getKeyboard() : null;
+
+        for (Key key : getKeyboard().getKeys()) {
+            if (key.height < 8 * d || key.width < 8 * d) continue; // zero-size helper keys in the layouts
+            int code = key.codes != null && key.codes.length > 0 ? key.codes[0] : 0;
+            boolean isEnter = code == 10;
+            boolean isFn = code == -1 || code == -5 || code == -2 || code == -3 || code == -117
+                    || code == -158 || code == 8204 || code == 46 || (key.label == null && code != 32 && !isEnter);
+
+            // key shape: inset, soft shadow, rounded corners
+            float insetX = 2.5f * d, insetY = 3.5f * d, r = 7 * d;
+            mFlatRect.set(key.x + insetX, key.y + insetY, key.x + key.width - insetX, key.y + key.height - insetY);
+            mFlatPaint.setStyle(Paint.Style.FILL);
+            mFlatPaint.setColor(c.shadow);
+            mFlatRect.offset(0, 1.2f * d);
+            canvas.drawRoundRect(mFlatRect, r, r, mFlatPaint);
+            mFlatRect.offset(0, -1.2f * d);
+            int fill;
+            if (isEnter) fill = key.pressed ? c.accentPressed : c.accent;
+            else if (isFn) fill = key.pressed ? c.fnPressed : c.fn;
+            else fill = key.pressed ? c.keyPressed : c.key;
+            mFlatPaint.setColor(fill);
+            canvas.drawRoundRect(mFlatRect, r, r, mFlatPaint);
+
+            float cx = mFlatRect.centerX(), cy = mFlatRect.centerY();
+            float icon = Math.min(mFlatRect.height() * 0.46f, 26 * d);
+
+            switch (code) {
+                case 10: {
+                    int action = kk != null ? kk.enterAction : -1;
+                    int res = R.drawable.ic_kk_return;
+                    if ((action & android.view.inputmethod.EditorInfo.IME_FLAG_NO_ENTER_ACTION) == 0) {
+                        switch (action & android.view.inputmethod.EditorInfo.IME_MASK_ACTION) {
+                            case android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH: res = R.drawable.ic_kk_search; break;
+                            case android.view.inputmethod.EditorInfo.IME_ACTION_SEND: res = R.drawable.ic_kk_send; break;
+                            case android.view.inputmethod.EditorInfo.IME_ACTION_GO:
+                            case android.view.inputmethod.EditorInfo.IME_ACTION_NEXT: res = R.drawable.ic_kk_arrow_right; break;
+                            case android.view.inputmethod.EditorInfo.IME_ACTION_DONE: res = R.drawable.ic_kk_check; break;
+                        }
+                    }
+                    drawFlatIcon(canvas, res, cx, cy, icon, c.onAccent);
+                    continue;
+                }
+                case -1:
+                    drawFlatIcon(canvas, isShifted() ? R.drawable.ic_kk_shift_filled : R.drawable.ic_kk_shift,
+                            cx, cy, icon, isShifted() ? c.accent : c.text);
+                    continue;
+                case -5:
+                    drawFlatIcon(canvas, R.drawable.ic_kk_backspace, cx, cy, icon, c.text);
+                    continue;
+                case -3:
+                    drawFlatIcon(canvas, R.drawable.ic_kk_emoji, cx, cy, icon, c.text);
+                    continue;
+                case 32: {
+                    String lang = "fa".equals(kurdikeyboard.language) ? "فارسی"
+                            : "kr".equals(kurdikeyboard.language) ? "کوردی" : "English";
+                    fnText.setColor(c.hint);
+                    float base = cy + fnText.getTextSize() / 3;
+                    float half = fnText.measureText(lang) / 2 + 10 * d;
+                    canvas.drawText(lang, cx, base, fnText);
+                    canvas.drawText("◂", cx - half, base, fnText); // slide space left/right to switch language
+                    canvas.drawText("▸", cx + half, base, fnText);
+                    fnText.setColor(c.text);
+                    continue;
+                }
+                case -2: {
+                    String t = letters ? "?123" : ("en".equals(kurdikeyboard.language) ? "ABC" : "الف");
+                    canvas.drawText(t, cx, cy + fnText.getTextSize() / 3, fnText);
+                    continue;
+                }
+                case 8204: {
+                    Paint p = new Paint(fnText);
+                    p.setTextSize(fnText.getTextSize() * 0.8f);
+                    String t = "نیم‌فاصله";
+                    if (p.measureText(t) > mFlatRect.width() - 6 * d) t = "␣";
+                    canvas.drawText(t, cx, cy + p.getTextSize() / 3, p);
+                    continue;
+                }
+            }
+
+            if (key.label != null) {
+                String keyLabel = key.label.toString();
+                if (isShifted()) keyLabel = keyLabel.toUpperCase();
+                if (returnvalue(key)) {
+                    printcharactor(key, canvas, labelPaint, hintPaint, keyLabel);
+                } else {
+                    drawaarab(canvas, key, keyLabel, smallHint);
+                    canvas.drawText(key.label.toString(), cx, key.y + 7 * (key.height / 10), numberPaint);
+                }
+            } else if (key.icon != null) {
+                // any other function key: its own icon, recolored to the theme
+                Drawable ic = key.icon.getConstantState() != null
+                        ? key.icon.getConstantState().newDrawable(getResources()).mutate() : key.icon;
+                ic.setColorFilter(new android.graphics.PorterDuffColorFilter(c.text, android.graphics.PorterDuff.Mode.SRC_IN));
+                int s = (int) icon;
+                ic.setBounds((int) (cx - s / 2f), (int) (cy - s / 2f), (int) (cx + s / 2f), (int) (cy + s / 2f));
+                ic.draw(canvas);
+            }
+        }
+    }
+
+    private void drawFlatIcon(Canvas canvas, int res, float cx, float cy, float size, int color) {
+        Drawable dr = cachedDrawable(res);
+        dr.setTint(color);
+        int s = (int) size;
+        dr.setBounds((int) (cx - s / 2f), (int) (cy - s / 2f), (int) (cx + s / 2f), (int) (cy + s / 2f));
+        dr.draw(canvas);
     }
 }

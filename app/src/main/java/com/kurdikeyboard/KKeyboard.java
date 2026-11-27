@@ -32,6 +32,8 @@ public class KKeyboard extends Keyboard  {
     //private Key mdot;
 
     private Key mshift;
+    /** editor action of the current field (EditorInfo action | flags), for themes drawing the Enter key */
+    public int enterAction = 0;
     private Context mcontext;
 
     private Key mMulti_change;
@@ -293,6 +295,7 @@ public class KKeyboard extends Keyboard  {
 
 
 
+        enterAction = ei.imeOptions & (EditorInfo.IME_MASK_ACTION | EditorInfo.IME_FLAG_NO_ENTER_ACTION);
         switch (ei.imeOptions & (EditorInfo.IME_MASK_ACTION | EditorInfo.IME_FLAG_NO_ENTER_ACTION))
         {
 

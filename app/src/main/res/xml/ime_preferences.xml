@@ -134,6 +134,7 @@
                 android:summary="@string/summary_list_theme_selector"
                 android:entries="@array/listentries_list_theme_selector"
                 android:entryValues="@array/listvalues_list_theme_selector"
+                android:defaultValue="35"
             />
             <EditTextPreference
 

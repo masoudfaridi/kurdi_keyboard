@@ -553,7 +553,7 @@ public class kurdikeyboard extends InputMethodService
 
 
          listS=
-        preferenceKeyboard.getString(getString(R.string.pref_list_theme_selector),"1");
+        preferenceKeyboard.getString(getString(R.string.pref_list_theme_selector),"35");
         language_kurdi_enable=
                 preferenceKeyboard.getBoolean(getString(R.string.preflanguage_kurdi), true);
         language_farsi_enable=
@@ -776,6 +776,10 @@ public class kurdikeyboard extends InputMethodService
             //toastM(listS);
             root = getLayoutInflater().inflate(R.layout.a_34_mf_theme_34_input, null);
 
+        }else if (listS.equals("35")){
+            root = getLayoutInflater().inflate(R.layout.a_35_mf_theme_35_input, null); // modern light
+        }else if (listS.equals("36")){
+            root = getLayoutInflater().inflate(R.layout.a_36_mf_theme_36_input, null); // modern dark
         }
         mInputView = (KKeyboardView) root.findViewById(R.id.keyboard);
 
