@@ -365,5 +365,7 @@
     <string name="suggestion_removed">«%1$s» از پیشنهادها حذف شد</string>
     <string name="dictionary_loading">دیکشنری در حال بارگذاری است، کمی صبر کنید</string>
 
+    <string name="permission_granted">دسترسی داده شد. دوباره روی دکمه بزنید.</string>
+    <string name="permission_denied">بدون این دسترسی، این قابلیت کار نمی‌کند.</string>
 </resources>
 

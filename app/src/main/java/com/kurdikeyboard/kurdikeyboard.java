@@ -2064,7 +2064,9 @@ public class kurdikeyboard extends InputMethodService
         }
 
         InputConnection ic = getCurrentInputConnection();
+        // used by the cursor / select / copy keys; null when the editor does not support it
         ExtractedText et = ic.getExtractedText(new ExtractedTextRequest(), 0);
+        if (et == null) et = new ExtractedText();
 
 
 
@@ -2829,6 +2831,9 @@ public class kurdikeyboard extends InputMethodService
 
 
         }else  if(primaryCode==KKeyboardView.KEYCODE_CONTACCTS_READ_2){
+            if (!PermissionActivity.ensure(this, android.Manifest.permission.READ_CONTACTS)) {
+                return; // the permission dialog opens; tap the key again afterwards
+            }
             final MyPopupPhoneContacts
                     popupphonecontacts =new MyPopupPhoneContacts(
                     rootTemp,getApplicationContext()
@@ -4648,6 +4653,35 @@ private void setCurrentLanguage(){
         } catch (RuntimeException ignored) {
         }
         mClipListener = null;
+    }
+
+    // ---------------------------------------------------------------- safety
+
+    /** used when the editor has gone away: every call is a harmless no-op */
+    private static final InputConnection NO_OP_INPUT_CONNECTION = (InputConnection)
+            java.lang.reflect.Proxy.newProxyInstance(InputConnection.class.getClassLoader(),
+                    new Class<?>[]{InputConnection.class}, new java.lang.reflect.InvocationHandler() {
+                        @Override
+                        public Object invoke(Object proxy, java.lang.reflect.Method m, Object[] args) {
+                            Class<?> t = m.getReturnType();
+                            if (t == boolean.class) return false;
+                            if (t == int.class) return 0;
+                            if (t == long.class) return 0L;
+                            if (m.getName().equals("equals")) return proxy == args[0];
+                            if (m.getName().equals("hashCode")) return 0;
+                            return null;
+                        }
+                    });
+
+    /**
+     * The 2017 code calls getCurrentInputConnection().commitText(...) etc. everywhere without
+     * a null check; it is null for a moment when the app being typed in closes or loses
+     * focus, which crashed the keyboard.
+     */
+    @Override
+    public InputConnection getCurrentInputConnection() {
+        InputConnection ic = super.getCurrentInputConnection();
+        return ic != null ? ic : NO_OP_INPUT_CONNECTION;
     }
 }
 
