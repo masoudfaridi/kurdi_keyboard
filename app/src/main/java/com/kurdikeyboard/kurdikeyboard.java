@@ -302,7 +302,7 @@ public class kurdikeyboard extends InputMethodService
         tempint= (int) getResources().getDimension(R.dimen.longclickyadd);
         tempintfullscreen= (int) getResources().getDimension(R.dimen.fullscreenadd);
 
-        startService(new Intent(this, CBWatcherService.class));
+        registerClipboardListener();
        // clipboardString=new String[];
        // clipboardString[0]="firststring";
       // clipboardStringLen=1;
@@ -2667,7 +2667,7 @@ public class kurdikeyboard extends InputMethodService
 
             ///////////////////////
             //File folder = new File(getFilesDir(),Constants.ClipboardCacheFolderPath);
-            File directory = Environment.getExternalStorageDirectory();
+            File directory = AppStorage.root(getApplicationContext());
             File folder = new File( directory + "/data/data/com.kurdikeyboard" + Constants.ClipboardCacheFolderPath );
 
             if (!folder.exists()) {
@@ -2694,7 +2694,7 @@ public class kurdikeyboard extends InputMethodService
           //  File folder = new File( directory + "/" + Constants.ClipboardCacheFolderPath );
 
                 //toastM("path: " + directory.getPath());
-                File[] files = folder.listFiles();
+                File[] files = AppStorage.sortedFiles(folder);
                // toastM("lenth is:" + files.length);
                 mallclipboardStrings.clear();
                 mallclipboarddate.clear();
@@ -2717,7 +2717,7 @@ public class kurdikeyboard extends InputMethodService
                             }
                             fr.close();
                             br.close();
-                            mallclipboardStrings.add(sb.toString());
+                            mallclipboardStrings.add(AppStorage.trimTrailingNewline(sb));
                             String nametemp=file.getName();
                             nametemp = nametemp.substring(0, nametemp.length()-4);
                             mallclipboarddate.add(nametemp);
@@ -3875,7 +3875,7 @@ private void setCurrentLanguage(){
       //  toastM("onDestroy");
         try {
             trimCache(this);
-            stopService(new Intent(this, CBWatcherService.class));
+            unregisterClipboardListener();
             // toastM("trimCache");
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -4621,6 +4621,33 @@ private void setCurrentLanguage(){
         }
         showSuggestions(shown, -1, lang);
         mKeepSwipeAlternatives = true;
+    }
+
+    // ---------------------------------------------------------------- clipboard history
+
+    private ClipboardManager.OnPrimaryClipChangedListener mClipListener;
+
+    private void registerClipboardListener() {
+        try {
+            final ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            if (cm == null || mClipListener != null) return;
+            mClipListener = new ClipboardManager.OnPrimaryClipChangedListener() {
+                @Override public void onPrimaryClipChanged() {
+                    CBWatcherService.saveClip(kurdikeyboard.this);
+                }
+            };
+            cm.addPrimaryClipChangedListener(mClipListener);
+        } catch (RuntimeException ignored) {
+        }
+    }
+
+    private void unregisterClipboardListener() {
+        try {
+            ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            if (cm != null && mClipListener != null) cm.removePrimaryClipChangedListener(mClipListener);
+        } catch (RuntimeException ignored) {
+        }
+        mClipListener = null;
     }
 }
 

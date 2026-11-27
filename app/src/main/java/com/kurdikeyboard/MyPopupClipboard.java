@@ -171,7 +171,7 @@ public class MyPopupClipboard extends PopupWindow {
         final List<String> mallclipboarddate=new ArrayList<String>();
         final List<String> mallclipboardID=new ArrayList<String>();
 
-        File directory = Environment.getExternalStorageDirectory();
+        File directory = AppStorage.root(MyPopupClipboard.this.mContext);
             File folder = new File( directory + "/data/data/com.kurdikeyboard" + Constants.ClipboardCacheFolderPath );
 
             if (!folder.exists()) {
@@ -187,7 +187,7 @@ public class MyPopupClipboard extends PopupWindow {
 
                 }
             }
-        File[] files = folder.listFiles();
+        File[] files = AppStorage.sortedFiles(folder);
 
         mallclipboardStrings.clear();
         mallclipboarddate.clear();
@@ -213,7 +213,7 @@ public class MyPopupClipboard extends PopupWindow {
                     }
                     fr.close();
                     br.close();
-                    mallclipboardStrings.add(sb.toString());
+                    mallclipboardStrings.add(AppStorage.trimTrailingNewline(sb));
                    // String nametemp1=
                     //        shamsidate;
                     // file.getName();
@@ -338,7 +338,7 @@ public class MyPopupClipboard extends PopupWindow {
         return view;
     }
     public void removeallfiles() {
-        File directory = Environment.getExternalStorageDirectory();
+        File directory = AppStorage.root(MyPopupClipboard.this.mContext);
         File folder = new File( directory + "/data/data/com.kurdikeyboard" + Constants.ClipboardCacheFolderPath );
         if (!folder.exists()) {
             Toast.makeText(MyPopupClipboard.this.mContext, "nothings exists", Toast.LENGTH_LONG).show();
@@ -353,7 +353,7 @@ public class MyPopupClipboard extends PopupWindow {
 
             }
         }
-        File[] files = folder.listFiles();
+        File[] files = AppStorage.sortedFiles(folder);
         for (File file : files) {
             if(file.getName().endsWith(".txp")) {
                 try {
@@ -372,7 +372,7 @@ public class MyPopupClipboard extends PopupWindow {
 
     }
     public void removefiles(String IDdatemiladi){
-        File directory = Environment.getExternalStorageDirectory();
+        File directory = AppStorage.root(MyPopupClipboard.this.mContext);
         File folder = new File( directory + "/data/data/com.kurdikeyboard" + Constants.ClipboardCacheFolderPath );
 
         if (!folder.exists()) {
@@ -388,7 +388,7 @@ public class MyPopupClipboard extends PopupWindow {
 
             }
         }
-        File[] files = folder.listFiles();
+        File[] files = AppStorage.sortedFiles(folder);
 
         for (File file : files) {
             if(file.getName().endsWith(".txp")) {

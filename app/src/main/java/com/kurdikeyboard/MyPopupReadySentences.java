@@ -170,7 +170,7 @@ public class MyPopupReadySentences extends PopupWindow {
         setHeight(height);
     }
     public void  CreatAllDirecories(String path2){
-        File directory = Environment.getExternalStorageDirectory();
+        File directory = AppStorage.root(MyPopupReadySentences.this.mContext);
         File folder = new File( directory + path2 );
 
         if (!folder.exists()) {
@@ -204,7 +204,7 @@ public class MyPopupReadySentences extends PopupWindow {
         CreatAllDirecories("/data/data/com.kurdikeyboard");
         CreatAllDirecories("/data/data/com.kurdikeyboard/"+ Constants.ReadySentencesFolderPath);
 
-        File directory = Environment.getExternalStorageDirectory();
+        File directory = AppStorage.root(MyPopupReadySentences.this.mContext);
         File folder = new File( directory + "/data/data/com.kurdikeyboard/" + Constants.ReadySentencesFolderPath );
 
         if (!folder.exists()) {
@@ -220,7 +220,7 @@ public class MyPopupReadySentences extends PopupWindow {
 
             }
         }
-        File[] files = folder.listFiles();
+        File[] files = AppStorage.sortedFiles(folder);
 
         mallclipboardStrings.clear();
         mallclipboarddate.clear();
@@ -246,7 +246,7 @@ public class MyPopupReadySentences extends PopupWindow {
                     }
                     fr.close();
                     br.close();
-                    mallclipboardStrings.add(sb.toString());
+                    mallclipboardStrings.add(AppStorage.trimTrailingNewline(sb));
                      mallclipboarddate.add(file.getName());
 
                 } catch (IOException ioe) {
@@ -399,8 +399,13 @@ public class MyPopupReadySentences extends PopupWindow {
             );
 
             AlertDialog alertDialog = dialogBuilder.create();
-            alertDialog.getWindow().
-                    setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            // A dialog shown from a keyboard must be attached to the keyboard window
+            // (TYPE_SYSTEM_ALERT needs an extra permission and crashes on Android 8+).
+            WindowManager.LayoutParams dlp = alertDialog.getWindow().getAttributes();
+            dlp.token = rootView.getWindowToken();
+            dlp.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+            alertDialog.getWindow().setAttributes(dlp);
+            alertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
 
             alertDialog.show();
@@ -415,7 +420,7 @@ public class MyPopupReadySentences extends PopupWindow {
 
     }
     public void removeallfiles() {
-        File directory = Environment.getExternalStorageDirectory();
+        File directory = AppStorage.root(MyPopupReadySentences.this.mContext);
         File folder = new File( directory + "/data/data/com.kurdikeyboard/" + Constants.ReadySentencesFolderPath );
         if (!folder.exists()) {
             Toast.makeText(MyPopupReadySentences.this.mContext, "nothings exists", Toast.LENGTH_LONG).show();
@@ -430,7 +435,7 @@ public class MyPopupReadySentences extends PopupWindow {
 
             }
         }
-        File[] files = folder.listFiles();
+        File[] files = AppStorage.sortedFiles(folder);
         for (File file : files) {
             if(file.getName().endsWith(".txp")) {
                 try {
@@ -449,7 +454,7 @@ public class MyPopupReadySentences extends PopupWindow {
 
     }
     public void removefiles(String namefile) {
-        File directory = Environment.getExternalStorageDirectory();
+        File directory = AppStorage.root(MyPopupReadySentences.this.mContext);
         File folder = new File(directory + "/data/data/com.kurdikeyboard/" + Constants.ReadySentencesFolderPath);
         Toast.makeText(MyPopupReadySentences.this.mContext,
             "removing"+   namefile
@@ -467,7 +472,7 @@ public class MyPopupReadySentences extends PopupWindow {
 
             }
         }
-        File[] files = folder.listFiles();
+        File[] files = AppStorage.sortedFiles(folder);
 
         for (File file : files) {
             if (file.getName().endsWith(".txp")) {

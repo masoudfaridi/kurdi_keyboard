@@ -53,7 +53,7 @@ public class Main22Activity extends Activity {
         CreatAllDirecories("/data/data/com.kurdikeyboard");
         CreatAllDirecories("/data/data/com.kurdikeyboard/"+ Constants.ReadySentencesFolderPath);
 
-        File directory = Environment.getExternalStorageDirectory();
+        File directory = AppStorage.root(getApplicationContext());
         File folder = new File( directory + "/data/data/com.kurdikeyboard/" + Constants.ReadySentencesFolderPath );
         if (!folder.exists()) {
             Toast.makeText(getApplicationContext(), "nothings exists", Toast.LENGTH_LONG).show();
@@ -68,7 +68,7 @@ public class Main22Activity extends Activity {
 
             }
         }
-        File[] files = folder.listFiles();
+        File[] files = AppStorage.sortedFiles(folder);
         for (File file : files) {
             if(file.getName().endsWith(".txp")) {
                 try {
@@ -122,7 +122,7 @@ public class Main22Activity extends Activity {
         CreatAllDirecories("/data/data/com.kurdikeyboard");
         CreatAllDirecories("/data/data/com.kurdikeyboard/"+ Constants.ReadySentencesFolderPath);
 
-        File directory = Environment.getExternalStorageDirectory();
+        File directory = AppStorage.root(getApplicationContext());
         File folder = new File( directory + "/data/data/com.kurdikeyboard/" + Constants.ReadySentencesFolderPath );
 
         if (!folder.exists()) {
@@ -138,7 +138,7 @@ public class Main22Activity extends Activity {
 
             }
         }
-        File[] files = folder.listFiles();
+        File[] files = AppStorage.sortedFiles(folder);
 
         mallclipboardStrings.clear();
         mallclipboarddate.clear();
@@ -164,7 +164,7 @@ public class Main22Activity extends Activity {
                     }
                     fr.close();
                     br.close();
-                    mallclipboardStrings.add(sb.toString());
+                    mallclipboardStrings.add(AppStorage.trimTrailingNewline(sb));
                     mallclipboarddate.add(file.getName());
 
                 } catch (IOException ioe) {
@@ -250,7 +250,7 @@ public class Main22Activity extends Activity {
 
     }
     public void removefiles(String namefile) {
-        File directory = Environment.getExternalStorageDirectory();
+        File directory = AppStorage.root(getApplicationContext());
         File folder = new File(directory + "/data/data/com.kurdikeyboard/" + Constants.ReadySentencesFolderPath);
         Toast.makeText(getApplicationContext(),
                 "removing"+   namefile
@@ -268,7 +268,7 @@ public class Main22Activity extends Activity {
 
             }
         }
-        File[] files = folder.listFiles();
+        File[] files = AppStorage.sortedFiles(folder);
 
         for (File file : files) {
             if (file.getName().endsWith(".txp")) {
@@ -399,7 +399,7 @@ public class Main22Activity extends Activity {
         public Uri photoURI;
     }
     public void  CreatAllDirecories(String path2){
-        File directory = Environment.getExternalStorageDirectory();
+        File directory = AppStorage.root(getApplicationContext());
         File folder = new File( directory + path2 );
 
         if (!folder.exists()) {
