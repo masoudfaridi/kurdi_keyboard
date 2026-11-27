@@ -1631,6 +1631,7 @@ public class kurdikeyboard extends InputMethodService
         mKeepSwipeAlternatives = false;
         mJustAutoSpaced = false;
         mLastInserted = null;
+        mToolsRequested = false;
        // handleevent(attribute);
         if (mCurKeyboard == null) {
             mCurKeyboard = mQwertyKeyboard;
@@ -1967,6 +1968,9 @@ public class kurdikeyboard extends InputMethodService
     public void onKey(int primaryCode, int[] keyCodes) {
         boolean wasAutoSpaced = mJustAutoSpaced;
         mJustAutoSpaced = false;
+        if (mToolsRequested && primaryCode > 0) {
+            mToolsRequested = false; // typing again: suggestions come back
+        }
         mKeepSwipeAlternatives = false;
         if (primaryCode > 0 && !TextNormalizer.isWordChar((char) primaryCode)) {
             if (wasAutoSpaced && primaryCode == 32 && !spacemove) {
@@ -4231,6 +4235,8 @@ private void setCurrentLanguage(){
     private String mLastInserted = null;
     private String mLastInsertedLang = null;
     private boolean mJustAutoSpaced = false;
+    /** the user tapped the tools button on the strip: show the tools row until the next key */
+    private boolean mToolsRequested = false;
     private SwipeDecoder mSwipeDecoder;
     private Keyboard mSwipeDecoderKeyboard;
     private int mSwipeDecoderWidth;
@@ -4311,6 +4317,12 @@ private void setCurrentLanguage(){
                 pickSuggestion(word);
             }
 
+            @Override public void onShowToolsRequested() {
+                mToolsRequested = true;
+                if (toollayout != null) toollayout.setVisibility(View.VISIBLE);
+                refreshStripVisibility();
+            }
+
             @Override public void onSuggestionLongPressed(int index, String word) {
                 String lang = mStripLang;
                 WordDictionary d = mPredict.dictionary(lang);
@@ -4335,7 +4347,7 @@ private void setCurrentLanguage(){
     private void refreshStripVisibility() {
         if (mStrip == null) return;
         boolean toolsShown = toollayout != null && toollayout.getVisibility() == View.VISIBLE;
-        boolean show = predictionActive() && (!mStrip.isEmpty() || !toolsShown);
+        boolean show = predictionActive() && !mToolsRequested && (!mStrip.isEmpty() || !toolsShown);
         mStrip.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 

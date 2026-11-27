@@ -26,11 +26,14 @@ public class SuggestionStripView extends LinearLayout {
     public interface Listener {
         void onSuggestionPicked(int index, String word);
         void onSuggestionLongPressed(int index, String word);
+        /** the tools button at the edge of the strip: show the tools row instead */
+        void onShowToolsRequested();
     }
 
     private static final int SLOTS = 3;
     private final TextView[] slots = new TextView[SLOTS];
     private final View[] dividers = new View[SLOTS - 1];
+    private final TextView toolsButton;
     private final List<String> words = new ArrayList<>();
     private Listener listener;
     private int textColor = Color.WHITE;
@@ -42,6 +45,17 @@ public class SuggestionStripView extends LinearLayout {
         setOrientation(HORIZONTAL);
         setGravity(Gravity.CENTER_VERTICAL);
         setClickable(true); // swallow touches so the tools row below never gets them
+        toolsButton = new TextView(context);
+        toolsButton.setText("☰"); // ☰
+        toolsButton.setGravity(Gravity.CENTER);
+        toolsButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        toolsButton.setContentDescription("tools");
+        toolsButton.setOnClickListener(new OnClickListener() {
+            @Override public void onClick(View v) {
+                if (listener != null) listener.onShowToolsRequested();
+            }
+        });
+        addView(toolsButton, new LayoutParams(dp(44), LayoutParams.MATCH_PARENT));
         for (int i = 0; i < SLOTS; i++) {
             if (i > 0) {
                 View d = new View(context);
@@ -141,6 +155,8 @@ public class SuggestionStripView extends LinearLayout {
 
     private void applyColors() {
         for (TextView tv : slots) tv.setTextColor(textColor);
+        toolsButton.setTextColor(textColor);
+        toolsButton.setAlpha(0.8f);
         for (View d : dividers) d.setBackgroundColor((textColor & 0x00FFFFFF) | 0x55000000);
     }
 
