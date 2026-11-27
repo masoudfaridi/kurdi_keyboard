@@ -20,6 +20,42 @@
     android:summary=" تنضیمات ">
 
     <PreferenceScreen
+        android:icon="@drawable/ic_kk_keyboard"
+        android:title="@string/settings_space_title"
+        android:key="settingspace"
+        android:summary="@string/settings_space_summary">
+        <PreferenceCategory android:title="@string/settings_space_title">
+            <CheckBoxPreference
+                android:key="@string/prefspacecursor"
+                android:title="@string/title_space_cursor"
+                android:summary="@string/summary_space_cursor"
+                android:defaultValue="true" />
+            <com.kurdikeyboard.SeekBarPreference
+                xmlns:kurdikeyboard="http://kurdikeyboard.com"
+                android:key="@string/prefspacecursorspeed"
+                android:title="@string/title_space_cursor_speed"
+                android:dependency="@string/prefspacecursor"
+                android:defaultValue="5"
+                android:max="10"
+                kurdikeyboard:min="1" />
+            <CheckBoxPreference
+                android:key="@string/prefspacelang"
+                android:title="@string/title_space_lang"
+                android:summary="@string/summary_space_lang"
+                android:defaultValue="true" />
+            <com.kurdikeyboard.SeekBarPreference
+                xmlns:kurdikeyboard="http://kurdikeyboard.com"
+                android:key="@string/prefspaceholdms"
+                android:title="@string/title_space_hold"
+                android:dependency="@string/prefspacelang"
+                android:defaultValue="450"
+                android:max="1000"
+                kurdikeyboard:min="250"
+                kurdikeyboard:interval="50" />
+        </PreferenceCategory>
+    </PreferenceScreen>
+
+    <PreferenceScreen
         android:icon="@drawable/ic_kk_sparkle"
         android:title="@string/settings_prediction_title"
         android:key="settingprediction"
@@ -40,6 +76,9 @@
                 android:title="@string/title_autospace"
                 android:summary="@string/summary_autospace"
                 android:defaultValue="true" />
+            <Preference
+                android:selectable="false"
+                android:summary="@string/summary_enter_hold" />
             <Preference
                 android:key="@string/prefclearhistory"
                 android:title="@string/title_clearhistory"

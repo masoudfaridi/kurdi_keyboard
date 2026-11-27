@@ -288,6 +288,9 @@ public class KKeyboardView extends KeyboardView {
 
 
              return true;
+        }else if (key.codes[0] == 10) {
+            getOnKeyboardActionListener().onKey(KEYCODE_TOGGLE_TOP_ROW, null);
+            return true;
         }else if (key.codes[0] == -3) {
             return true; // the emoji key opens emoji on tap; a long press does nothing
         }
@@ -1615,8 +1618,12 @@ public class KKeyboardView extends KeyboardView {
     // =====================================================================
 
     static final int KEYCODE_LANG_EN = -171, KEYCODE_LANG_FA = -172, KEYCODE_LANG_KR = -173;
+    /** long press on Enter: hide / show the suggestion strip and tools row */
+    static final int KEYCODE_TOGGLE_TOP_ROW = -174;
 
     private boolean mSpaceTracking, mSpaceCursor, mSpaceLangOpen;
+    private boolean mSpaceCursorOn = true, mSpaceLangOn = true;
+    private float mSpaceStepDp = 14.8f;
     private float mSpaceDownX, mSpaceDownY, mSpaceLastStepX;
     private long mSpaceDownTime;
     private Key mSpaceKey;
@@ -1719,14 +1726,21 @@ public class KKeyboardView extends KeyboardView {
             case android.view.MotionEvent.ACTION_DOWN: {
                 resetSpace();
                 Key k = keyAt(me.getX(), me.getY());
+                SharedPreferences sp = getContext().getSharedPreferences("MySharedPreference", Context.MODE_PRIVATE);
+                mSpaceCursorOn = sp.getBoolean(getContext().getString(R.string.prefspacecursor), true);
+                mSpaceLangOn = sp.getBoolean(getContext().getString(R.string.prefspacelang), true);
+                // sensitivity 1..10 -> 22..6 dp of finger travel per character
+                int speed = Math.max(1, Math.min(10, sp.getInt(getContext().getString(R.string.prefspacecursorspeed), 5)));
+                mSpaceStepDp = 23.8f - 1.8f * speed;
+                int hold = Math.max(250, Math.min(1000, sp.getInt(getContext().getString(R.string.prefspaceholdms), 450)));
                 if (k != null && k.codes != null && k.codes.length > 0 && k.codes[0] == 32
-                        && keyboardHasLetters()) {
+                        && keyboardHasLetters() && (mSpaceCursorOn || mSpaceLangOn)) {
                     mSpaceTracking = true;
                     mSpaceKey = k;
                     mSpaceDownX = me.getX();
                     mSpaceDownY = me.getY();
                     mSpaceDownTime = me.getDownTime();
-                    mSpaceHandler.postDelayed(mSpaceLongPress, 450);
+                    if (mSpaceLangOn) mSpaceHandler.postDelayed(mSpaceLongPress, hold);
                 }
                 return false; // KeyboardView still shows the key as pressed / types it on a tap
             }
@@ -1743,7 +1757,7 @@ public class KKeyboardView extends KeyboardView {
                         }
                         return true;
                     }
-                    if (Math.abs(x - mSpaceDownX) > 14 * d) { // sideways on the space bar: cursor
+                    if (mSpaceCursorOn && Math.abs(x - mSpaceDownX) > 14 * d) { // sideways on the space bar: cursor
                         mSpaceLangOpen = false;
                         if (mSlideWindow != null) try { mSlideWindow.dismiss(); } catch (RuntimeException ignored) {}
                         mSpaceCursor = true;
@@ -1752,7 +1766,7 @@ public class KKeyboardView extends KeyboardView {
                     return true;
                 }
                 if (!mSpaceCursor) {
-                    if (Math.abs(x - mSpaceDownX) > 12 * d) {
+                    if (mSpaceCursorOn && Math.abs(x - mSpaceDownX) > 12 * d) {
                         mSpaceHandler.removeCallbacks(mSpaceLongPress);
                         cancelSuperTouch(mSpaceDownTime, x, y);
                         mSpaceCursor = true;
@@ -1762,7 +1776,7 @@ public class KKeyboardView extends KeyboardView {
                     }
                 }
                 // one character per step; in Persian / Kurdish the text runs right to left
-                float step = 11 * d;
+                float step = mSpaceStepDp * d;
                 boolean rtl = "fa".equals(kurdikeyboard.language) || "kr".equals(kurdikeyboard.language);
                 while (Math.abs(x - mSpaceLastStepX) >= step) {
                     boolean right = x > mSpaceLastStepX;

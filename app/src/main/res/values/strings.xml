@@ -390,5 +390,22 @@
     <string name="guide_done">پایان</string>
     <string name="theme_picker_title">تم کیبورد</string>
     <string name="theme_picker_summary">۲۴ تم ساده و زیبا، روشن و تیره</string>
+    <!-- space bar gestures -->
+    <string name="prefspacecursor" translatable="false">prefspacecursor</string>
+    <string name="prefspacecursorspeed" translatable="false">prefspacecursorspeed</string>
+    <string name="prefspacelang" translatable="false">prefspacelang</string>
+    <string name="prefspaceholdms" translatable="false">prefspaceholdms</string>
+    <string name="preftoprowhidden" translatable="false">preftoprowhidden</string>
+    <string name="settings_space_title">حرکات کلید فاصله</string>
+    <string name="settings_space_summary">جابجایی مکان‌نما و تغییر زبان با کلید فاصله</string>
+    <string name="title_space_cursor">جابجایی مکان‌نما با کشیدن روی فاصله</string>
+    <string name="summary_space_cursor">انگشت را روی کلید فاصله به چپ و راست بکشید</string>
+    <string name="title_space_cursor_speed">حساسیت جابجایی مکان‌نما</string>
+    <string name="title_space_lang">تغییر زبان با نگه داشتن فاصله</string>
+    <string name="summary_space_lang">فاصله را نگه دارید، روی زبان دلخواه بکشید و رها کنید</string>
+    <string name="title_space_hold">مدت نگه داشتن برای نمایش زبان‌ها (میلی‌ثانیه)</string>
+    <string name="top_row_hidden">پیش‌بینی کلمات غیرفعال شد</string>
+    <string name="top_row_shown">پیش‌بینی کلمات فعال شد</string>
+    <string name="summary_enter_hold">نکته: با نگه داشتن کلید Enter، نوار پیش‌بینی و ابزار پنهان یا نمایش داده می‌شود</string>
 </resources>
 

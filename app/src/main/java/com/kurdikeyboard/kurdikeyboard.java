@@ -1066,6 +1066,7 @@ public class kurdikeyboard extends InputMethodService
         installSuggestionStrip();
         mInputView.setSwipeListener(mSwipeListener);
         mSwipeDecoder = null;
+        applyTopRowHidden();
 
         String pathimage=
         preferenceKeyboard.getString(getString(R.string.prefkeypathimage), "unknown");
@@ -1837,6 +1838,11 @@ public class kurdikeyboard extends InputMethodService
             }
 
 
+        }else if(primaryCode==KKeyboardView.KEYCODE_TOGGLE_TOP_ROW){
+            boolean hidden = !preferenceKeyboard.getBoolean(getString(R.string.preftoprowhidden), false);
+            preferenceKeyboard.edit().putBoolean(getString(R.string.preftoprowhidden), hidden).apply();
+            applyTopRowHidden();
+            toastM(getString(hidden ? R.string.top_row_hidden : R.string.top_row_shown));
         }else if(primaryCode==KKeyboardView.KEYCODE_LANG_EN||primaryCode==KKeyboardView.KEYCODE_LANG_FA
                 ||primaryCode==KKeyboardView.KEYCODE_LANG_KR){
             // picked in the language strip (hold the space bar)
@@ -3870,7 +3876,7 @@ private void setCurrentLanguage(){
     }
 
     private boolean predictionActive() {
-        return mPredictionEnabled && mFieldAllowsPrediction && mStrip != null;
+        return mPredictionEnabled && mFieldAllowsPrediction && mStrip != null && !isTopRowHidden();
     }
 
     /** Dictionary language of the keyboard on screen (symbol pages keep the last language). */
@@ -4340,6 +4346,25 @@ private void setCurrentLanguage(){
             mOpenPopup = mEmojiWindow;
         } catch (RuntimeException e) {
             mEmojiWindow = null;
+        }
+    }
+
+    // ---------------------------------------------------------------- hidden top row (long press Enter)
+
+    private boolean isTopRowHidden() {
+        return preferenceKeyboard != null
+                && preferenceKeyboard.getBoolean(getString(R.string.preftoprowhidden), false);
+    }
+
+    /** hides the suggestion strip and tools row for more room, or shows them again */
+    private void applyTopRowHidden() {
+        View row = mTopRow != null ? mTopRow : toollayout;
+        if (row == null) return;
+        boolean hidden = isTopRowHidden();
+        row.setVisibility(hidden ? View.GONE : View.VISIBLE);
+        if (!hidden) {
+            refreshStripVisibility();
+            scheduleSuggestionUpdate();
         }
     }
 }
