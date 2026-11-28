@@ -4296,10 +4296,28 @@ private void setCurrentLanguage(){
         row.addView(iv, row.indexOfChild(paste) + 1);
     }
 
+    /** one of the app's own settings screens */
+    private void openAppScreen(Class<?> screen) {
+        Intent i = new Intent(getApplicationContext(), screen);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            startActivity(i);
+        } catch (RuntimeException ignored) {
+        }
+    }
+
+    /** the letters on screen, so ABC on the number pad or a symbols page comes back to them */
+    private void rememberLetters() {
+        Keyboard current = mInputView != null ? mInputView.getKeyboard() : null;
+        if (current == mQwertyKeyboard) prelanguage = "en";
+        else if (current == mfarsiKeyboard) prelanguage = "fa";
+        else if (current == mkurdishKeyboard) prelanguage = "kr";
+    }
+
     /**
-     * The tools row's last button: a half cylinder slides out of the right edge with settings,
-     * contacts and ready sentences in its chambers (MagazineMenu). Pressed again, or touched
-     * anywhere else, it slides away.
+     * The tools row's last button: a seven-chamber cylinder rolls in from the right edge with
+     * settings, themes, popup theme, numbers, chess notation, ready sentences and contacts
+     * (MagazineMenu). Pressed again, or touched anywhere else, it rolls away.
      */
     private void openMagazineMenu(final View anchor) {
         if (closeOpenPopup()) return;
@@ -4311,10 +4329,16 @@ private void setCurrentLanguage(){
         final int h = keyboardPopupHeight();
         // the popup covers the keyboard area from the bottom; the tools row is at its top
         float anchorBottom = a[1] + anchor.getHeight() - (r[1] + root.getHeight() - h);
+        // clockwise from the upper left (MagazineMenu.ANGLES): settings and the two theme
+        // screens, the number pad and the chess page, then ready sentences and contacts
         MagazineMenu.Item[] items = {
                 new MagazineMenu.Item(R.drawable.ic_kk_settings, getString(R.string.menu_settings)),
+                new MagazineMenu.Item(R.drawable.ic_kk_palette, getString(R.string.menu_theme)),
+                new MagazineMenu.Item(R.drawable.ic_kk_sparkle, getString(R.string.popup_style_title)),
+                new MagazineMenu.Item(R.drawable.ic_kk_numpad, getString(R.string.menu_numbers)),
+                new MagazineMenu.Item("♞", getString(R.string.menu_chess)),
+                new MagazineMenu.Item(R.drawable.ic_kk_notes, getString(R.string.menu_ready)),
                 new MagazineMenu.Item(R.drawable.ic_kk_person, getString(R.string.contacts_title)),
-                new MagazineMenu.Item(R.drawable.ic_kk_notes, getString(R.string.ready_title)),
         };
         final PopupWindow[] window = new PopupWindow[1];
         final MagazineMenu menu = new MagazineMenu(this, mInputView.currentTheme(), items, anchorBottom,
@@ -4322,17 +4346,20 @@ private void setCurrentLanguage(){
                     @Override public void onPick(int index) {
                         closeOpenPopup();
                         anchor.animate().rotation(0).setDuration(150).start();
-                        if (index == 0) {
-                            Intent i = new Intent(getApplicationContext(), ImePreferences.class);
-                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            try {
-                                startActivity(i);
-                            } catch (RuntimeException ignored) {
-                            }
-                        } else if (index == 1) {
-                            openContactPicker();
-                        } else {
-                            openKeyboardScreen(ReadySentencesActivity.class);
+                        switch (index) {
+                            case 0: openAppScreen(ImePreferences.class); break;
+                            case 1: openAppScreen(ThemePickerActivity.class); break;
+                            case 2: openAppScreen(PopupStyleActivity.class); break;
+                            case 3: // the number pad, as the English bottom-left key
+                                rememberLetters();
+                                onKey(KKeyboardView.KEYCODE_symbols_Numbers_page, null);
+                                break;
+                            case 4: // chess notation: symbols page 13/13
+                                rememberLetters();
+                                setKKeyboard(mSymbolsShiftedKeyboard13);
+                                break;
+                            case 5: openKeyboardScreen(ReadySentencesActivity.class); break;
+                            default: openContactPicker(); break;
                         }
                     }
 

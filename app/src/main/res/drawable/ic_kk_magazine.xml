@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- tools row: the menu button, a half cylinder on the right edge with three chambers -->
+<!-- tools row: the menu button, a revolver cylinder with seven chambers around the hub -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
@@ -8,10 +8,10 @@
     <path
         android:fillColor="#00000000"
         android:strokeColor="#FF000000"
-        android:strokeWidth="1.8"
-        android:strokeLineCap="round"
-        android:pathData="M20.5,2.5 A9.5,9.5 0 0,0 20.5,21.5" />
+        android:strokeWidth="1.7"
+        android:pathData="M2.4,12 a9.6,9.6 0 1,0 19.2,0 a9.6,9.6 0 1,0 -19.2,0" />
+    <!-- chambers at radius 5.9, every 360/7 degrees from the top; the hub in the middle -->
     <path
         android:fillColor="#FF000000"
-        android:pathData="M15.26,7.79 a1.9,1.9 0 1,0 3.8,0 a1.9,1.9 0 1,0 -3.8,0 M13.1,12 a1.9,1.9 0 1,0 3.8,0 a1.9,1.9 0 1,0 -3.8,0 M15.26,16.21 a1.9,1.9 0 1,0 3.8,0 a1.9,1.9 0 1,0 -3.8,0 M19.1,12 a1.4,1.4 0 1,0 2.8,0 a1.4,1.4 0 1,0 -2.8,0" />
+        android:pathData="M10.5,6.1 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0 M15.11,8.32 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0 M16.25,13.31 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0 M13.06,17.32 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0 M7.94,17.32 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0 M4.75,13.31 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0 M5.89,8.32 a1.5,1.5 0 1,0 3,0 a1.5,1.5 0 1,0 -3,0 M10.9,12 a1.1,1.1 0 1,0 2.2,0 a1.1,1.1 0 1,0 -2.2,0" />
 </vector>

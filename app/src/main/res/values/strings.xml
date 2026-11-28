@@ -22,7 +22,7 @@
         کیبورد هوشمند چندزبانه ماپریس
     </string>
 <string name="versionName">
-    2.9.0
+    2.9.1
 </string>
 
 
@@ -491,9 +491,13 @@
     <string name="s_hide_ready_title">پنهان کردن دکمه ایموجی</string>
     <string name="s_hide_ready_summary">دکمه سمت چپ نوار ابزار نمایش داده نشود</string>
     <string name="s_hide_gear_title">پنهان کردن دکمه منو</string>
-    <string name="s_hide_gear_summary">دکمه منوی نیم‌دایره (تنظیمات، مخاطبین، جمله‌های آماده) سمت راست نوار ابزار نمایش داده نشود</string>
+    <string name="s_hide_gear_summary">دکمه منوی خشابی (تنظیمات، تم کیبورد، تم پاپ‌آپ، اعداد، ثبت شطرنج، جمله‌های آماده و مخاطبین) سمت راست نوار ابزار نمایش داده نشود</string>
     <string name="menu_settings">تنظیمات</string>
-    <string name="toolbar_menu">منو: تنظیمات، مخاطبین، جمله‌های آماده</string>
+    <string name="toolbar_menu">منو: تنظیمات، تم کیبورد، تم پاپ‌آپ، اعداد، ثبت شطرنج، جمله‌های آماده و مخاطبین</string>
+    <string name="menu_theme">تم کیبورد</string>
+    <string name="menu_numbers">اعداد</string>
+    <string name="menu_chess">ثبت شطرنج</string>
+    <string name="menu_ready">جملات آماده</string>
     <string name="toolbar_emoji">ایموجی</string>
     <string name="s_lang_title">زبان‌ها</string>
     <string name="s_lang_summary">فارسی و کُردی، چیدمان کُردی و ضربه دوتایی</string>

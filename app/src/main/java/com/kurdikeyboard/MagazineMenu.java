@@ -17,10 +17,10 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 
 /**
- * The menu of the tools row's last button (2.9.0): a half revolver cylinder that slides out of
- * the keyboard's right edge and turns into place, its chambers holding settings, contacts and
- * ready sentences. Drawn like a schematic: pitch circle, spokes to the hub, flutes on the rim
- * and a callout label for each chamber. Colors come from the keyboard theme.
+ * The menu of the tools row's last button: a revolver cylinder with seven chambers that rolls
+ * in from the keyboard's right edge and clicks into place over the keys. Drawn like a
+ * schematic: pitch circle, spokes to the hub, flutes cut into the rim and a callout label for
+ * each chamber. Colors come from the keyboard theme. (2.9.0 had half a cylinder, three chambers.)
  */
 final class MagazineMenu extends View {
 
@@ -29,21 +29,31 @@ final class MagazineMenu extends View {
         void onClosed();
     }
 
+    /** a chamber: an icon, or a character drawn as the icon (♞), and its name */
     static final class Item {
         final int icon;
+        final String glyph;
         final String label;
 
         Item(int icon, String label) {
             this.icon = icon;
+            this.glyph = null;
+            this.label = label;
+        }
+
+        Item(String glyph, String label) {
+            this.icon = 0;
+            this.glyph = glyph;
             this.label = label;
         }
     }
 
-    /** where the chambers settle, in degrees (0 = right, 90 = up) */
-    private static final float[] ANGLES = {132f, 180f, 228f};
-    /** empty chambers at the edge, cut off by the screen side: the cylinder goes on */
-    private static final float[] EMPTY = {84f, 276f};
-    private static final float SPIN = 150f;
+    /**
+     * Where the seven chambers settle, in degrees (0 = right, 90 = up), clockwise from the upper
+     * left. One sits at the bottom with its label under the cylinder; three on each side have
+     * their labels beside it, far enough apart in height not to touch.
+     */
+    private static final float[] ANGLES = {115.714f, 64.286f, 12.857f, -38.571f, -90f, -141.429f, 167.143f};
 
     private final KeyboardTheme t;
     private final Item[] items;
@@ -53,6 +63,7 @@ final class MagazineMenu extends View {
     private final float d;
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint text = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private final TextPaint glyph = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final Path face = new Path(), cuts = new Path();
     private final RectF[] labelRects;
 
@@ -62,7 +73,7 @@ final class MagazineMenu extends View {
     private int pressed = -1;
 
     // layout when open
-    private float radius, pitch, chamberR, hubY;
+    private float radius, pitch, chamberR, hubX, hubY;
 
     MagazineMenu(Context c, KeyboardTheme theme, Item[] items, float anchorBottom, Listener l) {
         super(c);
@@ -71,28 +82,32 @@ final class MagazineMenu extends View {
         this.anchorBottom = anchorBottom;
         this.listener = l;
         d = c.getResources().getDisplayMetrics().density;
+        float sp = c.getResources().getDisplayMetrics().scaledDensity;
         icons = new Drawable[items.length];
         labelRects = new RectF[items.length];
         for (int i = 0; i < items.length; i++) {
-            Drawable ic = c.getResources().getDrawable(items[i].icon, null).mutate();
-            ic.setTint(theme.text);
-            icons[i] = ic;
+            if (items[i].icon != 0) {
+                Drawable ic = c.getResources().getDrawable(items[i].icon, null).mutate();
+                ic.setTint(theme.text);
+                icons[i] = ic;
+            }
             labelRects[i] = new RectF();
         }
         text.setTextAlign(Paint.Align.CENTER);
-        text.setTextSize(14 * c.getResources().getDisplayMetrics().scaledDensity);
+        text.setTextSize(12.5f * sp);
+        glyph.setTextAlign(Paint.Align.CENTER);
         setLayerType(LAYER_TYPE_HARDWARE, null);
     }
 
     void open() {
-        animateTo(1f, 460);
+        animateTo(1f, 560);
     }
 
     void close() {
         if (closing) return;
         closing = true;
         pressed = -1;
-        animateTo(0f, 230);
+        animateTo(0f, 260);
     }
 
     private void animateTo(final float target, long ms) {
@@ -116,11 +131,15 @@ final class MagazineMenu extends View {
     @Override
     protected void onSizeChanged(int w, int h, int ow, int oh) {
         float top = Math.max(0, anchorBottom) + 8 * d;
-        float bottom = h - 8 * d;
-        radius = Math.min(Math.min((bottom - top) / 2f, w * 0.40f), 170 * d);
+        float bottom = h - 6 * d;
+        // room under the cylinder for the bottom label, beside it for the others
+        radius = Math.min(Math.min((bottom - top - 40 * d) / 2f, w / 2f - 86 * d), 140 * d);
+        radius = Math.max(radius, 60 * d);
+        hubX = w / 2f;
         hubY = top + radius;
         pitch = radius * 0.60f;
-        chamberR = radius * 0.23f;
+        chamberR = radius * 0.22f;
+        glyph.setTextSize(chamberR * 1.05f);
     }
 
     // ------------------------------------------------------------------ drawing
@@ -131,7 +150,7 @@ final class MagazineMenu extends View {
     }
 
     private static float easeOutBack(float x) {
-        float s = 1.7f, f = x - 1;
+        float s = 1.4f, f = x - 1;
         return 1 + (s + 1) * f * f * f + s * f * f;
     }
 
@@ -147,14 +166,19 @@ final class MagazineMenu extends View {
                 Math.round(Color.blue(a) + (Color.blue(b) - Color.blue(a)) * f));
     }
 
+    /** how far the cylinder still has to roll; a little past the end and back = the click */
+    private float travel(float p) {
+        return (1 - easeOutBack(p)) * (getWidth() / 2f + radius + 24 * d);
+    }
+
     @Override
     protected void onDraw(Canvas c) {
         if (radius <= 0) return;
         float p = Math.max(0, Math.min(1, progress));
-        float out = easeOutCubic(p);
-        float hubX = getWidth() + (1 - out) * (radius + 32 * d);
-        float hy = hubY + (1 - out) * 48 * d; // it comes up as it slides in
-        float rot = (1 - easeOutBack(p)) * SPIN;
+        float tr = travel(p);
+        float cxHub = hubX + tr;
+        // rolling to the left turns it counter-clockwise: the turn is the distance / radius
+        float rot = (float) Math.toDegrees(-tr / radius);
         boolean dark = t.isDark();
         int disc = t.key | 0xFF000000;
         int discIn = mix(disc, dark ? Color.WHITE : Color.BLACK, 0.06f);
@@ -164,23 +188,23 @@ final class MagazineMenu extends View {
         // the keys dim behind the menu
         paint.setShader(null);
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(alpha(0xFF000000, 0.32f * out));
+        paint.setColor(alpha(0xFF000000, 0.34f * easeOutCubic(p)));
         c.drawRect(0, 0, getWidth(), getHeight(), paint);
 
-        // the cylinder face, with flutes cut into the rim between the chambers
+        // the cylinder face, with a flute cut into the rim between each two chambers
         face.reset();
-        face.addCircle(hubX, hy, radius, Path.Direction.CW);
+        face.addCircle(cxHub, hubY, radius, Path.Direction.CW);
         cuts.reset();
-        float fr = radius * 0.10f;
-        for (float a = 108f; a <= 252f; a += 48f) {
-            double r = Math.toRadians(a + rot);
-            cuts.addCircle(hubX + (float) Math.cos(r) * (radius + fr * 0.45f),
-                    hy - (float) Math.sin(r) * (radius + fr * 0.45f), fr, Path.Direction.CW);
+        float fr = radius * 0.095f;
+        for (float a : ANGLES) {
+            double r = Math.toRadians(a + 180f / ANGLES.length + rot);
+            cuts.addCircle(cxHub + (float) Math.cos(r) * (radius + fr * 0.45f),
+                    hubY - (float) Math.sin(r) * (radius + fr * 0.45f), fr, Path.Direction.CW);
         }
         face.op(cuts, Path.Op.DIFFERENCE);
         paint.setColor(Color.BLACK);
-        paint.setShader(new RadialGradient(hubX, hy, radius, discIn, discOut, Shader.TileMode.CLAMP));
-        if (out > 0.01f) paint.setShadowLayer(14 * d, -3 * d, 4 * d, 0x55000000);
+        paint.setShader(new RadialGradient(cxHub, hubY, radius, discIn, discOut, Shader.TileMode.CLAMP));
+        if (p > 0.01f) paint.setShadowLayer(14 * d, 0, 5 * d, 0x55000000);
         c.drawPath(face, paint);
         paint.clearShadowLayer();
         paint.setShader(null);
@@ -192,32 +216,23 @@ final class MagazineMenu extends View {
         c.drawPath(face, paint);
         paint.setStrokeWidth(1 * d);
         paint.setColor(alpha(line, 0.35f));
-        c.drawCircle(hubX, hy, radius + 5 * d, paint);
+        c.drawCircle(cxHub, hubY, radius + 5 * d, paint);
 
         // pitch circle through the chambers, dashed like a drawing
-        paint.setStrokeWidth(1 * d);
         paint.setColor(alpha(t.hint, 0.7f));
         paint.setPathEffect(new DashPathEffect(new float[]{4 * d, 4 * d}, rot * d * 0.2f));
-        c.drawCircle(hubX, hy, pitch, paint);
+        c.drawCircle(cxHub, hubY, pitch, paint);
         paint.setPathEffect(null);
 
-        // empty chambers at the screen edge
-        paint.setStrokeWidth(1.4f * d);
-        paint.setColor(alpha(t.hint, 0.8f));
-        for (float a : EMPTY) {
-            double r = Math.toRadians(a + rot);
-            c.drawCircle(hubX + (float) Math.cos(r) * pitch, hy - (float) Math.sin(r) * pitch, chamberR, paint);
-        }
-
         // spokes, chambers, icons
-        float iconScale = 0.6f + 0.4f * easeOutBack(p);
+        float iconScale = 0.65f + 0.35f * Math.min(1, easeOutBack(p));
         for (int i = 0; i < items.length && i < ANGLES.length; i++) {
             double r = Math.toRadians(ANGLES[i] + rot);
-            float cx = hubX + (float) Math.cos(r) * pitch, cy = hy - (float) Math.sin(r) * pitch;
+            float cx = cxHub + (float) Math.cos(r) * pitch, cy = hubY - (float) Math.sin(r) * pitch;
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(1 * d);
             paint.setColor(alpha(line, 0.45f));
-            c.drawLine(hubX, hy, cx, cy, paint);
+            c.drawLine(cxHub, hubY, cx, cy, paint);
 
             boolean down = i == pressed;
             paint.setStyle(Paint.Style.FILL);
@@ -231,53 +246,83 @@ final class MagazineMenu extends View {
             paint.setColor(alpha(down ? t.onAccent : t.hint, 0.6f));
             c.drawCircle(cx, cy, chamberR * 0.80f, paint); // the bore
 
-            Drawable ic = icons[i];
-            int s = Math.round(Math.min(chamberR * 1.05f, 30 * d) * iconScale);
-            ic.setTint(down ? t.onAccent : t.text);
-            ic.setBounds(Math.round(cx - s / 2f), Math.round(cy - s / 2f), Math.round(cx + s / 2f), Math.round(cy + s / 2f));
-            ic.draw(c);
+            int fg = down ? t.onAccent : t.text;
+            if (icons[i] != null) {
+                Drawable ic = icons[i];
+                int s = Math.round(Math.min(chamberR * 1.05f, 28 * d) * iconScale);
+                ic.setTint(fg);
+                ic.setBounds(Math.round(cx - s / 2f), Math.round(cy - s / 2f), Math.round(cx + s / 2f), Math.round(cy + s / 2f));
+                ic.draw(c);
+            } else if (items[i].glyph != null) {
+                glyph.setColor(fg);
+                c.save();
+                c.scale(iconScale, iconScale, cx, cy);
+                Paint.FontMetrics gm = glyph.getFontMetrics();
+                c.drawText(items[i].glyph, cx, cy - (gm.ascent + gm.descent) / 2, glyph);
+                c.restore();
+            }
         }
 
-        // the hub (axle) on the edge
+        // the hub (axle)
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(line);
-        c.drawCircle(hubX, hy, radius * 0.15f, paint);
+        c.drawCircle(cxHub, hubY, radius * 0.14f, paint);
         paint.setColor(disc);
-        c.drawCircle(hubX, hy, radius * 0.065f, paint);
+        c.drawCircle(cxHub, hubY, radius * 0.06f, paint);
 
         // a ring that runs out when the cylinder clicks into place
-        if (!closing && p > 0.72f && p < 1f) {
-            float k = (p - 0.72f) / 0.28f;
+        if (!closing && p > 0.75f && p < 1f) {
+            float k = (p - 0.75f) / 0.25f;
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2 * d);
             paint.setColor(alpha(line, 0.55f * (1 - k)));
-            c.drawCircle(hubX, hy, radius + (5 + 14 * k) * d, paint);
+            c.drawCircle(cxHub, hubY, radius + (5 + 14 * k) * d, paint);
         }
 
-        // callout labels left of the cylinder, joined to their chambers
-        float la = Math.max(0, Math.min(1, (p - 0.55f) / 0.45f));
-        if (la > 0) drawLabels(c, hubX, hy, rot, la);
+        // callout labels, joined to their chambers
+        float la = Math.max(0, Math.min(1, (p - 0.6f) / 0.4f));
+        if (la > 0) drawLabels(c, cxHub, rot, la);
     }
 
-    private void drawLabels(Canvas c, float hubX, float hy, float rot, float la) {
+    /** labels beside the cylinder at each chamber's height; the bottom one under it */
+    private void drawLabels(Canvas c, float cxHub, float rot, float la) {
         Paint.FontMetrics fm = text.getFontMetrics();
         float th = fm.descent - fm.ascent;
-        float shift = (1 - la) * 10 * d;
         for (int i = 0; i < items.length && i < ANGLES.length; i++) {
             double r = Math.toRadians(ANGLES[i] + rot);
-            float cx = hubX + (float) Math.cos(r) * pitch, cy = hy - (float) Math.sin(r) * pitch;
-            float dy = cy - hy;
-            float edge = hubX - (float) Math.sqrt(Math.max(0, radius * radius - dy * dy)); // rim at this height
-            float w = text.measureText(items[i].label) + 20 * d, h = th + 12 * d;
-            float right = edge - 14 * d + shift;
+            float cx = cxHub + (float) Math.cos(r) * pitch, cy = hubY - (float) Math.sin(r) * pitch;
+            float w = text.measureText(items[i].label) + 18 * d, h = th + 10 * d;
+            double settled = Math.toRadians(ANGLES[i]);
+            float side = (float) Math.cos(settled); // < 0 left, > 0 right, about 0 at the bottom
             RectF box = labelRects[i];
-            box.set(right - w, cy - h / 2, right, cy + h / 2);
+            float lx1, ly1, lx2, ly2; // leader line
+            if (Math.abs(side) < 0.3f) {
+                float top = hubY + radius + 9 * d;
+                box.set(cx - w / 2, top, cx + w / 2, top + h);
+                lx1 = cx; ly1 = cy + chamberR; lx2 = cx; ly2 = top;
+            } else {
+                float dy = cy - hubY;
+                float edge = (float) Math.sqrt(Math.max(0, radius * radius - dy * dy)); // rim at this height
+                if (side < 0) {
+                    float right = cxHub - edge - 12 * d;
+                    box.set(right - w, cy - h / 2, right, cy + h / 2);
+                    lx1 = cx - chamberR; lx2 = right;
+                } else {
+                    float left = cxHub + edge + 12 * d;
+                    box.set(left, cy - h / 2, left + w, cy + h / 2);
+                    lx1 = cx + chamberR; lx2 = left;
+                }
+                ly1 = cy; ly2 = cy;
+                // keep it on screen on narrow phones
+                if (box.left < 4 * d) box.offset(4 * d - box.left, 0);
+                if (box.right > getWidth() - 4 * d) box.offset(getWidth() - 4 * d - box.right, 0);
+            }
 
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(1 * d);
             paint.setColor(alpha(t.accent, 0.7f * la));
-            c.drawLine(right, cy, cx - chamberR, cy, paint); // leader line
-            c.drawCircle(cx - chamberR, cy, 1.8f * d, paint);
+            c.drawLine(lx1, ly1, lx2, ly2, paint);
+            c.drawCircle(lx1, ly1, 1.8f * d, paint);
 
             boolean down = i == pressed;
             paint.setStyle(Paint.Style.FILL);
@@ -298,7 +343,7 @@ final class MagazineMenu extends View {
         if (progress < 0.85f) return -1;
         for (int i = 0; i < items.length && i < ANGLES.length; i++) {
             double r = Math.toRadians(ANGLES[i]);
-            float cx = getWidth() + (float) Math.cos(r) * pitch, cy = hubY - (float) Math.sin(r) * pitch;
+            float cx = hubX + (float) Math.cos(r) * pitch, cy = hubY - (float) Math.sin(r) * pitch;
             float dx = x - cx, dy = y - cy, hit = chamberR * 1.15f;
             if (dx * dx + dy * dy <= hit * hit) return i;
             if (labelRects[i].contains(x, y)) return i;
@@ -312,7 +357,7 @@ final class MagazineMenu extends View {
         switch (e.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 pressed = itemAt(e.getX(), e.getY());
-                if (pressed < 0) close(); // outside the cylinder: put it away
+                if (pressed < 0) close(); // outside the chambers: put it away
                 invalidate();
                 return true;
             case MotionEvent.ACTION_MOVE:
@@ -327,8 +372,6 @@ final class MagazineMenu extends View {
                 if (pick >= 0 && listener != null) {
                     performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP);
                     listener.onPick(pick);
-                } else if (pick < 0) {
-                    close();
                 }
                 return true;
             }
