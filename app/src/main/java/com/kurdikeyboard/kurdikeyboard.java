@@ -1715,11 +1715,11 @@ public class kurdikeyboard extends InputMethodService
 
         if (primaryCode == KKeyboardView.KEYCODE_OPTIONS) {
             Intent i = new Intent(this, ImePreferences.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            // a fresh task, so the settings show even when the app's task is in the background
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
            // startActivity(i);
             try {
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 Toast toast = Toast.makeText(getBaseContext(), "ورود به تنظیمات", Toast.LENGTH_SHORT);
                 toast.show();
                 startActivity(i);
@@ -4296,10 +4296,15 @@ private void setCurrentLanguage(){
         row.addView(iv, row.indexOfChild(paste) + 1);
     }
 
-    /** one of the app's own settings screens */
+    /**
+     * One of the app's own settings screens, alone in a fresh task. They share the app's task,
+     * and with NEW_TASK alone Android only brings that task forward when the screen asked for
+     * is its first one: after popup theme then theme, asking for popup theme showed the theme
+     * screen again (and theme twice stacked a second copy). Back now returns to the typing.
+     */
     private void openAppScreen(Class<?> screen) {
         Intent i = new Intent(getApplicationContext(), screen);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         try {
             startActivity(i);
         } catch (RuntimeException ignored) {
