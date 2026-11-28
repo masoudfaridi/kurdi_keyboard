@@ -115,7 +115,7 @@
     </Row>
 
     <Row android:rowEdgeFlags="bottom">
-        <Key android:codes="-3"
+        <Key android:codes="-175"
             android:horizontalGap="@fraction/samsung_key_horizontalGap_left"
             android:keyIcon="@drawable/close_keyboard_black"
             android:keyWidth="@fraction/samsung_key_width_shift" android:keyEdgeFlags="left"/>

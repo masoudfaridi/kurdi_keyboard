@@ -129,7 +129,6 @@ public class kurdikeyboard extends InputMethodService
     private String mWordSeparators;
     private String mwordtwofunction;
     private String mwordtwofunction2;
-    private String mWordmultichoiceprimaries;
     private InputMethodManager mInputMethodManager;
     ////// end 1
 
@@ -280,7 +279,6 @@ public class kurdikeyboard extends InputMethodService
         /////// get sumbols like # @
        // mWordSeparators = getResources().getString(R.string.word_separators);
         mWordSeparators = getResources().getString(R.string.word_separators2);
-        mWordmultichoiceprimaries=getResources().getString(R.string.mWordmultichoiceprimaries);
         mwordtwofunction= getResources().getString(R.string.word_twofunction);
         mwordtwofunction2= getResources().getString(R.string.word_twofunction2);
 
@@ -595,9 +593,11 @@ public class kurdikeyboard extends InputMethodService
         LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         widthkeyboard=WindowManager.LayoutParams.MATCH_PARENT;
+        // left end of the tools row: emoji (ready sentences are in the menu at the right end)
+        ivKeyboard.setContentDescription(getString(R.string.toolbar_emoji));
         ivKeyboard.setOnClickListener(new OnClickListener() {
             @Override public void onClick(View view) {
-                openKeyboardScreen(ReadySentencesActivity.class);
+                onKey(KKeyboardView.KEYCODE_LONG_closetobringupemoji, null);
             }
         });
 
@@ -711,15 +711,12 @@ public class kurdikeyboard extends InputMethodService
 
             }
         });
-        // 2.0: the gear opens the settings (the 2017 option grid is gone; contacts have their own icon)
+        // right end of the tools row (was the gear): the half-cylinder menu with settings,
+        // contacts and ready sentences
+        ivKeyboardSetting.setContentDescription(getString(R.string.toolbar_menu));
         ivKeyboardSetting.setOnClickListener(new OnClickListener() {
             @Override public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(), ImePreferences.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                try {
-                    startActivity(i);
-                } catch (RuntimeException ignored) {
-                }
+                openMagazineMenu(view);
             }
         });
         mInputView.setOnKeyboardActionListener(this);
@@ -976,7 +973,7 @@ public class kurdikeyboard extends InputMethodService
             }
         }
         readPredictionPrefs();
-        addContactsToolbarButton(root);
+        addClipboardToolbarButton(root);
         modernizeToolbar(root);
         installSuggestionStrip();
         mInputView.setSwipeListener(mSwipeListener);
@@ -1266,6 +1263,7 @@ public class kurdikeyboard extends InputMethodService
         readPredictionPrefs();
         mFieldAllowsPrediction = fieldAllowsPrediction(attribute);
         mFieldNoLearning = attribute != null && (attribute.imeOptions & 0x1000000) != 0; // IME_FLAG_NO_PERSONALIZED_LEARNING
+        mFieldKeepsSymbols = !mFieldNoLearning && !isPasswordField(attribute);
         mKeepSwipeAlternatives = false;
         mJustAutoSpaced = false;
         mLastInserted = null;
@@ -1415,6 +1413,7 @@ public class kurdikeyboard extends InputMethodService
                     if (mInputView.handleBack()) {
                         return true;
                     }
+                    if (closeOpenPopup()) return true; // the menu, emoji, clipboard ... first
                 }
                 break;
 
@@ -2551,19 +2550,14 @@ public class kurdikeyboard extends InputMethodService
             setKKeyboard(mSymbolsnumbers);
         }else if(primaryCode==KKeyboardView.KEYCODE_LONG_closetobringupemoji){
             toggleEmojiPanel();
+        }else if(primaryCode==KKeyboardView.KEYCODE_FN){
+            // Persian / Kurdish bottom-left key: second letters and marks (KKeyboardView)
+            if (mInputView != null) mInputView.cycleFn();
         }else if(primaryCode==-158){
-            //onja
-            /*
-            try {
-                mCurKeyboard.changeMultiKey(getResources(), primaryCode);
-            }catch (Exception ex){
-                Toast.makeText(getBaseContext(),"er: mCurKeyboard.setIme ",Toast.LENGTH_SHORT).show();
-            }
-            */
-
-            onKey(KKeyboard.mMulti_change_value, null);
-            //Toast.makeText(getBaseContext(),"value: "+KKeyboard.mMulti_change_value,Toast.LENGTH_SHORT).show();
-
+            // the key between space and enter always types a dot; the symbols typed last are in
+            // the middle row of its long-press menu (RecentSymbols)
+            mJustAutoSpaced = wasAutoSpaced; // "word ." → "word." after a swipe or suggestion
+            onKey(46, null);
         }
 
 
@@ -2756,6 +2750,7 @@ public class kurdikeyboard extends InputMethodService
             getCurrentInputConnection().finishComposingText();
             getCurrentInputConnection().commitText(ch, 1);
             mKeyText.append(ch);
+            if (mFieldKeepsSymbols) RecentSymbols.add(this, primaryCode);
         }
 
         if(isAlphabet(primaryCode)){
@@ -3232,29 +3227,6 @@ private void setCurrentLanguage(){
             }, timewordtwofuction);
 
         }
-        if(ismultichoiceprimaries(primaryCode)||isfunctioned(primaryCode)) {
-            setmultichangekeyvalue(primaryCode);
-           // Toast.makeText(getApplicationContext(),
-             //       "multichice",Toast.LENGTH_SHORT).show();
-        }
-
-
-
-    }
-    public boolean isfunctioned(int primaryCode){
-        boolean retvalue=false;
-        if((primaryCode==-116)||(primaryCode==-112)||(primaryCode==-157)||(primaryCode==-150)||(primaryCode==-152)){
-           retvalue=true;
-        }
-        return retvalue;
-
-    }
-    public void setmultichangekeyvalue(int primaryCode){
-        try {
-            mCurKeyboard.changeMultiKey(getResources(), primaryCode);
-        }catch (Exception ex){
-            Toast.makeText(getBaseContext(),"er: mCurKeyboard.setIme ",Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override
@@ -3689,25 +3661,6 @@ private void setCurrentLanguage(){
         return convertedBitmap;
     }
 
-    //inja
-    private String getmultichoiceprimaries() {
-
-        // Toast.makeText(getBaseContext(),"getwordseparators",Toast.LENGTH_LONG).show();
-
-        return mWordmultichoiceprimaries;
-    }
-    public boolean ismultichoiceprimaries(int primarycode){
-       // boolean retvalue=false;
-
-        String separators = getmultichoiceprimaries();
-        //retvalue= separators.contains(String.valueOf((char)primarycode));
-
-
-
-        return separators.contains(String.valueOf((char)primarycode));
-    }
-
-
 
     // =====================================================================
     // Word prediction (English / Persian / Kurdish) and swipe typing
@@ -3760,6 +3713,19 @@ private void setCurrentLanguage(){
         if (a == null) return false;
         int c = a.inputType & InputType.TYPE_MASK_CLASS;
         return c == InputType.TYPE_CLASS_NUMBER || c == InputType.TYPE_CLASS_PHONE;
+    }
+
+    /** symbols typed here go to the recent symbols (not in password or incognito fields) */
+    private boolean mFieldKeepsSymbols = true;
+
+    private static boolean isPasswordField(EditorInfo a) {
+        if (a == null) return false;
+        int cls = a.inputType & InputType.TYPE_MASK_CLASS;
+        int v = a.inputType & InputType.TYPE_MASK_VARIATION;
+        if (cls == InputType.TYPE_CLASS_NUMBER) return v == InputType.TYPE_NUMBER_VARIATION_PASSWORD;
+        return cls == InputType.TYPE_CLASS_TEXT && (v == InputType.TYPE_TEXT_VARIATION_PASSWORD
+                || v == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                || v == InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD);
     }
 
     private static boolean fieldAllowsPrediction(EditorInfo attribute) {
@@ -4182,19 +4148,19 @@ private void setCurrentLanguage(){
                 bg.getConstantState() != null ? bg.getConstantState().newDrawable(getResources()) : bg) > 0.55;
         int tint = light ? 0xFF2B3442 : 0xFFF2F4F7;
         int[][] map = {
-                {R.id.ivKeyboard, R.drawable.ic_kk_notes}, // ready sentences (emoji: the emoji key)
+                {R.id.ivKeyboard, R.drawable.ic_kk_emoji},
                 {R.id.ivKeyboardselectall, R.drawable.ic_kk_select_all},
                 {R.id.ivKeyboardcopy, R.drawable.ic_kk_copy},
                 {R.id.ivKeyboardback, R.drawable.ic_kk_arrow_left},
                 {R.id.ivKeyboardforward, R.drawable.ic_kk_arrow_right},
                 {R.id.ivKeyboardcut, R.drawable.ic_kk_cut},
                 {R.id.ivKeyboardpaste, R.drawable.ic_kk_paste},
-                {R.id.ivKeyboardsetting, R.drawable.ic_kk_settings},
+                {R.id.ivKeyboardsetting, R.drawable.ic_kk_magazine}, // the menu (MagazineMenu)
         };
         int pad = (int) (12 * getResources().getDisplayMetrics().density);
-        View contactsButton = root.findViewWithTag("contacts");
-        if (contactsButton instanceof ImageView) {
-            ImageView iv = (ImageView) contactsButton;
+        View added = root.findViewWithTag("clipboard"); // a button added in code
+        if (added instanceof ImageView) {
+            ImageView iv = (ImageView) added;
             iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
             iv.setPadding(pad, pad, pad, pad);
             iv.setImageTintList(android.content.res.ColorStateList.valueOf(tint));
@@ -4311,23 +4277,93 @@ private void setCurrentLanguage(){
         }
     }
 
-    /** a contacts icon in the tools row, before the settings gear */
-    private void addContactsToolbarButton(View root) {
-        View gear = root.findViewById(R.id.ivKeyboardsetting);
-        if (gear == null || !(gear.getParent() instanceof LinearLayout)) return;
-        LinearLayout row = (LinearLayout) gear.getParent();
-        if (row.findViewWithTag("contacts") != null) return;
+    /** a clipboard icon in the tools row, after paste (it was in the dot key's menu before 2.9.0) */
+    private void addClipboardToolbarButton(View root) {
+        View paste = root.findViewById(R.id.ivKeyboardpaste);
+        if (paste == null || !(paste.getParent() instanceof LinearLayout)) return;
+        LinearLayout row = (LinearLayout) paste.getParent();
+        if (row.findViewWithTag("clipboard") != null) return;
         ImageView iv = new ImageView(this);
-        iv.setTag("contacts");
-        iv.setContentDescription(getString(R.string.contacts_title));
-        iv.setImageResource(R.drawable.ic_kk_person);
-        iv.setLayoutParams(new LinearLayout.LayoutParams((LinearLayout.LayoutParams) gear.getLayoutParams())); // keeps the weight
+        iv.setTag("clipboard");
+        iv.setContentDescription(getString(R.string.popup_clipboard_title));
+        iv.setImageResource(R.drawable.ic_kk_clipboard);
+        iv.setLayoutParams(new LinearLayout.LayoutParams((LinearLayout.LayoutParams) paste.getLayoutParams())); // keeps the weight
         iv.setOnClickListener(new OnClickListener() {
             @Override public void onClick(View v) {
-                openContactPicker();
+                onKey(KKeyboardView.KEYCODE_LONG_RUN_POPUPOPTONS, null);
             }
         });
-        row.addView(iv, row.indexOfChild(gear));
+        row.addView(iv, row.indexOfChild(paste) + 1);
+    }
+
+    /**
+     * The tools row's last button: a half cylinder slides out of the right edge with settings,
+     * contacts and ready sentences in its chambers (MagazineMenu). Pressed again, or touched
+     * anywhere else, it slides away.
+     */
+    private void openMagazineMenu(final View anchor) {
+        if (closeOpenPopup()) return;
+        if (mInputView == null) return;
+        View root = rootTemp != null ? rootTemp : mInputView;
+        int[] r = new int[2], a = new int[2];
+        root.getLocationOnScreen(r);
+        anchor.getLocationOnScreen(a);
+        final int h = keyboardPopupHeight();
+        // the popup covers the keyboard area from the bottom; the tools row is at its top
+        float anchorBottom = a[1] + anchor.getHeight() - (r[1] + root.getHeight() - h);
+        MagazineMenu.Item[] items = {
+                new MagazineMenu.Item(R.drawable.ic_kk_settings, getString(R.string.menu_settings)),
+                new MagazineMenu.Item(R.drawable.ic_kk_person, getString(R.string.contacts_title)),
+                new MagazineMenu.Item(R.drawable.ic_kk_notes, getString(R.string.ready_title)),
+        };
+        final PopupWindow[] window = new PopupWindow[1];
+        final MagazineMenu menu = new MagazineMenu(this, mInputView.currentTheme(), items, anchorBottom,
+                new MagazineMenu.Listener() {
+                    @Override public void onPick(int index) {
+                        closeOpenPopup();
+                        anchor.animate().rotation(0).setDuration(150).start();
+                        if (index == 0) {
+                            Intent i = new Intent(getApplicationContext(), ImePreferences.class);
+                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            try {
+                                startActivity(i);
+                            } catch (RuntimeException ignored) {
+                            }
+                        } else if (index == 1) {
+                            openContactPicker();
+                        } else {
+                            openKeyboardScreen(ReadySentencesActivity.class);
+                        }
+                    }
+
+                    @Override public void onClosed() {
+                        if (window[0] != null && window[0].isShowing()) {
+                            try {
+                                window[0].dismiss();
+                            } catch (RuntimeException ignored) {
+                            }
+                        }
+                        if (mOpenPopup == window[0]) mOpenPopup = null;
+                    }
+                });
+        PopupWindow w = new PopupWindow(menu, WindowManager.LayoutParams.MATCH_PARENT, h);
+        w.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        w.setOutsideTouchable(false);
+        w.setAnimationStyle(0);
+        w.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override public void onDismiss() {
+                anchor.animate().rotation(0).setDuration(200).start();
+            }
+        });
+        window[0] = w;
+        try {
+            w.showAtLocation(mInputView.getRootView(), Gravity.BOTTOM, 0, 0);
+            mOpenPopup = w;
+            anchor.animate().rotation(-120).setDuration(460).start(); // the button turns with it
+            menu.open();
+        } catch (RuntimeException e) {
+            window[0] = null;
+        }
     }
 }
 

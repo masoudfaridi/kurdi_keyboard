@@ -22,7 +22,7 @@
         کیبورد هوشمند چندزبانه ماپریس
     </string>
 <string name="versionName">
-    2.8.1
+    2.9.0
 </string>
 
 
@@ -488,10 +488,13 @@
     <string name="s_bg_pick_summary">یک عکس از گالری انتخاب کنید</string>
     <string name="s_bg_opacity">میزان پررنگی کلیدها روی عکس</string>
     <string name="s_cat_toolbar">نوار ابزار</string>
-    <string name="s_hide_ready_title">پنهان کردن دکمه جمله‌های آماده</string>
+    <string name="s_hide_ready_title">پنهان کردن دکمه ایموجی</string>
     <string name="s_hide_ready_summary">دکمه سمت چپ نوار ابزار نمایش داده نشود</string>
-    <string name="s_hide_gear_title">پنهان کردن دکمه تنظیمات</string>
-    <string name="s_hide_gear_summary">دکمه چرخ‌دنده نوار ابزار نمایش داده نشود</string>
+    <string name="s_hide_gear_title">پنهان کردن دکمه منو</string>
+    <string name="s_hide_gear_summary">دکمه منوی نیم‌دایره (تنظیمات، مخاطبین، جمله‌های آماده) سمت راست نوار ابزار نمایش داده نشود</string>
+    <string name="menu_settings">تنظیمات</string>
+    <string name="toolbar_menu">منو: تنظیمات، مخاطبین، جمله‌های آماده</string>
+    <string name="toolbar_emoji">ایموجی</string>
     <string name="s_lang_title">زبان‌ها</string>
     <string name="s_lang_summary">فارسی و کُردی، چیدمان کُردی و ضربه دوتایی</string>
     <string name="s_cat_languages">زبان‌های فعال</string>

@@ -26,18 +26,16 @@
 
 
     <Row>
-        <Key android:codes="-116" android:keyIcon="@drawable/paste_black"
+        <!-- -190: the 5 symbols typed last, the newest on the right (KKeyboardView
+             fillRecentSymbols). The labels are shown until enough symbols were typed.
+             Paste, copy, clipboard, emoji and ready sentences are in the tools row and on the
+             emoji key. -->
+        <Key android:codes="-190" android:keyLabel="*"
             android:keyEdgeFlags="left"/>
-        <Key android:codes="-112" android:keyIcon="@drawable/copy_black"/>
-        <Key android:codes="-150" android:keyIcon="@drawable/clipboard_black"/>
-
-        <Key android:codes="-157" android:keyIcon="@drawable/emoji_black"/>
-
-        <Key android:codes="-152" android:keyIcon="@drawable/ready_sentences_black"/>
-
-        <!--
-         <Key android:codes="-152" android:keyIcon="@drawable/contacts_black"/>
-         !-->
+        <Key android:codes="-190" android:keyLabel="»"/>
+        <Key android:codes="-190" android:keyLabel="«"/>
+        <Key android:codes="-190" android:keyLabel="؛"/>
+        <Key android:codes="-190" android:keyLabel=":"/>
         <Key android:codes="45" android:keyLabel="-"/>
 
 

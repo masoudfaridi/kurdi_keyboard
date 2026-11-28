@@ -36,10 +36,6 @@ public class KKeyboard extends Keyboard  {
     public int enterAction = 0;
     private Context mcontext;
 
-    private Key mMulti_change;
-    static int mMulti_change_value=46;
-
-
     private Key mSavedLanguageSwitchKey;
 
     public KKeyboard(Context context, int xmlLayoutResId) {
@@ -94,30 +90,7 @@ public class KKeyboard extends Keyboard  {
             mdot=key;
         }
         */
-        else if(key.codes[0]==-158){
-            mMulti_change=key;
-        }
         return key;
-    }
-    /**
-     * The "?!" key repeats the last symbol picked from its popup. 2.0: the key shows that
-     * symbol as text (drawn by KKeyboardView), no more one picture per symbol.
-     */
-    void changeMultiKey(Resources res,int primarykey){
-        if(mMulti_change==null){
-            return;
-        }
-        switch (primarykey) {
-            case 33: case 34: case 39: case 40: case 41: case 43: case 44: case 45: case 46: case 47:
-            case 60: case 62: case 63: case 64: case 92: case 124: case 1548: case 1567:
-            case -112: case -116: case -150: case -152: case -157:
-                mMulti_change_value = primarykey;
-                break;
-            default:
-                mMulti_change_value = 46;
-        }
-        mMulti_change.label = null;
-        mMulti_change.icon = null;
     }
    /* @Override
     public int[] getNearestKeys(int x, int y) {

@@ -88,6 +88,8 @@ public class KKeyboardView extends KeyboardView {
     static final int KEYCODE_LONG_VEHHADKURDI=-156;
     static final int KEYCODE_LONG_closetobringupemoji=-157;
     static final int KEYCODE_MULTI_CHANGE=-158;
+    /** a cell of the dot key's menu that shows one of the symbols typed last (RecentSymbols) */
+    static final int KEYCODE_RECENT_SYMBOL = -190;
     /** number pad: back to the letters of the current language */
     static final int KEYCODE_BACK_TO_LETTERS=-170;
     // KEYCODE_MULTI_CHANGE used in xml file
@@ -168,6 +170,113 @@ public class KKeyboardView extends KeyboardView {
         mTapTime = mLastTouchTime;
     }
 
+    // fn (Persian and Kurdish keyboards, bottom left): like shift, a tap turns it on for the
+    // next key, a second tap keeps it on, a third turns it off; holding it shows or hides the
+    // tools row. With fn on, a two-letter key types its second letter and the other letters
+    // type marks and punctuation (FnLayer). Those taps are typed here, not by KeyboardView, so
+    // its double tap never takes an fn letter for the first tap of a double tap.
+    static final int KEYCODE_FN = -175;
+    private int mFn;                 // 0 off, 1 for the next key, 2 stays on
+    private Key mFnKey;              // key pressed with fn on, typed when the finger lifts
+    private int mFnCode;
+    private java.util.Set<Integer> mBoardCodes; // first codes of the keys on this keyboard
+
+    /** the fn key was tapped: off → next key → stays on → off */
+    void cycleFn() {
+        mFn = (mFn + 1) % 3;
+        invalidateAllKeys();
+    }
+
+    void resetFn() {
+        mFnKey = null;
+        if (mFn != 0) {
+            mFn = 0;
+            invalidateAllKeys();
+        }
+    }
+
+    boolean fnOn() { return mFn != 0; }
+
+    @Override
+    public void setKeyboard(Keyboard keyboard) {
+        mBoardCodes = null;
+        mFnKey = null;
+        mFn = 0; // fn belongs to one keyboard page
+        super.setKeyboard(keyboard);
+    }
+
+    /** what a key types with fn on, or 0 */
+    private int fnCode(Key key) {
+        if (mFn == 0 || key == null || !keyboardHasLetters()) return 0;
+        if (mBoardCodes == null) {
+            mBoardCodes = new java.util.HashSet<>();
+            Keyboard kb = getKeyboard();
+            if (kb != null) {
+                for (Key k : kb.getKeys()) {
+                    if (k.codes != null && k.codes.length > 0) mBoardCodes.add(k.codes[0]);
+                }
+            }
+        }
+        return FnLayer.code(kurdikeyboard.language, key.codes, mBoardCodes);
+    }
+
+    /** a letter tapped with fn on: KeyboardView only shows it pressed; it is typed here */
+    private boolean handleFnTouch(android.view.MotionEvent me) {
+        int a = me.getActionMasked();
+        if (a == android.view.MotionEvent.ACTION_DOWN) {
+            mFnKey = null;
+            Key k = keyAt(me.getX(), me.getY());
+            int c = fnCode(k);
+            if (c == 0) return false; // space, delete, enter ...: as always
+            mFnKey = k;
+            mFnCode = c;
+            super.onTouchEvent(me);
+            return true;
+        }
+        if (mFnKey == null) return false;
+        switch (a) {
+            case android.view.MotionEvent.ACTION_UP: {
+                cancelPress(me);
+                int c = mFnCode;
+                mFnKey = null;
+                OnKeyboardActionListener l = getOnKeyboardActionListener();
+                if (l != null) {
+                    l.onKey(c, new int[]{c});
+                    l.onRelease(c);
+                }
+                mTapKey = null; // not the first tap of a double tap
+                if (mFn == 1) {
+                    mFn = 0;
+                    invalidateAllKeys();
+                }
+                return true;
+            }
+            case android.view.MotionEvent.ACTION_CANCEL:
+                cancelPress(me);
+                mFnKey = null;
+                return true;
+            default:
+                return true; // moving or a second finger: still this key
+        }
+    }
+
+    /** lets KeyboardView release the pressed key without typing it */
+    private void cancelPress(android.view.MotionEvent me) {
+        android.view.MotionEvent cancel = android.view.MotionEvent.obtain(me);
+        cancel.setAction(android.view.MotionEvent.ACTION_CANCEL);
+        super.onTouchEvent(cancel);
+        cancel.recycle();
+    }
+
+    /** a letter key with fn on: what it types, large, and its own letter small in the corner */
+    private void drawFnKey(Canvas canvas, Key key, int code, float cx) {
+        canvas.drawText(FnLayer.display(code), cx, key.y + 7 * (key.height / 10f), mLabelPaint);
+        if (key.label != null && key.label.length() > 0) {
+            canvas.drawText(key.label.toString(), key.x + key.width * 0.24f,
+                    key.y + key.height * 0.38f, mHintPaint);
+        }
+    }
+
     /** which letter of a two-letter key this press types: the next one on a double tap */
     private void noteDown(android.view.MotionEvent me) {
         Key k = keyAt(me.getX(), me.getY());
@@ -180,6 +289,7 @@ public class KKeyboardView extends KeyboardView {
     }
     @Override
     protected boolean onLongPress(Key key) {
+        if (mFnKey != null) return true; // fn on: holding a letter only types its fn letter
         mSwipeLongPressed = true; // a popup is opening: this touch is not a swipe
         // number pad / symbol pages: long press = hold-and-slide options (the copy/paste
         // shortcuts on 7-0 belong to the number row above the letters)
@@ -348,8 +458,10 @@ public class KKeyboardView extends KeyboardView {
 
 
              return true;
-        }else if (key.codes[0] == -3) {
-            // bottom-left key: tap = emoji, long press = hide / show suggestions and tools row
+        }else if (key.codes[0] == -3 || key.codes[0] == KEYCODE_FN
+                || (key.codes[0] == KEYCODE_symbols_Numbers_page && keyboardHasLetters())) {
+            // bottom-left key (fn on Persian / Kurdish, number pad on English): long press =
+            // hide / show the suggestions and tools row
             getOnKeyboardActionListener().onKey(KEYCODE_TOGGLE_TOP_ROW, null);
             return true;
         }
@@ -1003,6 +1115,7 @@ public class KKeyboardView extends KeyboardView {
             }
             return r;
         }
+        if (handleFnTouch(me)) return true;
         if (handleSpaceGesture(me)) return true;
         if (mSwipeListener == null) return super.onTouchEvent(me);
         int action = me.getActionMasked();
@@ -1254,7 +1367,7 @@ public class KKeyboardView extends KeyboardView {
             if (key.height < 8 * d || key.width < 8 * d) continue; // zero-size helper keys in the layouts
             int code = key.codes != null && key.codes.length > 0 ? key.codes[0] : 0;
             boolean isEnter = code == 10;
-            boolean isFn = code == -1 || code == -5 || code == -2 || code == -3 || code == -117
+            boolean isFn = code == -1 || code == -5 || code == -2 || code == -3 || code == -117 || code == KEYCODE_FN
                     || code == -170 || code == -153
                     || code == -158 || code == 8204 || code == 46 || (key.label == null && code != 32 && !isEnter);
 
@@ -1326,6 +1439,26 @@ public class KKeyboardView extends KeyboardView {
                 case -3:
                     drawIcon(canvas, R.drawable.ic_kk_emoji, cx, cy, icon, t.text);
                     continue;
+                case KEYCODE_symbols_Numbers_page:
+                    if (!letters) break; // the "12" key of the symbol pages keeps its label
+                    // English keyboard, bottom left: the number pad (as a long press on ?123)
+                    drawIcon(canvas, R.drawable.ic_kk_numpad, cx, cy, icon * 0.9f, t.text);
+                    continue;
+                case KEYCODE_FN: {
+                    // "fn" in the accent color while on; a bar under it while it stays on
+                    float base = cy + mFnTextPaint.getTextSize() / 3;
+                    mFnTextPaint.setColor(mFn != 0 ? t.accent : t.text);
+                    canvas.drawText("fn", cx, base, mFnTextPaint);
+                    if (mFn == 2) {
+                        float w = mFnTextPaint.measureText("fn");
+                        mKeyPaint.setStyle(Paint.Style.FILL);
+                        mKeyPaint.setColor(t.accent);
+                        canvas.drawRoundRect(cx - w * 0.6f, base + 3.5f * d, cx + w * 0.6f, base + 5.5f * d,
+                                d, d, mKeyPaint);
+                    }
+                    mFnTextPaint.setColor(t.text);
+                    continue;
+                }
                 case 32: {
                     if (!letters) { // number pad / symbols: a plain space bar
                         mFnTextPaint.setColor(t.hint);
@@ -1356,20 +1489,12 @@ public class KKeyboardView extends KeyboardView {
                     continue;
                 }
                 case -158: {
-                    int v = KKeyboard.mMulti_change_value;
-                    int res = v == -112 ? R.drawable.ic_kk_copy : v == -116 ? R.drawable.ic_kk_paste
-                            : v == -150 ? R.drawable.ic_kk_clipboard : v == -152 ? R.drawable.ic_kk_notes
-                            : v == -157 ? R.drawable.ic_kk_emoji : 0;
-                    if (res != 0) {
-                        drawIcon(canvas, res, cx, cy, icon * 0.9f, t.text);
-                    } else {
-                        canvas.drawText(new String(Character.toChars(v > 0 ? v : 46)), cx,
-                                cy + mNumberPaint.getTextSize() / 3, mNumberPaint);
-                        // a tiny dot tells that a long press opens more symbols
-                        mKeyPaint.setStyle(Paint.Style.FILL);
-                        mKeyPaint.setColor(t.hint);
-                        canvas.drawCircle(mKeyRect.right - 6 * d, mKeyRect.top + 6 * d, 1.6f * d, mKeyPaint);
-                    }
+                    // always a dot; the symbols typed last are in its long-press menu
+                    canvas.drawText(".", cx, cy + mNumberPaint.getTextSize() / 3, mNumberPaint);
+                    // a tiny dot tells that a long press opens more symbols
+                    mKeyPaint.setStyle(Paint.Style.FILL);
+                    mKeyPaint.setColor(t.hint);
+                    canvas.drawCircle(mKeyRect.right - 6 * d, mKeyRect.top + 6 * d, 1.6f * d, mKeyPaint);
                     continue;
                 }
                 case 8204: {
@@ -1383,6 +1508,11 @@ public class KKeyboardView extends KeyboardView {
                 }
             }
 
+            int fnc = fnCode(key);
+            if (fnc != 0) { // fn on: the letter's fn character
+                drawFnKey(canvas, key, fnc, cx);
+                continue;
+            }
             if (key.label != null && !letters && key.popupCharacters != null && key.popupCharacters.length() > 0) {
                 // number pad / symbols: the first long-press option as a corner hint
                 String pc = key.popupCharacters.toString();
@@ -1524,6 +1654,7 @@ public class KKeyboardView extends KeyboardView {
                 it.y = k.y; it.x = k.x; // used for grouping into rows
                 items.add(it);
             }
+            fillRecentSymbols(items);
         }
         if (items.isEmpty()) return false;
 
@@ -1575,6 +1706,42 @@ public class KKeyboardView extends KeyboardView {
         mSlideMoved = false;
         hideKeyPreview();
         return true;
+    }
+
+    /**
+     * The menu's recent-symbol cells (KEYCODE_RECENT_SYMBOL, in popup_multikey_*.xml) get the
+     * symbols typed last, the newest on the right, next to the finger. Until enough symbols were
+     * typed, the cells' own labels fill in.
+     */
+    private void fillRecentSymbols(List<SlideItem> items) {
+        List<Integer> cells = new java.util.ArrayList<>(); // indexes in items, right to left
+        for (int i = items.size() - 1; i >= 0; i--) {
+            if (items.get(i).code == KEYCODE_RECENT_SYMBOL) cells.add(i);
+        }
+        if (cells.isEmpty()) return;
+        List<Integer> symbols = new java.util.ArrayList<>();
+        for (int cp : RecentSymbols.load(getContext())) {
+            if (!symbols.contains(cp)) symbols.add(cp);
+        }
+        for (int i : cells) {
+            String label = items.get(i).text;
+            if (label == null || label.isEmpty()) continue;
+            int cp = label.codePointAt(0);
+            if (!symbols.contains(cp)) symbols.add(cp);
+        }
+        for (int c = 0; c < cells.size(); c++) {
+            int i = cells.get(c);
+            SlideItem cell = items.get(i);
+            if (c >= symbols.size()) { // no symbol left for it (labels repeated): leave it out
+                items.remove(i);
+                continue;
+            }
+            int cp = symbols.get(c);
+            SlideItem it = new SlideItem(cp, new String(Character.toChars(cp)), null);
+            it.x = cell.x;
+            it.y = cell.y;
+            items.set(i, it);
+        }
     }
 
     /** item under a point of this view (nearest in the row when between cells), or -1 */
@@ -1962,6 +2129,8 @@ public class KKeyboardView extends KeyboardView {
     /** text shown for a key, or null for keys without a preview (function keys) */
     private String previewText(Key key) {
         if (key == null || key.label == null || key.codes == null || key.codes.length == 0) return null;
+        int fn = fnCode(key);
+        if (fn != 0) return FnLayer.display(fn);
         int code = key.codes[0];
         if (code <= 0 || code == 32 || code == 10) return null;
         String s = key.label.toString();
@@ -2126,6 +2295,7 @@ public class KKeyboardView extends KeyboardView {
 
     /** keeps the preview in step with the finger (called for every touch event) */
     private void trackKeyPreview(android.view.MotionEvent me) {
+        if (mFnKey != null && me.getActionMasked() == android.view.MotionEvent.ACTION_MOVE) return;
         switch (me.getActionMasked()) {
             case android.view.MotionEvent.ACTION_DOWN:
                 noteDown(me);
@@ -2164,6 +2334,7 @@ public class KKeyboardView extends KeyboardView {
     }
 
     void cleanUpGestures() {
+        resetFn();
         mSlideActive = false;
         closeMenuWindow(true);
         resetSpace();
