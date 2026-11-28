@@ -22,7 +22,7 @@
         کیبورد هوشمند چندزبانه ماپریس
     </string>
 <string name="versionName">
-    2.7.0
+    2.8.0
 </string>
 
 
@@ -393,25 +393,35 @@
     <string name="theme_picker_title">تم کیبورد</string>
     <string name="prefpopupstyle" translatable="false">prefpopupstyle</string>
     <string name="popup_style_title">تم پاپ‌آپ</string>
-    <string name="popup_style_summary">شکل نمایش حرف هنگام تایپ: پرتو نور، رعد و برق، تابش نور، گوی پلاسما، هولوگرام</string>
+    <string name="popup_style_summary">شکل نمایش حرف هنگام تایپ: پرتو نور، رعد و برق، آتش، دود، تابش نور، گوی پلاسما، هولوگرام، یخ، غبار ستاره، حباب</string>
     <string name="popup_switch_summary">اگر خاموش باشد، هنگام تایپ هیچ پاپ‌آپی دیده نمی‌شود</string>
     <string-array name="popup_style_names">
         <item>خودکار</item>
         <item>ساده</item>
         <item>پرتو نور</item>
         <item>رعد و برق</item>
+        <item>آتش</item>
+        <item>دود</item>
         <item>تابش نور</item>
         <item>گوی پلاسما</item>
         <item>هولوگرام</item>
+        <item>یخ</item>
+        <item>غبار ستاره</item>
+        <item>حباب</item>
     </string-array>
     <string-array name="popup_style_descs">
         <item>هماهنگ با تم: پرتو نور در تم‌های حرفه‌ای تیره، ساده در بقیه</item>
         <item>یک مستطیل ساده، مثل قبل</item>
         <item>پرتوی مثلثی نور از کلید تا حرف</item>
         <item>صاعقه و جرقه از کلید تا حرف</item>
+        <item>شعله‌های کوچک به رنگ تم زیر حرف می‌سوزند و اخگر بالا می‌رود</item>
+        <item>دود به رنگ تم از کلید بلند می‌شود و دور حرف می‌پیچد</item>
         <item>پرتوهای چرخان نور و موج ضربه</item>
         <item>گوی انرژی پر از رشته‌های برق</item>
         <item>تصویر سه‌بعدی با خطوط اسکن</item>
+        <item>بلورهای یخ روی قاب می‌رویند و برف می‌بارد</item>
+        <item>ستاره‌های ریز از کلید تا حرف می‌چرخند و می‌درخشند</item>
+        <item>حباب‌ها از کلید بالا می‌روند و کنار حرف می‌ترکند</item>
     </string-array>
     <string name="theme_group_normal">🎨  تم‌های ساده (%1$s)</string>
     <string name="theme_group_pro">✨  تم‌های حرفه‌ای (%1$s)</string>

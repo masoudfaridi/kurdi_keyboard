@@ -28,6 +28,12 @@ import java.util.Random;
  * RADIANCE   rays of light turn behind the frame, shock rings spread from the key
  * PLASMA     energy orbs full of electric arcs, tied to the finger by a thin arc
  * HOLOGRAM   a projector on the key casts a flickering hologram with scan lines
+ * FIRE       low flames burn under the frame, a little flame under the finger, embers rise
+ * SMOKE      smoke rises from the finger and curls around the frame, which appears out of it
+ * FROST      ice crystals grow on the frame, a frost star under the finger, snow falls
+ * STARDUST   glittering stars spiral from the finger up around the frame
+ * BUBBLES    bubbles rise from the finger and pop at a glossy frame
+ * All of them take the color of the theme: blue fire and blue smoke on a blue theme.
  * AUTO picks BEAM for dark pro themes and SIMPLE for the others.
  *
  * Frames take the shape and colors of the theme's keys. Used by the keyboard (KKeyboardView
@@ -36,9 +42,11 @@ import java.util.Random;
 final class PressEffect {
 
     static final String AUTO = "auto", SIMPLE = "simple", BEAM = "beam", LIGHTNING = "lightning",
-            RADIANCE = "radiance", PLASMA = "plasma", HOLOGRAM = "hologram";
+            RADIANCE = "radiance", PLASMA = "plasma", HOLOGRAM = "hologram", FIRE = "fire", SMOKE = "smoke",
+            FROST = "frost", STARDUST = "stardust", BUBBLES = "bubbles";
     /** in the order of the settings screen */
-    static final String[] ALL = {AUTO, SIMPLE, BEAM, LIGHTNING, RADIANCE, PLASMA, HOLOGRAM};
+    static final String[] ALL = {AUTO, SIMPLE, BEAM, LIGHTNING, FIRE, SMOKE, RADIANCE, PLASMA, HOLOGRAM, FROST,
+            STARDUST, BUBBLES};
 
     private PressEffect() {}
 
@@ -61,8 +69,9 @@ final class PressEffect {
     /** distance between key and frame the effect needs to be seen (dp) */
     static float minGapDp(String style) {
         switch (style) {
-            case BEAM: case HOLOGRAM: case LIGHTNING: return 38;
-            case PLASMA: return 30;
+            case BEAM: case HOLOGRAM: case LIGHTNING: case SMOKE: case BUBBLES: return 38;
+            case FIRE: case STARDUST: return 34;
+            case PLASMA: case FROST: return 30;
             case RADIANCE: return 26;
             default: return 0;
         }
@@ -73,7 +82,8 @@ final class PressEffect {
         switch (style) {
             case RADIANCE: return Math.max(bw, bh) * 0.85f;
             case PLASMA: return Math.max(bw, bh) * 0.58f;
-            case LIGHTNING: return Math.max(bw, bh) * 0.5f + 8 * d;
+            case LIGHTNING: case FIRE: case FROST: case BUBBLES: return Math.max(bw, bh) * 0.5f + 8 * d;
+            case SMOKE: case STARDUST: return Math.max(bw, bh) * 0.75f;
             default: return Math.max(bw, bh) * 0.25f + 8 * d; // the frame's halo fades out inside it
         }
     }
@@ -158,6 +168,43 @@ final class PressEffect {
             case HOLOGRAM:
                 hologram(c, p, theme, bubble, key, tipX, tipY, t, color, d, label, alt);
                 break;
+            case FIRE:
+                fireBed(c, p, bubble, 7, bubble.height() * 0.42f, true, t, seed, color, d, dark);
+                frame(c, p, theme, bubble, color, d, label, alt, pop(t), 0);
+                fireRise(c, p, bubble, tipX, tipY, t, seed, color, d, dark, true);
+                break;
+            case SMOKE: {
+                smoke(c, p, bubble, tipX, tipY, t, seed, color, d, dark, false);
+                float in = easeOut(t / 260f); // the frame appears out of the smoke
+                int sv = in < 1 ? c.saveLayerAlpha(bubble.left - 24 * d, bubble.top - 24 * d, bubble.right + 24 * d,
+                        bubble.bottom + 24 * d, (int) (255 * in)) : -1;
+                frame(c, p, theme, bubble, color, d, label, alt, pop(t), 0);
+                if (sv >= 0) c.restoreToCount(sv);
+                smoke(c, p, bubble, tipX, tipY, t, seed, color, d, dark, true);
+                break;
+            }
+            case FROST: {
+                int ice = ice(color);
+                frostMist(c, p, bubble, t, ice, d, dark);
+                frame(c, p, theme, bubble, ice, d, label, alt, pop(t), 0);
+                frost(c, p, bubble, tipX, tipY, t, seed, ice, d);
+                break;
+            }
+            case STARDUST:
+                stardust(c, p, bubble, tipX, tipY, t, seed, color, d, dark);
+                frame(c, p, theme, bubble, color, d, label, alt, pop(t), 0);
+                twinkles(c, p, bubble, t, color, d, dark);
+                break;
+            case BUBBLES: {
+                frame(c, p, theme, bubble, color, d, label, alt, pop(t), 0);
+                c.save();
+                c.scale(pop(t), pop(t), bubble.centerX(), bubble.bottom);
+                gloss(c, p, ProPainter.shapePath(theme.pro, bubble, Math.min(bubble.width(), bubble.height()) * 0.24f,
+                        d, PB), bubble, dark);
+                c.restore();
+                bubbles(c, p, bubble, tipX, tipY, t, seed, color, d, dark);
+                break;
+            }
             default:
                 simple(c, p, theme, bubble, label, alt, d);
         }
@@ -323,9 +370,23 @@ final class PressEffect {
                 projector(c, p, panel.left + 6 * d, panel.right - 6 * d, panel.bottom, tipX, tipY, 16 * d, t,
                         color, d, dark);
                 break;
+            case FIRE:
+                fireBed(c, p, panel, Math.max(4, (int) (panel.width() / (13 * d))),
+                        Math.min(panel.height() * 0.4f, 26 * d), false, t, seed, color, d, dark);
+                break;
+            case SMOKE:
+                smoke(c, p, chosen != null ? chosen.r : panel, tipX, tipY, t, seed, color, d, dark, false);
+                break;
+            case FROST:
+                frostMist(c, p, panel, t, ice(color), d, dark);
+                break;
+            case STARDUST:
+                stardust(c, p, chosen != null ? chosen.r : panel, tipX, tipY, t, seed + sel * 7, color, d, dark);
+                break;
             default:
                 break;
         }
+        int frameColor = FROST.equals(style) ? ice(color) : color;
 
         // the panel
         Path s = panelPath(theme, panel, d, PC);
@@ -334,7 +395,7 @@ final class PressEffect {
         } else if (HOLOGRAM.equals(style)) {
             holoPanel(c, p, s, panel, t, color, d, dark);
         } else {
-            frameBody(c, p, s, panel, color, d, dark, 0, 0);
+            frameBody(c, p, s, panel, frameColor, d, dark, 0, 0);
         }
 
         // rays bursting from the chosen option
@@ -344,13 +405,34 @@ final class PressEffect {
         }
         // the options
         for (int i = 0; i < items.size(); i++) {
-            item(c, p, style, theme, items.get(i), i == sel, tSel, t, seed, color, d, dark);
+            item(c, p, style, theme, items.get(i), i == sel, tSel, t, seed, frameColor, d, dark);
         }
         // electricity running around the chosen option
         if (LIGHTNING.equals(style) && chosen != null) {
             R2.set(chosen.r);
             R2.inset(2.5f * d, 2.5f * d);
             crackle(c, p, R2, t, seed + sel, color, d);
+        }
+        // in front: flames, smoke, frost, stars or bubbles going to the chosen option
+        RectF target = chosen != null ? chosen.r : panel;
+        switch (style) {
+            case FIRE:
+                fireRise(c, p, target, tipX, tipY, t, seed, color, d, dark, chosen != null);
+                break;
+            case SMOKE:
+                if (chosen != null) smoke(c, p, chosen.r, tipX, tipY, t, seed, color, d, dark, true);
+                break;
+            case FROST:
+                frost(c, p, panel, tipX, tipY, t, seed, frameColor, d);
+                break;
+            case STARDUST:
+                if (chosen != null) twinkles(c, p, chosen.r, t, color, d, dark);
+                break;
+            case BUBBLES:
+                bubbles(c, p, target, tipX, tipY, t, seed, color, d, dark);
+                break;
+            default:
+                break;
         }
         c.restore();
         reset(p);
@@ -490,6 +572,7 @@ final class PressEffect {
                     color, true, 0, d, 1.1f);
         } else {
             frameBody(c, p, s, R1, color, d, dark, 0.55f, 0);
+            if (BUBBLES.equals(style)) gloss(c, p, s, R1, dark);
             int fg = dark ? ProPainter.mix(color, 0xFFFFFFFF, 0.65f) : ProPainter.mix(color, 0xFF000000, 0.3f);
             label(c, p, it, r, fg, color, dark, 0, d, 1.1f);
         }
@@ -876,6 +959,329 @@ final class PressEffect {
         path.moveTo(b.right, b.bottom - l); path.lineTo(b.right, b.bottom); path.lineTo(b.right - l, b.bottom);
         path.moveTo(b.left + l, b.bottom); path.lineTo(b.left, b.bottom); path.lineTo(b.left, b.bottom - l);
         glow(c, p, path, color, 1.6f * d, 1f);
+    }
+
+    // ------------------------------------------------------------------ fire
+
+    /** one living flame standing on (x, base): it sways and flickers with time */
+    private static void flameTongue(Canvas c, Paint p, float x, float base, float w, float h, long t, float phase,
+                                    int color, boolean dark) {
+        if (h < 1) return;
+        float hh = h * (0.8f + 0.14f * (float) Math.sin(t * 0.013 + phase) + 0.06f * (float) Math.sin(t * 0.037 + phase * 1.9));
+        float lean = w * 0.38f * (float) Math.sin(t * 0.008 + phase * 0.7);
+        Path f = P2;
+        f.reset();
+        f.moveTo(x - w / 2, base);
+        f.cubicTo(x - w * 0.6f, base - hh * 0.42f, x + lean - w * 0.18f, base - hh * 0.62f, x + lean, base - hh);
+        f.cubicTo(x + lean + w * 0.08f, base - hh * 0.58f, x + w * 0.62f, base - hh * 0.38f, x + w / 2, base);
+        f.close();
+        int mid = ProPainter.mix(color, 0xFFFFFFFF, 0.45f), core = ProPainter.mix(color, 0xFFFFFFFF, 0.85f);
+        p.setColor(Color.BLACK);
+        p.setShader(new LinearGradient(0, base, 0, base - hh, new int[]{a(mid, 235), a(color, 205), a(color, 0)},
+                new float[]{0f, 0.45f, 1f}, Shader.TileMode.CLAMP));
+        c.drawPath(f, p);
+        // the hot core
+        float cw = w * 0.45f, ch = hh * 0.5f, cl = lean * 0.5f;
+        f.reset();
+        f.moveTo(x - cw / 2, base);
+        f.cubicTo(x - cw * 0.5f, base - ch * 0.5f, x + cl - cw * 0.1f, base - ch * 0.7f, x + cl, base - ch);
+        f.cubicTo(x + cl + cw * 0.1f, base - ch * 0.6f, x + cw * 0.5f, base - ch * 0.4f, x + cw / 2, base);
+        f.close();
+        p.setShader(new LinearGradient(0, base, 0, base - ch, a(core, dark ? 240 : 190), a(core, 0),
+                Shader.TileMode.CLAMP));
+        c.drawPath(f, p);
+        p.setShader(null);
+    }
+
+    /**
+     * Low flames burning along the bottom of a frame (and up its sides), drawn behind it: the
+     * frame stands in a small fire of the theme's color.
+     */
+    private static void fireBed(Canvas c, Paint p, RectF b, int n, float h, boolean sides, long t, int seed,
+                                int color, float d, boolean dark) {
+        float grow = easeOut(t / 200f);
+        float gr = Math.max(b.width(), b.height() * 2) * 0.6f;
+        p.setColor(Color.BLACK);
+        p.setShader(new RadialGradient(b.centerX(), b.bottom, gr, a(color, dark ? 120 : 80), a(color, 0),
+                Shader.TileMode.CLAMP));
+        c.drawCircle(b.centerX(), b.bottom, gr, p);
+        p.setShader(null);
+        Random r = new Random(seed);
+        float w = b.width() / n * 1.6f;
+        for (int i = 0; i < n; i++) {
+            float fx = b.left + b.width() * (i + 0.5f) / n + (r.nextFloat() - 0.5f) * 3 * d;
+            float fh = h * (0.75f + r.nextFloat() * 0.5f) * grow;
+            flameTongue(c, p, fx, b.bottom + fh * 0.45f, w, fh, t, i * 1.7f + r.nextFloat() * 3, color, dark);
+        }
+        if (!sides) return;
+        for (int side = -1; side <= 1; side += 2) {
+            for (int k = 0; k < 2; k++) {
+                float fx = side < 0 ? b.left + 3 * d : b.right - 3 * d;
+                float fh = h * (0.9f - 0.3f * k) * grow;
+                float base = b.bottom - b.height() * 0.32f * k + fh * 0.3f;
+                flameTongue(c, p, fx + side * 2 * d, base, 11 * d, fh, t, side * 2.3f + k * 1.3f, color, dark);
+            }
+        }
+    }
+
+    /** a little flame where the finger touches, embers rising to the frame, low flames in front of it */
+    private static void fireRise(Canvas c, Paint p, RectF b, float tipX, float tipY, long t, int seed, int color,
+                                 float d, boolean dark, boolean flamesOnFrame) {
+        float grow = easeOut(t / 150f);
+        flameTongue(c, p, tipX, tipY + 5 * d, 10 * d, 17 * d * grow, t, 0.5f, color, dark);
+        if (flamesOnFrame) {
+            for (int i = 0; i < 3; i++) {
+                float fx = b.left + b.width() * (0.2f + 0.3f * i);
+                flameTongue(c, p, fx, b.bottom + 2 * d, b.width() * 0.22f, b.height() * 0.24f * grow, t,
+                        4.1f + i * 2.2f, color, dark);
+            }
+        }
+        Random r = new Random(seed * 3L);
+        int ember = ProPainter.mix(color, 0xFFFFFFFF, 0.55f);
+        float top = b.top - 24 * d;
+        for (int i = 0; i < 18; i++) {
+            float ph = (t * 0.0009f + r.nextFloat()) % 1f;
+            float sx = r.nextFloat(), amp = (3 + r.nextFloat() * 9) * d, size = (0.8f + r.nextFloat()) * d;
+            boolean fromFinger = i % 2 == 0;
+            float x0 = fromFinger ? tipX : b.left + b.width() * sx, y0 = fromFinger ? tipY : b.bottom + 4 * d;
+            float x = x0 + (b.centerX() - x0) * ph * (fromFinger ? 1 : 0.2f) + (float) Math.sin(ph * 9 + i) * amp;
+            float y = y0 - (y0 - top) * ph;
+            float al = (float) Math.sin(ph * Math.PI) * (0.6f + 0.4f * (float) Math.sin(t * 0.05 + i));
+            p.setColor(a(ember, (int) (230 * al * grow)));
+            c.drawCircle(x, y, size, p);
+        }
+    }
+
+    // ------------------------------------------------------------------ smoke
+
+    /** smoke of the theme's color rising from the finger and curling around a frame */
+    private static void smoke(Canvas c, Paint p, RectF b, float tipX, float tipY, long t, int seed, int color, float d,
+                              boolean dark, boolean front) {
+        int col = dark ? ProPainter.mix(color, 0xFFFFFFFF, 0.3f) : ProPainter.mix(color, 0xFF000000, 0.05f);
+        float appear = easeOut(t / 300f), topY = b.top - b.height() * 0.6f;
+        Random r = new Random(seed * 5L + (front ? 1 : 0));
+        int n = front ? 7 : 26;
+        for (int i = 0; i < n; i++) {
+            float ph = (t * 0.00055f + r.nextFloat()) % 1f;
+            float sway = r.nextFloat() - 0.5f, extra = r.nextFloat() * 6;
+            float x = tipX + (b.centerX() - tipX) * Math.min(1, ph * 1.6f)
+                    + (float) Math.sin(ph * 5.5f + i * 1.3f) * b.width() * 0.4f * ph + sway * b.width() * 0.6f * ph;
+            float y = tipY - (tipY - topY) * ph;
+            float rad = (6 + 28 * ph + extra) * d;
+            float al = (float) Math.sin(Math.min(1, ph * 1.15f) * Math.PI) * appear
+                    * (front ? 0.26f : (dark ? 0.52f : 0.4f));
+            p.setColor(Color.BLACK);
+            p.setShader(new RadialGradient(x, y, rad, a(col, (int) (255 * al)), a(col, 0), Shader.TileMode.CLAMP));
+            c.drawCircle(x, y, rad, p);
+        }
+        p.setShader(null);
+        if (front) return;
+        // thin wisps curling up around the frame
+        p.setStyle(Paint.Style.STROKE);
+        p.setStrokeCap(Paint.Cap.ROUND);
+        p.setStrokeWidth(2 * d);
+        for (int k = -1; k <= 1; k++) {
+            float ph = (t * 0.0004f + (k + 1) / 3f) % 1f;
+            float x0 = tipX + k * 6 * d, y0 = tipY - ph * 24 * d;
+            Path w = P1;
+            w.reset();
+            w.moveTo(x0, y0);
+            w.cubicTo(x0 + 22 * d * k + 10 * d * (float) Math.sin(t * 0.004 + k), y0 - 30 * d,
+                    b.centerX() - 24 * d * k, b.bottom + 12 * d,
+                    b.centerX() + k * b.width() * 0.45f, b.top - 8 * d);
+            p.setColor(Color.BLACK);
+            p.setShader(new LinearGradient(0, y0, 0, b.top, a(col, (int) (170 * appear)), a(col, 0),
+                    Shader.TileMode.CLAMP));
+            c.drawPath(w, p);
+        }
+        p.setShader(null);
+        p.setStyle(Paint.Style.FILL);
+    }
+
+    // ------------------------------------------------------------------ frost
+
+    /** the icy version of a color */
+    private static int ice(int color) {
+        return ProPainter.mix(color, 0xFFFFFFFF, 0.45f);
+    }
+
+    /** cold mist at the foot of a frame */
+    private static void frostMist(Canvas c, Paint p, RectF b, long t, int ice, float d, boolean dark) {
+        float gr = Math.max(b.width(), b.height()) * 0.8f * easeOut(t / 300f);
+        if (gr < 1) return;
+        p.setColor(Color.BLACK);
+        p.setShader(new RadialGradient(b.centerX(), b.bottom, gr, a(ice, dark ? 110 : 90), a(ice, 0),
+                Shader.TileMode.CLAMP));
+        c.drawCircle(b.centerX(), b.bottom, gr, p);
+        p.setShader(null);
+    }
+
+    /** ice crystals growing from the corners of a frame, a frost star under the finger, snowflakes */
+    private static void frost(Canvas c, Paint p, RectF b, float tipX, float tipY, long t, int seed, int ice, float d) {
+        float grow = easeOut(t / 320f);
+        float[][] corners = {{b.left, b.top, -1, -1}, {b.right, b.top, 1, -1}, {b.right, b.bottom, 1, 1},
+                {b.left, b.bottom, -1, 1}};
+        for (float[] k : corners) {
+            crystal(c, p, k[0], k[1], (float) Math.atan2(k[3], k[2]), 15 * d * grow, ice, d); // outwards
+            crystal(c, p, k[0], k[1], (float) Math.atan2(0, -k[2]), 11 * d * grow, ice, d);   // along the edge
+            crystal(c, p, k[0], k[1], (float) Math.atan2(-k[3], 0), 11 * d * grow, ice, d);   // along the side
+        }
+        for (int i = 0; i < 6; i++) {
+            crystal(c, p, tipX, tipY, (float) (i * Math.PI / 3 + 0.3), 12 * d * grow, ice, d);
+        }
+        Random r = new Random(seed * 19L);
+        for (int i = 0; i < 9; i++) {
+            float ph = (t * 0.00035f + r.nextFloat()) % 1f;
+            float x = b.left - 12 * d + r.nextFloat() * (b.width() + 24 * d) + (float) Math.sin(ph * 6 + i) * 6 * d;
+            float y = b.top - 22 * d + (b.height() + 44 * d) * ph;
+            flake(c, p, x, y, (2.5f + r.nextFloat() * 2.5f) * d, ph * 3 + i, a(ice, (int) (230 * Math.sin(ph * Math.PI))), d);
+        }
+    }
+
+    /** one ice crystal: a needle with two pairs of side needles */
+    private static void crystal(Canvas c, Paint p, float x, float y, float ang, float len, int ice, float d) {
+        if (len < d) return;
+        Path path = P1;
+        path.reset();
+        float ex = x + (float) Math.cos(ang) * len, ey = y + (float) Math.sin(ang) * len;
+        path.moveTo(x, y);
+        path.lineTo(ex, ey);
+        for (int k = 1; k <= 2; k++) {
+            float bx = x + (ex - x) * k / 3f, by = y + (ey - y) * k / 3f, bl = len * (0.42f - 0.12f * k);
+            for (int sd = -1; sd <= 1; sd += 2) {
+                double a2 = ang + sd * Math.PI / 3;
+                path.moveTo(bx, by);
+                path.lineTo(bx + (float) Math.cos(a2) * bl, by + (float) Math.sin(a2) * bl);
+            }
+        }
+        glow(c, p, path, ice, 1.0f * d, 0.9f);
+    }
+
+    /** a six-armed snowflake */
+    private static void flake(Canvas c, Paint p, float x, float y, float s, float rot, int color, float d) {
+        p.setStyle(Paint.Style.STROKE);
+        p.setStrokeCap(Paint.Cap.ROUND);
+        p.setStrokeWidth(0.9f * d);
+        p.setColor(color);
+        for (int i = 0; i < 6; i++) {
+            double ang = rot + i * Math.PI / 3;
+            c.drawLine(x, y, x + (float) Math.cos(ang) * s, y + (float) Math.sin(ang) * s, p);
+        }
+        p.setStyle(Paint.Style.FILL);
+    }
+
+    // ------------------------------------------------------------------ stardust
+
+    /** glittering stars spiralling from the finger up around a frame, a burst when the key is touched */
+    private static void stardust(Canvas c, Paint p, RectF b, float tipX, float tipY, long t, int seed, int color, float d,
+                                 boolean dark) {
+        int gold = dark ? ProPainter.mix(color, 0xFFFFFFFF, 0.5f) : color;
+        int white = dark ? 0xFFFFFF : ProPainter.mix(color, 0xFF000000, 0.25f);
+        Random r = new Random(seed * 11L);
+        float appear = easeOut(t / 200f);
+        for (int i = 0; i < 46; i++) {
+            float ph = (t * 0.0008f + r.nextFloat()) % 1f;
+            float spin = r.nextFloat() * 6.28f, size = 2.2f + r.nextFloat() * 3.2f;
+            float e = easeOut(ph);
+            float cx = tipX + (b.centerX() - tipX) * e, cy = tipY + (b.centerY() - tipY) * e;
+            float ang = spin + ph * 4.2f, sr = b.width() * 0.62f * ph;
+            float x = cx + (float) Math.cos(ang) * sr, y = cy + (float) Math.sin(ang) * sr * 0.6f;
+            float tw = 0.5f + 0.5f * (float) Math.sin(t * 0.03 + i * 1.9);
+            float sz = size * d * (0.6f + 0.4f * tw);
+            int al = (int) (255 * Math.min(1, 1.4f * Math.sin(ph * Math.PI)) * (0.55f + 0.45f * tw) * appear);
+            if (sz > 3 * d) {
+                p.setColor(Color.BLACK);
+                p.setShader(new RadialGradient(x, y, sz * 2.4f, a(color, al / 2), a(color, 0), Shader.TileMode.CLAMP));
+                c.drawCircle(x, y, sz * 2.4f, p);
+                p.setShader(null);
+            }
+            glint(c, p, x, y, sz, a(i % 3 == 0 ? white : gold, al));
+        }
+        if (t < 320) {
+            Random br = new Random(seed * 23L);
+            float f = t / 320f;
+            for (int i = 0; i < 12; i++) {
+                double ang = br.nextFloat() * Math.PI * 2;
+                float dist = (8 + 26 * br.nextFloat()) * d * easeOut(f);
+                glint(c, p, tipX + (float) Math.cos(ang) * dist, tipY + (float) Math.sin(ang) * dist * 0.7f,
+                        (2 + 2 * br.nextFloat()) * d, a(gold, (int) (240 * (1 - f))));
+            }
+        }
+    }
+
+    /** four stars twinkling on the corners of a frame, in turn */
+    private static void twinkles(Canvas c, Paint p, RectF b, long t, int color, float d, boolean dark) {
+        int gold = dark ? ProPainter.mix(color, 0xFFFFFFFF, 0.5f) : color;
+        int white = dark ? 0xFFFFFF : ProPainter.mix(color, 0xFF000000, 0.25f);
+        float[] xs = {b.left + 2 * d, b.right - 2 * d, b.right - 2 * d, b.left + 2 * d};
+        float[] ys = {b.top + 2 * d, b.top + 2 * d, b.bottom - 2 * d, b.bottom - 2 * d};
+        for (int i = 0; i < 4; i++) {
+            float tw = Math.max(0, (float) Math.sin(t * 0.012 + i * 1.6));
+            if (tw <= 0.05f) continue;
+            float sz = (2.5f + 3.5f * tw) * d;
+            p.setColor(Color.BLACK);
+            p.setShader(new RadialGradient(xs[i], ys[i], sz * 2.2f, a(color, (int) (120 * tw)), a(color, 0),
+                    Shader.TileMode.CLAMP));
+            c.drawCircle(xs[i], ys[i], sz * 2.2f, p);
+            p.setShader(null);
+            glint(c, p, xs[i], ys[i], sz, a(i % 2 == 0 ? white : gold, (int) (255 * tw)));
+        }
+    }
+
+    // ------------------------------------------------------------------ bubbles
+
+    /** bubbles rising from the finger and popping at the frame */
+    private static void bubbles(Canvas c, Paint p, RectF b, float tipX, float tipY, long t, int seed, int color, float d,
+                                boolean dark) {
+        float endY = b.bottom - 3 * d;
+        if (tipY - endY < 6 * d) return;
+        int rim = dark ? ProPainter.mix(color, 0xFFFFFFFF, 0.35f) : color;
+        Random r = new Random(seed * 17L);
+        float appear = easeOut(t / 160f);
+        for (int i = 0; i < 14; i++) {
+            float life = 1300 + r.nextFloat() * 700, offset = r.nextFloat() * life;
+            float startX = tipX + (r.nextFloat() - 0.5f) * 12 * d, endX = b.left + b.width() * (0.15f + 0.7f * r.nextFloat());
+            float baseR = (3 + r.nextFloat() * 5) * d;
+            float ph = ((t + offset) % life) / life, go = Math.min(1, ph / 0.9f);
+            float y = tipY - (tipY - endY) * go;
+            float x = startX + (endX - startX) * go + (float) Math.sin(ph * 8 + i) * 4 * d;
+            float rad = baseR * (0.6f + 0.4f * ph);
+            if (ph > 0.9f) { // pop
+                float f = (ph - 0.9f) / 0.1f;
+                p.setStyle(Paint.Style.STROKE);
+                p.setStrokeWidth(d);
+                p.setColor(a(rim, (int) (200 * (1 - f) * appear)));
+                c.drawCircle(x, y, rad * (1 + f * 0.9f), p);
+                p.setStyle(Paint.Style.FILL);
+                continue;
+            }
+            p.setColor(Color.BLACK);
+            p.setShader(new RadialGradient(x, y, rad, a(rim, 10), a(rim, (int) ((dark ? 90 : 70) * appear)),
+                    Shader.TileMode.CLAMP));
+            c.drawCircle(x, y, rad, p);
+            p.setShader(null);
+            p.setStyle(Paint.Style.STROKE);
+            p.setStrokeWidth(0.9f * d);
+            p.setColor(a(rim, (int) (210 * appear)));
+            c.drawCircle(x, y, rad, p);
+            p.setStyle(Paint.Style.FILL);
+            p.setColor(a(0xFFFFFF, (int) (204 * appear)));
+            c.drawCircle(x - rad * 0.35f, y - rad * 0.35f, Math.max(0.8f * d, rad * 0.22f), p);
+        }
+    }
+
+    /** a glossy reflection across the top of a frame (bubble style), above the letter */
+    private static void gloss(Canvas c, Paint p, Path s, RectF b, boolean dark) {
+        c.save();
+        c.clipPath(s);
+        R2.set(b.left + b.width() * 0.18f, b.top + b.height() * 0.05f, b.right - b.width() * 0.18f,
+                b.top + b.height() * 0.22f);
+        p.setColor(Color.BLACK);
+        p.setShader(new LinearGradient(0, R2.top, 0, R2.bottom, dark ? 0x33FFFFFF : 0x99FFFFFF, 0x00FFFFFF,
+                Shader.TileMode.CLAMP));
+        c.drawOval(R2, p);
+        p.setShader(null);
+        c.restore();
     }
 
     // ------------------------------------------------------------------ helpers
