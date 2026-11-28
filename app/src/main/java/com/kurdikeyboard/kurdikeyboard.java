@@ -1612,7 +1612,59 @@ public class kurdikeyboard extends InputMethodService
     ////////////////////////////////////////////////////////////
 
 
+    /** set by KeyboardView's double-tap delete: done together with the letter that follows */
+    private boolean mMultiTapDelete;
+    /** what the key being handled typed; between keys, what the last key typed */
+    private final StringBuilder mKeyText = new StringBuilder();
+    private int mKeyDepth;
+
     public void onKey(int primaryCode, int[] keyCodes) {
+        if (primaryCode == Keyboard.KEYCODE_DELETE && keyCodes != null && keyCodes.length == 1
+                && keyCodes[0] == Keyboard.KEYCODE_DELETE) {
+            // Double tap on a two-letter key (ص ص → ض): KeyboardView sends this delete and at
+            // once the key's next letter (a normal delete key press has 12 key codes). The
+            // first letter is swapped for the next one in one step when that letter comes.
+            mMultiTapDelete = true;
+            return;
+        }
+        InputConnection ic = null;
+        String typed = null;
+        if (mMultiTapDelete) {
+            mMultiTapDelete = false;
+            ic = getCurrentInputConnection();
+            typed = mKeyText.toString();
+        }
+        if (mKeyDepth == 0) mKeyText.setLength(0);
+        mKeyDepth++;
+        try {
+            if (ic != null) {
+                ic.beginBatchEdit();
+                deleteTyped(ic, typed);
+            }
+            handleKey(primaryCode, keyCodes);
+        } finally {
+            mKeyDepth--;
+            if (ic != null) ic.endBatchEdit();
+        }
+    }
+
+    /**
+     * Removes what the first tap of a double tap typed. Done through the InputConnection, it
+     * stays in order with the letter typed next. It used to be a DEL key event, which a busy app
+     * could run only after that letter: the new letter was deleted and a fast double tap left ص.
+     */
+    private void deleteTyped(InputConnection ic, String typed) {
+        if (typed != null && !typed.isEmpty()) {
+            CharSequence before = ic.getTextBeforeCursor(typed.length(), 0);
+            if (before != null && typed.contentEquals(before)) {
+                ic.deleteSurroundingText(typed.length(), 0);
+                return;
+            }
+        }
+        handleBackspace(); // a field that does not show its text (a terminal): as before
+    }
+
+    private void handleKey(int primaryCode, int[] keyCodes) {
         boolean wasAutoSpaced = mJustAutoSpaced;
         mJustAutoSpaced = false;
         if (mToolsRequested && primaryCode > 0) {
@@ -2578,6 +2630,8 @@ public class kurdikeyboard extends InputMethodService
         }
         ic.commitText(text, 1); // cursor after the text (was 0: before it)
         ic.endBatchEdit();
+        if (mKeyDepth == 0) mKeyText.setLength(0); // not part of a key press
+        mKeyText.append(text);
         // updateShiftKeyState(getCurrentInputEditorInfo());
 
 
@@ -2698,9 +2752,10 @@ public class kurdikeyboard extends InputMethodService
             commitTyped(getCurrentInputConnection());
         }else {
 
+            String ch = new String(Character.toChars(primaryCode));
             getCurrentInputConnection().finishComposingText();
-            getCurrentInputConnection().commitText(
-                    new String(Character.toChars(primaryCode)), 1);
+            getCurrentInputConnection().commitText(ch, 1);
+            mKeyText.append(ch);
         }
 
         if(isAlphabet(primaryCode)){
@@ -3147,6 +3202,7 @@ private void setCurrentLanguage(){
     }
 
     public void onRelease(int primaryCode) {
+        mMultiTapDelete = false; // its letter came with onKey just before
 
        // mInputView.setPreviewEnabled(true);
         mInputView.setPreviewEnabled(false);

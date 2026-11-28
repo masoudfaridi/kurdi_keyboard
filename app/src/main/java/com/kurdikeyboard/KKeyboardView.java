@@ -118,6 +118,66 @@ public class KKeyboardView extends KeyboardView {
         super(context, attrs, defStyle);
         this.mContext = context;
     }
+
+    // Double tap on a two-letter key (ص ص → ض): KeyboardView types the key's next letter when
+    // it is tapped again within 800 ms. Its counter is private, so the key preview follows the
+    // keys it sends (TapTracker) to show the letter a press will type.
+    private static final int MULTITAP_MS = 800; // KeyboardView.MULTITAP_INTERVAL
+    private Key mTapKey;      // two-letter key typed by the last tap, or null
+    private int mTapIndex;    // which of its letters
+    private long mTapTime;    // when (finger up)
+    private Key mDownKey;     // key under the finger at the last touch down
+    private int mDownIndex;   // letter of mDownKey this press types (0 = the first)
+    private long mLastTouchTime;
+
+    @Override
+    public void setOnKeyboardActionListener(OnKeyboardActionListener listener) {
+        super.setOnKeyboardActionListener(listener == null ? null : new TapTracker(listener));
+    }
+
+    /** passes everything on; notes which letter of a two-letter key a tap typed */
+    private final class TapTracker implements OnKeyboardActionListener {
+        private final OnKeyboardActionListener l;
+
+        TapTracker(OnKeyboardActionListener l) { this.l = l; }
+
+        @Override public void onKey(int code, int[] codes) {
+            // the delete KeyboardView sends before the next letter of a double tap: 1 key code
+            if (code != Keyboard.KEYCODE_DELETE || codes == null || codes.length != 1) noteTap(code);
+            l.onKey(code, codes);
+        }
+        @Override public void onText(CharSequence text) { mTapKey = null; l.onText(text); }
+        @Override public void onPress(int code) { l.onPress(code); }
+        @Override public void onRelease(int code) { l.onRelease(code); }
+        @Override public void swipeLeft() { l.swipeLeft(); }
+        @Override public void swipeRight() { l.swipeRight(); }
+        @Override public void swipeDown() { l.swipeDown(); }
+        @Override public void swipeUp() { l.swipeUp(); }
+    }
+
+    private void noteTap(int code) {
+        Key k = mDownKey;
+        int index = -1;
+        if (k != null && k.codes != null && k.codes.length > 1) {
+            for (int i = 0; i < k.codes.length; i++) {
+                if (k.codes[i] == code) { index = i; break; }
+            }
+        }
+        mTapKey = index >= 0 ? k : null;
+        mTapIndex = Math.max(0, index);
+        mTapTime = mLastTouchTime;
+    }
+
+    /** which letter of a two-letter key this press types: the next one on a double tap */
+    private void noteDown(android.view.MotionEvent me) {
+        Key k = keyAt(me.getX(), me.getY());
+        mDownKey = k;
+        mDownIndex = 0;
+        if (k != null && k == mTapKey && k.codes != null && k.codes.length > 1
+                && me.getEventTime() < mTapTime + MULTITAP_MS) {
+            mDownIndex = (mTapIndex + 1) % k.codes.length;
+        }
+    }
     @Override
     protected boolean onLongPress(Key key) {
         mSwipeLongPressed = true; // a popup is opening: this touch is not a swipe
@@ -917,6 +977,7 @@ public class KKeyboardView extends KeyboardView {
     public boolean onTouchEvent(android.view.MotionEvent me) {
         mLastTouchX = me.getX();
         mLastTouchY = me.getY();
+        mLastTouchTime = me.getEventTime();
         boolean consumed = onTouchEventInner(me);
         trackKeyPreview(me); // after the gesture handlers, so swipe / slide / space states are known
         return consumed;
@@ -1905,6 +1966,10 @@ public class KKeyboardView extends KeyboardView {
         if (code <= 0 || code == 32 || code == 10) return null;
         String s = key.label.toString();
         if (s.isEmpty() || s.length() > 3) return null;
+        if (key == mDownKey && mDownIndex > 0 && mDownIndex < key.codes.length
+                && key.codes[mDownIndex] > 0) {
+            s = new String(Character.toChars(key.codes[mDownIndex])); // double tap: next letter
+        }
         return isShifted() ? s.toUpperCase() : s;
     }
 
@@ -1937,7 +2002,7 @@ public class KKeyboardView extends KeyboardView {
             hideKeyPreview();
             return;
         }
-        if (key == mPreviewKey && live) return;
+        if (key == mPreviewKey && live && text.equals(mPreviewView.text)) return;
         mPreviewKey = key;
         presentPreview(key.x, key.y, key.width, key.height, text, false);
     }
@@ -2063,6 +2128,8 @@ public class KKeyboardView extends KeyboardView {
     private void trackKeyPreview(android.view.MotionEvent me) {
         switch (me.getActionMasked()) {
             case android.view.MotionEvent.ACTION_DOWN:
+                noteDown(me);
+                // fall through
             case android.view.MotionEvent.ACTION_MOVE:
                 if (mSlideActive || mSwiping || mSpaceCursor || mSpaceLangOpen) {
                     hideKeyPreview();
